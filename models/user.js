@@ -25,43 +25,47 @@ class User {
         ); // Convert rows to User objects
     }
 
+    static async getUserById(id) {
+        const connection = await sql.connect(dbConfig);
 
-    // static async getUserById(id) {
-    //     const connection = await sql.connect(dbConfig);
+        const sqlQuery = `SELECT userId, username, email, userType, parentId FROM Users Where userId LIKE @id`; // Parameterized query
 
-    //     const sqlQuery = `SELECT UserId, UserName, Email, UserType, ParentId FROM Users Where ParentID IS NOT Null and UserID = @id`; // Parameterized query
+        const request = connection.request();
+        request.input("id", id);
+        const result = await request.query(sqlQuery);
 
-    //     const request = connection.request();
-    //     request.input("id", id);
-    //     const result = await request.query(sqlQuery);
+        connection.close();
 
-    //     connection.close();
+        return result.recordset[0]
+        ? new User (
+            result.recordset[0].userId,
+            result.recordset[0].username,
+            result.recordset[0].email,
+            result.recordset[0].userType,
+            result.recordset[0].parentId
+            )
+        : null; // Handle book not found
+    }
 
-    //     return result.recordset[0]
-    //     ? new User (
-    //         result.recordset[0].id,
-    //         result.recordset[0].username,
-    //         result.recordset[0].email
-    //         )
-    //     : null; // Handle book not found
-    // }
+    static async createUser(newUserData) {
+        const connection = await sql.connect(dbConfig);
 
-    // static async createUser(newUserData) {
-    //     const connection = await sql.connect(dbConfig);
+        const sqlQuery = `DECLARE @newID VARCHAR(10);
+                          SELECT @newID = 'S' + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4)) 
+                          FROM Users where userID LIKE 'S%';
+                          INSERT INTO Users OUTPUT inserted.userID VALUES (@newID, @username, @email, @password, @userType, @parentId);`;
 
-    //     const sqlQuery = `INSERT INTO Users (username, email) VALUES (@username, @email); SELECT SCOPE_IDENTITY() AS id;`;
-
-    //     const request = connection.request();
-    //     request.input("username", newUserData.username);
-    //     request.input("email", newUserData.email);
-
-    //     const result = await request.query(sqlQuery);
-
-    //     connection.close();
-
-    //     // Retrieve the newly created user using its ID
-    //     return this.getUserById(result.recordset[0].id);
-    // }
+        const request = connection.request();
+        request.input("userName", newUserData.username);
+        request.input("email", newUserData.email);
+        request.input("password", newUserData.password);
+        request.input("userType", newUserData.userType);
+        request.input("parentID", null);
+        
+        const result = await request.query(sqlQuery);
+        // Retrieve the newly created user using its ID
+        return this.getUserById(result.recordset[0].userID);
+    }
 
     // static async updateUser(id, newUserData) {
     //     const connection = await sql.connect(dbConfig);

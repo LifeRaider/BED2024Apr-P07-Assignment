@@ -1,6 +1,6 @@
 const express = require("express");
+const cors = require("cors");
 // Controller import
-// const booksController = require("./controllers/booksController");
 const usersController = require("./controllers/usersController");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
@@ -11,6 +11,10 @@ const bodyParser = require("body-parser"); // Import body-parser
 const app = express();
 const port = process.env.PORT || 3000; // Use environment variable or default port
 
+// Enable CORS
+app.use(cors());
+
+// Serve static files
 const staticMiddleware = express.static("public"); // Path to the public folder
 
 // Include body-parser middleware to handle JSON data
@@ -20,6 +24,7 @@ app.use(staticMiddleware); // Mount the static middleware
 
 
 app.get("/users", usersController.getAllUsers); // Get all users
+app.post("/CreateUsers", usersController.createUser); // Create user
 
 
 app.listen(port, async () => {
