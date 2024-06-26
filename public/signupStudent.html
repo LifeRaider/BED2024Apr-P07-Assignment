@@ -11,11 +11,11 @@
   </head>
   <body>
     <section id="signup-page">
-      <h2>Student Signup</h2>
+      <h2 id="signupSubtitle">Student Signup</h2>
       <h1>Create new account<span style="color:#00D1FF">.</span></h1>
       <h3>Already have a account? <a href="login.html">Login Here</a></h3>
-
-      <form onsubmit="signup(event)">
+      
+      <form onsubmit="signup()">
         <div class="name">
           <span class="field">
               <div class="innerField">
@@ -33,7 +33,7 @@
           </span>
         </div>
   
-        <span class="field">
+        <span class="field" id="eSpan">
           <div class="innerField">
             <input type="email" id="email" name="email" placeholder="" value="aa@lmao.com" required>
             <label for="email">email</label>
@@ -42,23 +42,24 @@
         </span>
         <p id="eWarning" class="eWarning">* This email is already in use.</p>
 
-        <span class="field" id="cpDesign">
+        <span class="field">
           <div class="innerField">
             <input type="password" id="password" name="password" placeholder="" value="aaaa" required>
             <label for="password">password</label>
           </div>
-          <img src="assets/password-icon1.png">
+          <img src="assets/password-icon.png">
         </span>
-        <span class="field">
+
+        <span class="field" id="pSpan">
           <div class="innerField">
             <input type="password" id="cPassword" name="cPassword" placeholder="" value="aaaa" required>
             <label for="cPassword">confirm password</label>
           </div>
-          <img src="assets/password-icon1.png">
+          <img src="assets/password-icon.png">
         </span>
         
         <p id="pWarning" class="pWarning">* The password that you entered does not match.</p>
-        <button type="submit" id="createAcc" class="createAcc">Create account</button>
+        <button type="submit" id="submit" class="createAcc">Create account</button>
       </form>
 
     </section>

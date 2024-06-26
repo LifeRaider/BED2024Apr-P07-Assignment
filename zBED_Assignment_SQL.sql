@@ -3,7 +3,7 @@ Go
 
 Create Table Users (
 	userID  VARCHAR(4) PRIMARY KEY,
-	userName VARCHAR(50),
+	username VARCHAR(50),
 	email VARCHAR(100) UNIQUE,
 	password VARCHAR(100),
 	userType VARCHAR(20) CHECK (userType IN ('admin', 'teacher', 'parent', 'student')),
@@ -71,15 +71,30 @@ Insert Into Users Values
 ('T005', 'Teacher5', 'Teacher5@example.com', '567890123', 'teacher', Null),
 ('T006', 'Teacher6', 'Teacher6@example.com', '678901234', 'teacher', Null);
 
-DECLARE @newID VARCHAR(10);
+
 DECLARE @username VARCHAR(50) = 'hidhfidf';
-DECLARE @email VARCHAR(100) = 'hidhfidf@fsdfg.com';
+DECLARE @email VARCHAR(100) = 'hidhfidf@fsdfg.comw';
 DECLARE @password VARCHAR(100) = 'hidhfidf';
 DECLARE @userType VARCHAR(20) = 'student';
 DECLARE @parentId VARCHAR(4) = 'P001';
+DECLARE @newID VARCHAR(10);
 
-SELECT @newID = 'S' + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
+SELECT @newID = UPPER(SUBSTRING(@userType, 1, 1)) + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
 FROM Users where userID LIKE 'S%';
+print @newID;
+INSERT INTO Users OUTPUT inserted.userID VALUES (@newID, @username, @email, @password, @userType, @parentId);
 
-INSERT INTO Users VALUES (@newID, @username, @email, @password, @userType, @parentId);
+
+DELETE FROM Users
+WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
+
+
+Select * FROM Users
+WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
+
 Select * FROM Users;
+
+INSERT INTO Users OUTPUT inserted.userID VALUES ('1000', @username, @email, @password, @userType, @parentId);
+
+DELETE FROM Users
+WHERE userName like 'hidhfidf';

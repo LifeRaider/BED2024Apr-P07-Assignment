@@ -4,8 +4,12 @@
     font-family: Inter;
 }
 
-body{
+html{
     background-color: #090807;
+}
+
+body{
+    display: none;
 }
 
 button{
@@ -33,7 +37,6 @@ input:focus {
     margin-top: 32vh;
     margin-left: 18vw;
     width: fit-content;
-    /* outline: solid red 1px; */
 }
 
 h1{
@@ -59,10 +62,10 @@ h3 a{
     position: relative;
     display: flex;
     flex-direction: column;
+    margin-top: 45px;
     width: fit-content;
     left: -20px;
     align-self: center;
-    /* outline: solid red 1px; */
 }
 .signup button{
     padding-block: 20px;
@@ -73,26 +76,26 @@ h3 a{
     font-weight:600;
     background-color: #2358A6;
 }
-
-.sSignup{
-    margin-top: 45px;
+.signup a{
     margin-bottom: 20px;
+    border-radius: 50px;
 }
 
 
-/* Student Signup */
-#signup-page{
+/* Student & Parent Signup */
+#signup-page, #login-page{
     margin-top: 24vh;
     margin-left: 18vw;
 }
-#signup-page form{
+#signup-page form, #login-page form{
     display: flex;
     flex-direction: column;
+    margin-top: 35px;
     width: fit-content;
     align-items: center;
 }
 
-h2{
+#signup-page h2{
     margin-top: 0;
     margin-bottom: 4px;
     color: #ABABAB;
@@ -107,7 +110,7 @@ h2{
     justify-content: space-between;
     align-items: center;
     width: 380px;
-    margin-top: 25px;
+    margin-bottom: 25px;
     padding-top: 6px;
     padding-bottom: 10px;
     padding-inline: 20px;
@@ -175,9 +178,10 @@ h2{
     width: 110px;
 }
 
-.pWarning, .eWarning{
+.pWarning, .eWarning, .ceWarning, .lWarning{
     margin-top: 2px;
     margin-left: -120px;
+    margin-bottom: 8px;
     font-size: 12px;
     font-weight:200;
     color: red;
@@ -187,14 +191,66 @@ h2{
 .eWarning{
     margin-left: -235px;
 }
+.ceWarning{
+    margin-left: -160px;
+}
+.lWarning{
+    margin-left: -150px;
+}
 
-.createAcc{
-    margin-top: 30px;
-    padding-block: 20px;
+.createAcc, .loginBtn{
+    margin-top: 5px;
+    padding-block: 18px;
     padding-inline: 55px;
     font-size: 18px;
     font-weight:600;
     background-color: #2358A6;
     border-radius: 50px;
 }
+.loginBtn{
+    padding-inline: 75px;
+}
 
+
+
+
+/* Loader Style */
+.loader-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 9999;
+}
+.loader {
+    width: 65px;
+    aspect-ratio: 1;
+    position: relative;
+}
+.loader:before,
+.loader:after {
+    content: "";
+    position: absolute;
+    border-radius: 50px;
+    box-shadow: 0 0 0 5px inset #2358A6;
+    animation: loading 3.5s infinite;
+}
+.loader:after {
+    animation-delay: -1.75s;
+}
+@keyframes loading {
+    0% {inset: 0 35px 35px 0;}
+    12.5% {inset: 0 35px 0 0;}
+    25% {inset: 35px 35px 0 0;}
+    37.5% {inset: 35px 0 0 0;}
+    50% {inset: 35px 0 0 35px;}
+    62.5% {inset: 0 0 0 35px;}
+    75% {inset: 0 0 35px 35px;}
+    87.5% {inset: 0 0 35px 0;}
+    100% {inset: 0 35px 35px 0;}
+}
