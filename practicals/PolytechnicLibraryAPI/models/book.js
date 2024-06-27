@@ -20,14 +20,14 @@ class Book {
         connection.close();
     
         return result.recordset.map(
-          (row) => new Book(row.id, row.title, row.author, row.availability)
+          (row) => new Book(row.book_id, row.title, row.author, row.availability)
         ); // Convert rows to Book objects
     }
 
     static async getBookById(id) {
         const connection = await sql.connect(dbConfig);
     
-        const sqlQuery = `SELECT * FROM Books WHERE id = @id`; // Parameterized query
+        const sqlQuery = `SELECT * FROM Books WHERE book_id = @id`; // Parameterized query
     
         const request = connection.request();
         request.input("id", id);
@@ -48,11 +48,11 @@ class Book {
     static async updateBookAvailability(id, newBookAvailability) {
         const connection = await sql.connect(dbConfig);
     
-        const sqlQuery = `UPDATE Books SET availability = @availability WHERE id = @id`; // Parameterized query
+        const sqlQuery = `UPDATE Books SET availability = @availability WHERE book_id = @id`; // Parameterized query
     
         const request = connection.request();
         request.input("id", id);
-        request.input("availability", newBookAvailability);
+        request.input("availability", newBookAvailability.availability);
     
         await request.query(sqlQuery);
     
