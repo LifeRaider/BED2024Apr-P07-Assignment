@@ -1,4 +1,7 @@
 const express = require("express");
+const booksController = require("./controllers/booksController");
+const usersController = require("./controllers/usersController");
+const verifyJWT = require("./middlewares/authorization.js");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
@@ -9,6 +12,17 @@ const port = process.env.PORT || 3000;
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+
+// Routes
+app.get("/books", verifyJWT, booksController.getAllBooks);
+app.get("/books/:id", verifyJWT, booksController.getBookById);
+app.put("/books/:id/availability", verifyJWT, booksController.updateBookAvailability);
+
+app.post("/register", usersController.registerUser);
+app.post("/login", usersController.login);
+
+
+module.exports = app;
 
 app.listen(port, async () => {
     try {
