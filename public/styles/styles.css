@@ -1,24 +1,256 @@
-#book-list {
+* {
+    margin: 0;
+    color: #F2EFEC;
+    font-family: Inter;
+}
+
+html{
+    background-color: #090807;
+}
+
+body{
+    display: none;
+}
+
+button{
+    border: none;
+    cursor: pointer;
+}
+button:hover{
+    opacity: 90%;
+}
+
+input{
+    border: none;
+}
+input:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+
+/* Create account */
+#mSignup-page{
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    margin-top: 32vh;
+    margin-left: 18vw;
+    width: fit-content;
+}
+
+h1{
+    margin: 0;
+    font-size: 50px;
+    font-weight:600;
+}
+
+h3{
+    margin-top: 15px;
+    color: #ABABAB;
+    font-size: 17px;
+    font-weight:600;
+}
+h3 a{
+    margin-left: 6px;
+    color: #657AC8;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.signup{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-top: 45px;
+    width: fit-content;
+    left: -20px;
+    align-self: center;
+}
+.signup button{
+    padding-block: 20px;
+    padding-inline: 85px;
+    width: 305px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight:600;
+    background-color: #2358A6;
+}
+.signup a{
+    margin-bottom: 20px;
+    border-radius: 50px;
+}
+
+
+/* Student & Parent Signup */
+#signup-page, #login-page{
+    margin-top: 24vh;
+    margin-left: 18vw;
+}
+#signup-page form, #login-page form{
+    display: flex;
+    flex-direction: column;
+    margin-top: 35px;
+    width: fit-content;
+    align-items: center;
+}
+
+#signup-page h2{
+    margin-top: 0;
+    margin-bottom: 4px;
+    color: #ABABAB;
+    font-size: 20px;
+    font-weight:600;
+}
+
+/* Normal field */
+.field{
+    display: flex;
+    flex-direction: row;
     justify-content: space-between;
-    margin-top: 2rem;
-    list-style: none;
-    padding: 0;
+    align-items: center;
+    width: 380px;
+    margin-bottom: 25px;
+    padding-top: 6px;
+    padding-bottom: 10px;
+    padding-inline: 20px;
+    background-color: #606972;
+    border-radius: 18px;
 }
-  
-.book {
-    width: calc(33% - 1rem);
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    text-align: center;
+.field img{
+    width: 28px;
+    height: 28px;
 }
-  
-.book h2 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
+.name img{
+    width: 24px;
+    height: 24px;
+}
+
+.innerField{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 45px;
+    color: #FFFFFF;
+}
+.innerField label{
+    position: absolute;
+    font-size: 17px;
+    font-weight: 400;
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+.innerField input{
+    position: relative;
+    padding-top: 6px;
+    width: 335px;
+    color: #F2EFEC;
+    font-size: 20px;
+    font-weight:600;
+    box-sizing: border-box;
+    background-color: transparent;
+}
+.innerField input:focus,
+.innerField input:not(:placeholder-shown){
+    top: 5px;
+}
+.innerField input:focus + label,
+.innerField input:not(:placeholder-shown) + label {
+    top: -2px;
+    font-size: 12px;
+    font-weight: 300;
+}
+
+/* Name field */
+.name{
+    display: flex;
+    flex-direction: row;
+    width: 420px;
+    justify-content: space-between;
+    /* outline: solid red 1px; */
+}
+.name .field{
+    width: 155px;
+}
+.name .field input{
+    width: 110px;
+}
+
+.pWarning, .eWarning, .ceWarning, .lWarning{
+    margin-top: 2px;
+    margin-left: -120px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight:200;
+    color: red;
+    display: none;
+    /* display: block; */
+}
+.eWarning{
+    margin-left: -235px;
+}
+.ceWarning{
+    margin-left: -160px;
+}
+.lWarning{
+    margin-left: -150px;
+}
+
+.createAcc, .loginBtn{
+    margin-top: 5px;
+    padding-block: 18px;
+    padding-inline: 55px;
+    font-size: 18px;
+    font-weight:600;
+    background-color: #2358A6;
+    border-radius: 50px;
+}
+.loginBtn{
+    padding-inline: 75px;
+}
+
+
+
+
+/* Loader Style */
+.loader-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 9999;
+}
+.loader {
+    width: 65px;
+    aspect-ratio: 1;
+    position: relative;
+}
+.loader:before,
+.loader:after {
+    content: "";
+    position: absolute;
+    border-radius: 50px;
+    box-shadow: 0 0 0 5px inset #2358A6;
+    animation: loading 3.5s infinite;
+}
+.loader:after {
+    animation-delay: -1.75s;
+}
+@keyframes loading {
+    0% {inset: 0 35px 35px 0;}
+    12.5% {inset: 0 35px 0 0;}
+    25% {inset: 35px 35px 0 0;}
+    37.5% {inset: 35px 0 0 0;}
+    50% {inset: 35px 0 0 35px;}
+    62.5% {inset: 0 0 0 35px;}
+    75% {inset: 0 0 35px 35px;}
+    87.5% {inset: 0 0 35px 0;}
+    100% {inset: 0 35px 35px 0;}
 }

@@ -1,100 +1,75 @@
 const User = require("../models/user");
+const passport = require('passport');
 
-const getAllUsers = async (req, res) => {
+const test = (req, res) => {
+    res.json("everything is a ok")
+};
+
+const createUser = async (req, res) => {
+    const newUser = req.body;
     try {
-      const users = await User.getAllUsers();
-      res.json(users);
+        const createdUser = await User.createUser(newUser);
+        res.status(201).json(createdUser);
     } catch (error) {
-      console.error(error);
-      res.status(500).send("Error retrieving users");
+        if (error.message.includes('Violation of UNIQUE KEY constraint')) {
+            console.error("User with this email already exists.");
+            res.status(409).json({ message: 'User with this email already exists.' }); // 409 Conflict
+        } else {
+            console.error("Error creating user: ", error);
+            res.status(500).json({ message: "Error creating user" });
+        }
     }
 };
 
-// const getUserById = async (req, res) => {
-//     const userId = parseInt(req.params.id);
-//     try {
-//         const user = await User.getUserById(userId);
-//         if (!user) {
-//         return res.status(404).send("User not found");
-//         }
-//         res.json(user);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send("Error retrieving user");
-//     }
-// };
+const initializePassport = (passport) => {
+    try {
+        const done = User.initializePassport(passport);
+    } catch (error) {
+        console.log(error)
+    }
+}
 
-// const createUser = async (req, res) => {
-//     const newUser = req.body;
-//     try {
-//         const createdUser = await User.createUser(newUser);
-//         res.status(201).json(createdUser);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send("Error creating user");
-//     }
-// };
+const loginUser = (req, res) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+          return res.status(500).json({ message: 'Authentication failed' });
+        }
+        if (!user) {
+          return res.status(401).json({ message: info.message });
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            return res.status(500).json({ message: 'Login failed' });
+          }
+          req.session.user = user;
+          return res.json({ message: 'Login successful', user });
+        });
+    })(req, res);
+};
 
-// const updateUser = async (req, res) => {
-//     const userId = parseInt(req.params.id);
-//     const newUserData = req.body;
-  
-//     try {
-//         const updatedUser = await User.updateUser(userId, newUserData);
-//         if (!updatedUser) {
-//         return res.status(404).send("User not found");
-//         }
-//         res.json(updatedUser);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send("Error updating user");
-//     }
-// };
-  
-// const deleteUser = async (req, res) => {
-//     const userId = parseInt(req.params.id);
-  
-//     try {
-//         const success = await User.deleteUser(userId);
-//         if (!success) {
-//         return res.status(404).send("User not found");
-//         }
-//         res.status(204).send();
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send("Error deleting user");
-//     }
-// };
+const checkAuthenticated = (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json(req.session.user);
+    } else {
+        res.status(401).json({ message: 'Not authenticated' });
+    }
+}
 
-// async function searchUsers(req, res) {
-//     const searchTerm = req.query.searchTerm; // Extract search term from query params
-  
-//     try {    
-//       const users = await User.searchUsers(searchTerm);
-//       res.json(users);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: "Error searching users" });
-//     }
-// };
-
-// async function getUsersWithBooks(req, res) {
-//     try {
-//       const users = await User.getUsersWithBooks();
-//       res.json(users);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: "Error fetching users with books" });
-//     }
-// };
-
+const logout = (req, res) => {
+    req.logOut((error) => {
+        if (error) {
+            console.log(error)
+            return res.status(500).json({ message: 'Logout failed' });
+        }
+      return res.json({ message: 'Logout successful'});
+    })
+}
 
 module.exports = {
-    getAllUsers,
-    // getUserById,
-    // createUser,
-    // updateUser,
-    // deleteUser,
-    // searchUsers,
-    // getUsersWithBooks,
+    test,
+    createUser,
+    initializePassport,
+    loginUser,
+    checkAuthenticated,
+    logout,
 };

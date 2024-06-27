@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Jam Systems</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <section id="login-page">
+      <h1>Login to your account<span style="color:#00D1FF">.</span></h1>
+      <h3>Don't have an account? <a href="signupType.html">Signup Here</a></h3>
+  
+      <form onsubmit="login()">
+        <span class="field">
+            <div class="innerField">
+              <input type="email" id="email" name="email" placeholder="" required>
+              <label for="email">email</label>
+            </div>
+            <img src="assets/email-icon.png">
+        </span>
+        
+        <span class="field" id="pSpan">
+          <div class="innerField">
+            <input type="password" id="password" name="password" placeholder="" required>
+            <label for="password">password</label>
+          </div>
+          <img src="assets/password-icon.png">
+        </span>
+
+        <p id="lWarning" class="lWarning">* The email or password entered is incorrect.</p>
+        <button type="submit" id="submit" class="loginBtn">Login</button>
+      </form>
+
+    </section>
+
+    <script src="scripts/script.js"></script>
+  </body>
+</html>

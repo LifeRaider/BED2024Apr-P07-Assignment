@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Jam Systems</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <section id="signup-page">
+      <h2 id="signupSubtitle">Student Signup</h2>
+      <h1>Create new account<span style="color:#00D1FF">.</span></h1>
+      <h3>Already have a account? <a href="login.html">Login Here</a></h3>
+      
+      <form onsubmit="signup()">
+        <div class="name">
+          <span class="field">
+              <div class="innerField">
+                <input type="text" id="fname" name="fname" placeholder="" value="Jovan" required>
+                <label for="fname">first name</label>
+              </div>
+              <img src="assets/profile-icon.png">
+          </span>
+          <span class="field">
+              <div class="innerField">
+                <input type="text" id="lname" name="lname" placeholder="" value="Lim" required>
+                <label for="lname">last name</label>
+              </div>
+              <img src="assets/profile-icon.png">
+          </span>
+        </div>
+  
+        <span class="field" id="eSpan">
+          <div class="innerField">
+            <input type="email" id="email" name="email" placeholder="" value="aa@lmao.com" required>
+            <label for="email">email</label>
+          </div>
+          <img src="assets/email-icon.png">
+        </span>
+        <p id="eWarning" class="eWarning">* This email is already in use.</p>
+
+        <span class="field">
+          <div class="innerField">
+            <input type="password" id="password" name="password" placeholder="" value="aaaa" required>
+            <label for="password">password</label>
+          </div>
+          <img src="assets/password-icon.png">
+        </span>
+
+        <span class="field" id="pSpan">
+          <div class="innerField">
+            <input type="password" id="cPassword" name="cPassword" placeholder="" value="aaaa" required>
+            <label for="cPassword">confirm password</label>
+          </div>
+          <img src="assets/password-icon.png">
+        </span>
+        
+        <p id="pWarning" class="pWarning">* The password that you entered does not match.</p>
+        <button type="submit" id="submit" class="createAcc">Create account</button>
+      </form>
+
+    </section>
+
+    <script src="scripts/script.js"></script>
+  </body>
+</html>
