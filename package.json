@@ -4,16 +4,21 @@
   "description": "This is the repository for the BED 2024 April assignment.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
-    "joi": "^17.13.1",
-    "mssql": "^7.2.0",
-    "nodemon": "^3.1.3"
+    "express-session": "^1.18.0",
+    "joi": "^17.13.3",
+    "mssql": "^11.0.0",
+    "nodemon": "^3.1.4",
+    "passport-local": "^1.0.0"
   }
 }
