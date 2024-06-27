@@ -1,5 +1,7 @@
 const express = require("express");
 const booksController = require("./controllers/booksController");
+const usersController = require("./controllers/usersController");
+const verifyJWT = require("./middlewares/authorization.js");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
@@ -12,9 +14,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 
 // Routes
-app.get("/books", booksController.getAllBooks);
-app.get("/books/:id", booksController.getBookById);
-app.put("/books/:id/availability", booksController.updateBookAvailability);
+app.get("/books", verifyJWT, booksController.getAllBooks);
+app.get("/books/:id", verifyJWT, booksController.getBookById);
+app.put("/books/:id/availability", verifyJWT, booksController.updateBookAvailability);
+
+app.post("/register", usersController.registerUser);
+app.post("/login", usersController.login);
 
 module.exports = app;
 
