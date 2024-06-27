@@ -1,4 +1,5 @@
 const express = require("express");
+const booksController = require("./controllers/booksController");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
@@ -9,6 +10,13 @@ const port = process.env.PORT || 3000;
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+
+// Routes
+app.get("/books", booksController.getAllBooks);
+app.get("/books/:id", booksController.getBookById);
+app.put("/books/:id/availability", booksController.updateBookAvailability);
+
+module.exports = app;
 
 app.listen(port, async () => {
     try {
