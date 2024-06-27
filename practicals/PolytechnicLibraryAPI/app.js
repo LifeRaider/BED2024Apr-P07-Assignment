@@ -21,7 +21,6 @@ app.put("/books/:id/availability", verifyJWT, booksController.updateBookAvailabi
 app.post("/register", usersController.registerUser);
 app.post("/login", usersController.login);
 
-
 module.exports = app;
 
 app.listen(port, async () => {
