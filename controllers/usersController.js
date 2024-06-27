@@ -1,75 +1,80 @@
+require('dotenv').config();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const passport = require('passport');
 
 const test = (req, res) => {
-    res.json("everything is a ok")
+  const user = req.user
+  res.status(201).json({ message: "everything is a ok", user});
 };
 
-const createUser = async (req, res) => {
-    const newUser = req.body;
-    try {
-        const createdUser = await User.createUser(newUser);
-        res.status(201).json(createdUser);
-    } catch (error) {
-        if (error.message.includes('Violation of UNIQUE KEY constraint')) {
-            console.error("User with this email already exists.");
-            res.status(409).json({ message: 'User with this email already exists.' }); // 409 Conflict
-        } else {
-            console.error("Error creating user: ", error);
-            res.status(500).json({ message: "Error creating user" });
-        }
-    }
-};
+async function register(req, res) {
+  const { email, password, confirmPassword } = req.body;
 
-const initializePassport = (passport) => {
-    try {
-        const done = User.initializePassport(passport);
-    } catch (error) {
-        console.log(error)
+  try {
+    // Validate user data
+    if (password != confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
     }
+
+    // Check for existing username
+    const existingUser = await User.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user in database
+    try {
+      const createdUser = await User.createUser(req.body, hashedPassword);
+      res.status(201).json(createdUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error creating user");
+    }
+
+    // return res.status(201).json({ message: "User created successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 }
 
-const loginUser = (req, res) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-          return res.status(500).json({ message: 'Authentication failed' });
-        }
-        if (!user) {
-          return res.status(401).json({ message: info.message });
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            return res.status(500).json({ message: 'Login failed' });
-          }
-          req.session.user = user;
-          return res.json({ message: 'Login successful', user });
-        });
-    })(req, res);
-};
+async function login(req, res) {
+  const { email, password } = req.body;
 
-const checkAuthenticated = (req, res) => {
-    if (req.isAuthenticated()) {
-        res.json(req.session.user);
-    } else {
-        res.status(401).json({ message: 'Not authenticated' });
+  try {
+    // Validate user credentials
+    const user = await User.getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-}
 
-const logout = (req, res) => {
-    req.logOut((error) => {
-        if (error) {
-            console.log(error)
-            return res.status(500).json({ message: 'Logout failed' });
-        }
-      return res.json({ message: 'Logout successful'});
-    })
+    // Compare password with hash
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // Generate JWT token
+    const payload = {
+      id: user.id,
+      userType: user.userType,
+    };
+    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "3600s" }); // Expires in 1 hour
+
+    return res.status(200).json({ token });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 module.exports = {
     test,
-    createUser,
-    initializePassport,
-    loginUser,
-    checkAuthenticated,
-    logout,
+    register,
+    login,
 };

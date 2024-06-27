@@ -5,7 +5,7 @@ Create Table Users (
 	userID  VARCHAR(4) PRIMARY KEY,
 	username VARCHAR(50),
 	email VARCHAR(100) UNIQUE,
-	password VARCHAR(100),
+	passwordHash VARCHAR(100),
 	userType VARCHAR(20) CHECK (userType IN ('admin', 'teacher', 'parent', 'student')),
 	parentId VARCHAR(4) FOREIGN KEY (parentId) REFERENCES Users(userId)
 );
@@ -74,15 +74,16 @@ Insert Into Users Values
 
 DECLARE @username VARCHAR(50) = 'hidhfidf';
 DECLARE @email VARCHAR(100) = 'hidhfidf@fsdfg.comw';
-DECLARE @password VARCHAR(100) = 'hidhfidf';
+DECLARE @passwordHash VARCHAR(100) = 'hidhfidf';
 DECLARE @userType VARCHAR(20) = 'student';
 DECLARE @parentId VARCHAR(4) = 'P001';
 DECLARE @newID VARCHAR(10);
 
 SELECT @newID = UPPER(SUBSTRING(@userType, 1, 1)) + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
-FROM Users where userID LIKE 'S%';
+FROM Users where userID LIKE UPPER(SUBSTRING(@userType, 1, 1)) + '%';
+IF @newID IS NULL SET @newID = UPPER(SUBSTRING(@userType, 1, 1)) + '001';
 print @newID;
-INSERT INTO Users OUTPUT inserted.userID VALUES (@newID, @username, @email, @password, @userType, @parentId);
+INSERT INTO Users OUTPUT inserted.userID VALUES (@newID, @username, @email, @passwordHash, @userType, @parentId);
 
 
 DELETE FROM Users
@@ -92,9 +93,17 @@ WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
 Select * FROM Users
 WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
 
-Select * FROM Users;
 
-INSERT INTO Users OUTPUT inserted.userID VALUES ('1000', @username, @email, @password, @userType, @parentId);
 
-DELETE FROM Users
-WHERE userName like 'hidhfidf';
+INSERT INTO Users OUTPUT inserted.userID VALUES ('1000', @username, @email, @passwordHash, @userType, @parentId);
+
+DROP TABLE Users;
+
+
+DECLARE @newID VARCHAR(10);
+DECLARE @userType VARCHAR(20) = 'admin';
+
+SELECT @newID = UPPER(SUBSTRING(@userType, 1, 1)) + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
+FROM Users where userID LIKE UPPER(SUBSTRING(@userType, 1, 1)) + '%';
+IF @newID IS NULL SET @newID = UPPER(SUBSTRING(@userType, 1, 1)) + '001';
+print @newID;
