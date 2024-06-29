@@ -4,6 +4,7 @@ const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
 const usersController = require("./controllers/usersController");
+const classController = require("./controllers/classController");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
@@ -23,6 +24,7 @@ app.get("/", verifyJWT, usersController.test); // Get all users
 app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user
 // app.get('/currentUser', usersController.checkAuthenticated); // Check Authentification
+app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classes
 
 
 app.listen(port, async () => {
