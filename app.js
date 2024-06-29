@@ -25,7 +25,8 @@ app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user
 // app.get('/currentUser', usersController.checkAuthenticated); // Check Authentification
 app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classes
-
+app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get class by ID
+app.post("/classes", verifyJWT, classController.createClass); // Create class
 
 app.listen(port, async () => {
   try {

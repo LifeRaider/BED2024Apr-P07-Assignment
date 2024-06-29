@@ -18,6 +18,8 @@ function verifyJWT(req, res, next) {
       const authorizedRoles = {
         "/": ["admin", "teacher", "parent", "student"],
         "/getAllClasses" : ["admin"],
+        "/getClassById": ["admin"],
+        "/createClass": ["admin"],
         "/getAllUsers": ["admin"],
         "/logout": ["admin", "teacher", "parent", "student"]
       };

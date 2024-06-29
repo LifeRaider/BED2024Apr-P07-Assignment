@@ -22,6 +22,58 @@ class Class {
           (row) => new Class(row.classID, row.className, row.classDes)
         ); // Convert rows to Class objects
     }
+
+    static async getClassById(classID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `SELECT * FROM Classes WHERE classID LIKE @classID`; // Parameterized query
+
+        const request = connection.request();
+        request.input("classID", classID);
+        const result = await request.query(sqlQuery);
+
+        connection.close();
+
+        return result.recordset[0]
+        ? new Class (
+            result.recordset[0].classID,
+            result.recordset[0].className,
+            result.recordset[0].classDes
+        )
+        : null; // Handle class not found
+    }
+
+    static async createClass(newClassData) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `DECLARE @newClassID VARCHAR(7);
+                          SELECT @newClassID = 'Class' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(classID, 6, 2) AS INT)), 0) + 1, '00')
+                          FROM Classes WHERE classID LIKE 'Class%';
+                          IF @newClassID IS NULL SET @newClassID = 'Class01';
+                          
+                          INSERT INTO Classes (classID, className, classDes) 
+                          OUTPUT INSERTED.classID
+                          VALUES (@newClassID, @className, @classDes);
+                          
+                          DECLARE @SQL NVARCHAR(MAX);
+                          SET @SQL = N'CREATE TABLE ' + QUOTENAME(@newClassID) + ' (
+                            UserId VARCHAR(4) PRIMARY KEY,
+                            FOREIGN KEY (UserId) REFERENCES Users(userId)
+                          );';
+                          EXEC sp_executesql @SQL;`;
+    
+        const request = connection.request();
+        request.input("className", newClassData.className);
+        request.input("classDes", newClassData.classDes);
+    
+        const result = await request.query(sqlQuery);
+    
+        connection.close();
+    
+        // Retrieve the newly created class using its ID
+        return this.getClassById(result.recordset[0].classID);
+    }
+
 }
     
 module.exports = Class;
