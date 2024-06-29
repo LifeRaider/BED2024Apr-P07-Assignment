@@ -35,8 +35,77 @@ const createClass = async (req, res) => {
     }
 };
 
+// Add Student / Teacher to Class - PUT
+exports.addToClass = async (req, res) => {
+  const { classID } = req.params;
+  const { userID, role } = req.body; // role can be 'student' or 'teacher'
+
+  if (!userID || !role) {
+    return res.status(400).send({ message: "userID and role are required" });
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    let query;
+    if (role === "student") {
+      query = "INSERT INTO ClassStudents (classID, studentID) VALUES (@classID, @userID)";
+    } else if (role === "teacher") {
+      query = "INSERT INTO ClassTeachers (classID, teacherID) VALUES (@classID, @userID)";
+    } else {
+      return res.status(400).send({ message: "Invalid role" });
+    }
+
+    await pool.request()
+      .input("classID", sql.Int, classID)
+      .input("userID", sql.Int, userID)
+      .query(query);
+
+    res.status(200).send({ message: "User added to class successfully" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+// Retrieve Class info - GET
+exports.getClassInfo = async (req, res) => {
+  const { classID } = req.params;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const studentsQuery = `
+      SELECT s.* FROM Students s
+      JOIN ClassStudents cs ON s.studentID = cs.studentID
+      WHERE cs.classID = @classID
+    `;
+    const teachersQuery = `
+      SELECT t.* FROM Teachers t
+      JOIN ClassTeachers ct ON t.teacherID = ct.teacherID
+      WHERE ct.classID = @classID
+    `;
+
+    const students = await pool.request()
+      .input("classID", sql.Int, classID)
+      .query(studentsQuery);
+
+    const teachers = await pool.request()
+      .input("classID", sql.Int, classID)
+      .query(teachersQuery);
+
+    res.status(200).send({
+      students: students.recordset,
+      teachers: teachers.recordset
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
 module.exports = {
     getAllClasses,
     getClassById,
-    createClass
+    createClass,
+    addToClass,
+    getClassInfo
+
 };

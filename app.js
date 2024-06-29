@@ -28,6 +28,9 @@ app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classe
 app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get class by ID
 app.post("/classes", verifyJWT, classController.createClass); // Create class
 
+app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
+app.get("/classes/:classID/info", verifyJWT, classController.getClassInfo); // Retrieve Class Info
+
 app.listen(port, async () => {
   try {
     // Connect to the database
