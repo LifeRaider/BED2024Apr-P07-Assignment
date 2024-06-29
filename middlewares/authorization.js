@@ -17,6 +17,9 @@ function verifyJWT(req, res, next) {
       // Check user role for authorization (replace with your logic)
       const authorizedRoles = {
         "/test": ["admin", "teacher", "parent", "student"],
+        "/getAllClasses" : ["admin"],
+        "/getClassById": ["admin"],
+        "/createClass": ["admin"],
         "/getAllUsers": ["admin"],
         "/logout": ["admin", "teacher", "parent", "student"]
       };
