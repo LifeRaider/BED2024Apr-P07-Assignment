@@ -57,3 +57,10 @@ controller
 //     console.error("Student email does not exist.");
 //     res.status(404).json({ message: 'Student email does not exist.' }); // 404 Conflict
 // } else 
+
+// if (document.URL.includes("signupStudent.html")) {
+//   temp = 'student'
+// }
+// if (document.URL.includes("signupParent.html")) {
+//   temp = 'parent'
+// }

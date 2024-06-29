@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware); // Mount the static middleware
 
 // Routes for requests
-app.get("/", verifyJWT, usersController.test); // Get all users
+app.get("/test", verifyJWT, usersController.test); // Get all users
 // app.get("/getAllUsers", verifyJWT, usersController.getAllUsers); // Get all users
 app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user

@@ -15,7 +15,7 @@
       <h1>Create new account<span style="color:#00D1FF">.</span></h1>
       <h3>Already have a account? <a href="login.html">Login Here</a></h3>
       
-      <form onsubmit="signup()">
+      <form onsubmit="signup()" novalidate>
         <div class="name">
           <span class="field">
               <div class="innerField">
@@ -59,7 +59,7 @@
         </span>
         
         <p id="pWarning" class="pWarning">* The password that you entered does not match.</p>
-        <button type="submit" id="submit" class="createAcc">Create account</button>
+        <button type="submit" id="submit" class="createAcc" disabled>Create account</button>
       </form>
 
     </section>

@@ -1,8 +1,5 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig"); // Import dbConfig
-const LocalStrategy = require('passport-local').Strategy
-const bcrypt = require("bcrypt");
-
 
 class User {
     constructor(id, username, email, passwordHash, userType, parentId) {

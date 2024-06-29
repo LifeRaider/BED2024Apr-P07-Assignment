@@ -1,3 +1,16 @@
+// Form checker
+if (document.querySelector('form')) {
+  const form = document.querySelector('form');
+  const submitButton = document.querySelector('#submit');
+  form.addEventListener('input', () => {
+    if (form.checkValidity()) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  });
+}
+console.log(window.location.pathname)
 // Loading Screen
 function loading() {
   document.body.insertAdjacentHTML
@@ -6,6 +19,18 @@ function loading() {
 // Loaded Screen
 function loaded() {
   document.getElementById('loader-container').remove()
+}
+
+// Signup page check
+if (window.location.href.includes("signup.html")) {
+  const subtitle = document.getElementById("signupSubtitle")
+  const str = window.location.href.match(/#(.*)$/)[1];
+  if (str == "Parent" || str == "Student") {
+    subtitle.innerText = str + " Signup";
+  } else {
+    console.log(str)
+    window.location.href = "index.html";
+  }
 }
 
 // signup function
@@ -20,19 +45,12 @@ async function signup() {
   eWarning.style.display = 'none', pWarning.style.display = 'none';
   eSpan.style = 'margin-bottom: 25px;', pSpan.style = 'margin-bottom: 25px;';
 
-  if (document.URL.includes("signupStudent.html")) {
-    temp = 'student'
-  }
-  if (document.URL.includes("signupParent.html")) {
-    temp = 'parent'
-  }
-
   const formData = {
     "username": document.getElementById('fname').value + " "+ document.getElementById('lname').value,
     "email": document.getElementById('email').value,
     "password": document.getElementById('password').value,
     "confirmPassword": document.getElementById('cPassword').value,
-    "userType": temp,
+    "userType": window.location.href.match(/#(.*)$/)[1].toLowerCase(),
   };
 
   let settings = {
@@ -105,11 +123,11 @@ async function logout() {
 }
 
 // Authentification check
-fetch('http://localhost:3000/', {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}})
+fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}})
     .then(async response => {
       if (response.ok) {
         const data = await response.json()
-        if (window.location.href.includes("login.html") || window.location.href.includes("signup")) {
+        if (window.location.href.includes("login.html") || window.location.href.includes("signup") || window.location.href.includes("index")) {
           window.location.href = "main.html"
         } else {
           document.body.style.display = 'block';
@@ -118,11 +136,12 @@ fetch('http://localhost:3000/', {headers: {"Authorization": "Bearer " + localSto
         }
         return data;
       }
+
       throw new Error('Not authenticated');
     })
     .catch(error => {
       console.error('Error:', error);
-      if (!window.location.href.includes("login.html") && !window.location.href.includes("signup")) {
+      if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
         window.location.href = '/public/login.html'; // Redirect to login
       } else {
         document.body.style.display = 'block';

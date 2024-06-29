@@ -12,9 +12,9 @@
   <body>
     <section id="login-page">
       <h1>Login to your account<span style="color:#00D1FF">.</span></h1>
-      <h3>Don't have an account? <a href="signupType.html">Signup Here</a></h3>
-  
-      <form onsubmit="login()">
+      <h3>Don't have an account? <a href="index.html">Signup Here</a></h3>
+
+      <form onsubmit="login()" novalidate>
         <span class="field">
             <div class="innerField">
               <input type="email" id="email" name="email" placeholder="" required>
@@ -32,7 +32,7 @@
         </span>
 
         <p id="lWarning" class="lWarning">* The email or password entered is incorrect.</p>
-        <button type="submit" id="submit" class="loginBtn">Login</button>
+        <button type="submit" id="submit" class="loginBtn" disabled>Login</button>
       </form>
 
     </section>

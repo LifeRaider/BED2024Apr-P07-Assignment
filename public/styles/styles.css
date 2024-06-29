@@ -5,6 +5,7 @@
 }
 
 html{
+    height: 100vh;
     background-color: #090807;
 }
 
@@ -30,8 +31,53 @@ input:focus {
 }
 
 
+/* Loader Style */
+.loader-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 9999;
+}
+.loader {
+    width: 65px;
+    aspect-ratio: 1;
+    position: relative;
+}
+.loader:before,
+.loader:after {
+    content: "";
+    position: absolute;
+    border-radius: 50px;
+    box-shadow: 0 0 0 5px inset #2358A6;
+    animation: loading 3.5s infinite;
+}
+.loader:after {
+    animation-delay: -1.75s;
+}
+@keyframes loading {
+    0% {inset: 0 35px 35px 0;}
+    12.5% {inset: 0 35px 0 0;}
+    25% {inset: 35px 35px 0 0;}
+    37.5% {inset: 35px 0 0 0;}
+    50% {inset: 35px 0 0 35px;}
+    62.5% {inset: 0 0 0 35px;}
+    75% {inset: 0 0 35px 35px;}
+    87.5% {inset: 0 0 35px 0;}
+    100% {inset: 0 35px 35px 0;}
+}
+
+html:has(#index-page), html:has(#signup-page), html:has(#login-page){
+    background: url("../assets/curved-gradient.svg"), url("../assets/topography.svg"), black;
+}
+
 /* Create account */
-#mSignup-page{
+#index-page{
     display: flex;
     flex-direction: column;
     margin-top: 32vh;
@@ -83,8 +129,12 @@ h3 a{
 
 
 /* Student & Parent Signup */
-#signup-page, #login-page{
+#signup-page{
     margin-top: 24vh;
+    margin-left: 18vw;
+}
+#login-page{
+    margin-top: 32vh;
     margin-left: 18vw;
 }
 #signup-page form, #login-page form{
@@ -103,7 +153,6 @@ h3 a{
     font-weight:600;
 }
 
-/* Normal field */
 .field{
     display: flex;
     flex-direction: row;
@@ -111,11 +160,13 @@ h3 a{
     align-items: center;
     width: 380px;
     margin-bottom: 25px;
-    padding-top: 6px;
-    padding-bottom: 10px;
+    padding-block: 10px;
     padding-inline: 20px;
     background-color: #606972;
     border-radius: 18px;
+}
+.field:has(input:valid), .field:has(input:focus){
+    background-color: #545b63;
 }
 .field img{
     width: 28px;
@@ -132,21 +183,18 @@ h3 a{
     flex-direction: column;
     justify-content: center;
     height: 45px;
-    color: #FFFFFF;
 }
 .innerField label{
     position: absolute;
     font-size: 17px;
     font-weight: 400;
-    color: #FFFFFF;
     transition: all 0.3s ease;
     pointer-events: none;
 }
 .innerField input{
     position: relative;
-    padding-top: 6px;
+    padding-block: 10px;
     width: 335px;
-    color: #F2EFEC;
     font-size: 20px;
     font-weight:600;
     box-sizing: border-box;
@@ -155,6 +203,7 @@ h3 a{
 .innerField input:focus,
 .innerField input:not(:placeholder-shown){
     top: 5px;
+    padding: 0;
 }
 .innerField input:focus + label,
 .innerField input:not(:placeholder-shown) + label {
@@ -163,13 +212,11 @@ h3 a{
     font-weight: 300;
 }
 
-/* Name field */
 .name{
     display: flex;
     flex-direction: row;
     width: 420px;
     justify-content: space-between;
-    /* outline: solid red 1px; */
 }
 .name .field{
     width: 155px;
@@ -178,6 +225,23 @@ h3 a{
     width: 110px;
 }
 
+#submit:disabled {
+    cursor: not-allowed;
+}
+.createAcc, .loginBtn{
+    margin-top: 5px;
+    padding-block: 18px;
+    padding-inline: 55px;
+    font-size: 18px;
+    font-weight:600;
+    background-color: #2358A6;
+    border-radius: 50px;
+}
+.loginBtn{
+    padding-inline: 75px;
+}
+
+/* Warnings */
 .pWarning, .eWarning, .ceWarning, .lWarning{
     margin-top: 2px;
     margin-left: -120px;
@@ -198,59 +262,3 @@ h3 a{
     margin-left: -150px;
 }
 
-.createAcc, .loginBtn{
-    margin-top: 5px;
-    padding-block: 18px;
-    padding-inline: 55px;
-    font-size: 18px;
-    font-weight:600;
-    background-color: #2358A6;
-    border-radius: 50px;
-}
-.loginBtn{
-    padding-inline: 75px;
-}
-
-
-
-
-/* Loader Style */
-.loader-container{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.1);
-    z-index: 9999;
-}
-.loader {
-    width: 65px;
-    aspect-ratio: 1;
-    position: relative;
-}
-.loader:before,
-.loader:after {
-    content: "";
-    position: absolute;
-    border-radius: 50px;
-    box-shadow: 0 0 0 5px inset #2358A6;
-    animation: loading 3.5s infinite;
-}
-.loader:after {
-    animation-delay: -1.75s;
-}
-@keyframes loading {
-    0% {inset: 0 35px 35px 0;}
-    12.5% {inset: 0 35px 0 0;}
-    25% {inset: 35px 35px 0 0;}
-    37.5% {inset: 35px 0 0 0;}
-    50% {inset: 35px 0 0 35px;}
-    62.5% {inset: 0 0 0 35px;}
-    75% {inset: 0 0 35px 35px;}
-    87.5% {inset: 0 0 35px 0;}
-    100% {inset: 0 35px 35px 0;}
-}
