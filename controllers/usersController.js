@@ -66,7 +66,7 @@ async function login(req, res) {
       id: user.id,
       userType: user.userType,
     };
-    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "60s" }); // Expires in 1 hour
+    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" }); // Expires in 1 hour
     return res.status(200).json({ token });
   } catch (err) {
     console.error(err);
