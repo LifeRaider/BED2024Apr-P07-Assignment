@@ -38,7 +38,7 @@ const createClass = async (req, res) => {
 // Add Student / Teacher to Class - PUT
 exports.addToClass = async (req, res) => {
   const { classID } = req.params;
-  const { userID, role } = req.body; // role can be 'student' or 'teacher'
+  const { userID, role } = req.body;
 
   if (!userID || !role) {
     return res.status(400).send({ message: "userID and role are required" });
