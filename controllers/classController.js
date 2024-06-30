@@ -35,77 +35,37 @@ const createClass = async (req, res) => {
     }
 };
 
-// Add Student / Teacher to Class - PUT
 const addToClass = async (req, res) => {
   const { classID } = req.params;
-  const { userID, role } = req.body;
-
-  if (!userID || !role) {
-    return res.status(400).send({ message: "userID and role are required" });
-  }
-
+  const { userID } = req.body;
   try {
-    const pool = await sql.connect(dbConfig);
+      const updatedClass = await Class.addToClass(classID, userID);
+      res.status(200).json(updatedClass);
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-    let query;
-    if (role === "student") {
-      query = "INSERT INTO ClassStudents (classID, studentID) VALUES (@classID, @userID)";
-    } else if (role === "teacher") {
-      query = "INSERT INTO ClassTeachers (classID, teacherID) VALUES (@classID, @userID)";
-    } else {
-      return res.status(400).send({ message: "Invalid role" });
+const getClassUsers = async (req, res) => {
+  const classID = req.params.classID;
+  try {
+    const classObj = await Class.getClassUsers(classID);
+    if (!classObj || classObj.length === 0) {
+        return res.status(404).send("Class not found or no users in this class");
     }
-
-    await pool.request()
-      .input("classID", sql.Int, classID)
-      .input("userID", sql.Int, userID)
-      .query(query);
-
-    res.status(200).send({ message: "User added to class successfully" });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
+    res.json(classObj);
+} catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving class users");
+}
 };
 
-// Retrieve Class info - GET
-const getClassInfo = async (req, res) => {
-  const { classID } = req.params;
-
-  try {
-    const pool = await sql.connect(dbConfig);
-
-    const studentsQuery = `
-      SELECT s.* FROM Students s
-      JOIN ClassStudents cs ON s.studentID = cs.studentID
-      WHERE cs.classID = @classID
-    `;
-    const teachersQuery = `
-      SELECT t.* FROM Teachers t
-      JOIN ClassTeachers ct ON t.teacherID = ct.teacherID
-      WHERE ct.classID = @classID
-    `;
-
-    const students = await pool.request()
-      .input("classID", sql.Int, classID)
-      .query(studentsQuery);
-
-    const teachers = await pool.request()
-      .input("classID", sql.Int, classID)
-      .query(teachersQuery);
-
-    res.status(200).send({
-      students: students.recordset,
-      teachers: teachers.recordset
-    });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
 module.exports = {
     getAllClasses,
     getClassById,
     createClass,
     addToClass,
-    getClassInfo
+    getClassUsers
 
 };

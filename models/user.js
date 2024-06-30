@@ -95,6 +95,8 @@ class User {
         // Retrieve the newly created user using its ID
         return this.getUserById(result.recordset[0].userID);
     }
+
+    
 }
 
 module.exports = User;

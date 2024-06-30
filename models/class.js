@@ -74,6 +74,44 @@ class Class {
         return this.getClassById(result.recordset[0].classID);
     }
 
+    static async addToClass(classID, userID) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `  DECLARE @sql NVARCHAR(MAX);
+                            SET @sql = N'INSERT INTO ' + QUOTENAME(@classID) + ' (userID) VALUES (@userID)';
+                            EXEC sp_executesql @sql, N'@userID NVARCHAR(50)', @userID;`;
+    
+        const request = connection.request();
+        request.input("classID", classID);
+        request.input("userID", userID);
+    
+        await request.query(sqlQuery);
+    
+        connection.close();
+    
+        return this.getClassUsers(classID);
+
+}
+static async getClassUsers(classID) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `
+        DECLARE @sql NVARCHAR(MAX);
+        SET @sql = N'SELECT u.userID, u.username, u.email, u.userType, u.parentID 
+                     FROM ' + QUOTENAME(@classID) + ' c 
+                     JOIN Users u ON c.userID = u.userID';
+        EXEC sp_executesql @sql;
+    `;
+
+    const request = connection.request();
+    request.input("classID", sql.VarChar, classID);
+    const result = await request.query(sqlQuery);
+
+    connection.close();
+
+    return result.recordset;
+}
+
 }
     
 module.exports = Class;

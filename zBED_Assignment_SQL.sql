@@ -42,6 +42,7 @@ Create Table Class04 (
 	FOREIGN KEY (UserId) REFERENCES Users(userId)
 );
 
+
 Insert Into Users Values
 ('A001', 'Admin1', 'Admin1@example.com', '$2a$10$sAjfmmFH5wrJmZVxxSeFHOmH9rzWo71P8QKXXx6ZwubPRnTHesHCO', 'admin', Null),
 ('P001', 'Parent1', 'Parent1@example.com', '$2a$10$sAjfmmFH5wrJmZVxxSeFHOmH9rzWo71P8QKXXx6ZwubPRnTHesHCO', 'parent', Null),

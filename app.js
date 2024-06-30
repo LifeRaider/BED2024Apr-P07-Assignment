@@ -29,7 +29,7 @@ app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get cl
 app.post("/classes", verifyJWT, classController.createClass); // Create class
 
 app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
-app.get("/classes/:classID/info", verifyJWT, classController.getClassInfo); // Retrieve Class Info
+app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
 
 app.listen(port, async () => {
   try {

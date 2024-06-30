@@ -21,8 +21,8 @@ function verifyJWT(req, res, next) {
         "/classes/.*": ["admin"], // Matches "/classes/" followed by anything
         "/getAllUsers": ["admin"],
         "/logout": ["admin", "teacher", "parent", "student"],
-        "/addToClass/.*": ["admin","teacher"],
-        "/classInfo/.*": ["admin", "teacher"]
+        "/classes/.*/add": ["admin","teacher"],
+        "/classUsers/.*": ["admin", "teacher"]
       };
   
       const requestedEndpoint = req.url;
