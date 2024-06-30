@@ -15,7 +15,7 @@ async function register(req, res) {
     // Validate user data
     if (password != confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
-    } else if (userType != "student" && userType != "teacher") {
+    } else if (userType !== "student" && userType !== "teacher") {
       return res.status(403).json({ message: "Unallowed user type" });
     }
 

@@ -36,7 +36,7 @@ const createClass = async (req, res) => {
 };
 
 // Add Student / Teacher to Class - PUT
-exports.addToClass = async (req, res) => {
+const addToClass = async (req, res) => {
   const { classID } = req.params;
   const { userID, role } = req.body;
 
@@ -68,7 +68,7 @@ exports.addToClass = async (req, res) => {
 };
 
 // Retrieve Class info - GET
-exports.getClassInfo = async (req, res) => {
+const getClassInfo = async (req, res) => {
   const { classID } = req.params;
 
   try {
