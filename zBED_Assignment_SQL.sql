@@ -97,14 +97,3 @@ WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
 
 
 INSERT INTO Users OUTPUT inserted.userID VALUES ('1000', @username, @email, @passwordHash, @userType, @parentId);
-
-DROP TABLE Users;
-
-
-DECLARE @newID VARCHAR(10);
-DECLARE @userType VARCHAR(20) = 'admin';
-
-SELECT @newID = UPPER(SUBSTRING(@userType, 1, 1)) + CAST(FORMAT(MAX(CAST(SUBSTRING(userID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
-FROM Users where userID LIKE UPPER(SUBSTRING(@userType, 1, 1)) + '%';
-IF @newID IS NULL SET @newID = UPPER(SUBSTRING(@userType, 1, 1)) + '001';
-print @newID;
