@@ -5,7 +5,6 @@ class User {
     constructor(id, username, passwordHash, role) {
         this.id = id;
         this.username = username;
-        this.passwordHash = passwordHash;
         this.role = role;
 
     }
@@ -25,48 +24,57 @@ class User {
         ? new User (
             result.recordset[0].user_id,
             result.recordset[0].username,
-            result.recordset[0].passwordHash,
-            result.recordset[0].role,
+            result.recordset[0].role
             )
         : null; // Handle book not found
     }
 
     static async getUserById(id) {
         const connection = await sql.connect(dbConfig);
-
+    
         const sqlQuery = `SELECT * FROM Users WHERE user_id = @id`; // Parameterized query
-
+    
         const request = connection.request();
         request.input("id", id);
         const result = await request.query(sqlQuery);
-
+    
         connection.close();
-
+    
         return result.recordset[0]
         ? new User (
-            result.recordset[0].id,
+            result.recordset[0].user_id,
             result.recordset[0].username,
-            result.recordset[0].email
+            result.recordset[0].passwordHash,
+            result.recordset[0].role
             )
-        : null; // Handle book not found
+        : null; // Handle user not found
     }
 
     static async createUser(username, hashedPassword, role) {
         const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `INSERT INTO Users (username, passwordHash, role) VALUES (@username, @passwordHash, @role); SELECT SCOPE_IDENTITY() AS id;`;
-
+    
+        // Step 1: Count the number of existing users to determine the next user_id
+        const countQuery = `SELECT COUNT(*) AS count FROM Users;`;
+        const countResult = await connection.request().query(countQuery);
+        const userCount = countResult.recordset[0].count + 1; // Add 1 for the new user
+    
+        // Step 2: Use the userCount directly as the user_id without padding
+        const userId = userCount.toString(); // Conversion to string without padding
+    
+        // Step 3: Insert the new user with the user_id
+        const sqlQuery = `INSERT INTO Users (user_id, username, passwordHash, role) VALUES (@userId, @username, @passwordHash, @role);`;
         const request = connection.request();
+        request.input("userId", userId);
         request.input("username", username);
         request.input("passwordHash", hashedPassword);
         request.input("role", role);
 
-        const result = await request.query(sqlQuery);
+        await request.query(sqlQuery);
 
         connection.close();
 
-        // Retrieve the newly created user using its ID
-        return this.getUserById(result.recordset[0].id);
+        // Since userId is manually set, directly return the user using getUserById
+        return this.getUserById(userId);
     }
 }
 module.exports = User;
