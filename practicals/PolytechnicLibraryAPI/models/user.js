@@ -5,28 +5,29 @@ class User {
     constructor(id, username, passwordHash, role) {
         this.id = id;
         this.username = username;
+        this.passwordHash = passwordHash;
         this.role = role;
-
     }
 
     static async getUserByUsername(username) {
         const connection = await sql.connect(dbConfig);
-
+    
         const sqlQuery = `SELECT * FROM Users Where username LIKE @username`; // Parameterized query
-
+    
         const request = connection.request();
         request.input("username", username);
         const result = await request.query(sqlQuery);
-
+    
         connection.close();
-
+    
         return result.recordset[0]
         ? new User (
             result.recordset[0].user_id,
             result.recordset[0].username,
+            result.recordset[0].passwordHash,
             result.recordset[0].role
             )
-        : null; // Handle book not found
+        : null; // Handle user not found
     }
 
     static async getUserById(id) {
@@ -44,7 +45,7 @@ class User {
         ? new User (
             result.recordset[0].user_id,
             result.recordset[0].username,
-            result.recordset[0].passwordHash,
+            undefined, // Do not return passwordHash
             result.recordset[0].role
             )
         : null; // Handle user not found
