@@ -5,6 +5,7 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
+const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
@@ -19,17 +20,21 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware); // Mount the static middleware
 
 // Routes for requests
-app.get("/test", verifyJWT, usersController.test); // Get all users
-// app.get("/getAllUsers", verifyJWT, usersController.getAllUsers); // Get all users
+app.get("/test", verifyJWT, usersController.test); // Authorize users
 app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user
-// app.get('/currentUser', usersController.checkAuthenticated); // Check Authentification
+
 app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classes
 app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get class by ID
 app.post("/classes", verifyJWT, classController.createClass); // Create class
 
 app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
 app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
+
+app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
+app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
+app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
+app.post("/feedback", verifyJWT, feedbackController.createFeedback); // Create feedback
 
 app.listen(port, async () => {
   try {
