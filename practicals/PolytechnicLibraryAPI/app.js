@@ -1,4 +1,6 @@
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json"); 
 const booksController = require("./controllers/booksController");
 const usersController = require("./controllers/usersController");
 const verifyJWT = require("./middlewares/authorization.js");
@@ -8,6 +10,9 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Serve the Swagger UI at a specific route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
