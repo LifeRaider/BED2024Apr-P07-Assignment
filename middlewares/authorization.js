@@ -20,7 +20,9 @@ function verifyJWT(req, res, next) {
         "/classes$": ["admin"], // Matches "/classes"
         "/classes/.*": ["admin"], // Matches "/classes/" followed by anything
         "/getAllUsers": ["admin"],
-        "/logout": ["admin", "teacher", "parent", "student"]
+        "/logout": ["admin", "teacher", "parent", "student"],
+        "/announcements$": ["admin"], // Matches "/annoucements"
+        "/announcements/.*": ["admin", "teacher", "parent", "student"], // Matches "/annoucements/" followed by anything
       };
   
       const requestedEndpoint = req.url;

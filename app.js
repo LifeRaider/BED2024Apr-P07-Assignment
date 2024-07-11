@@ -5,6 +5,7 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
+const announcementController = require("./controllers/announcementController.js");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
@@ -30,6 +31,10 @@ app.post("/classes", verifyJWT, classController.createClass); // Create class
 
 app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
 app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
+
+app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements); // Get all annoucements
+app.get("/announcements/:classID", verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
 
 app.listen(port, async () => {
   try {
