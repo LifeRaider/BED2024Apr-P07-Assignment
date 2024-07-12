@@ -11,21 +11,6 @@ class User {
         this.parentId = parentId;
     }
 
-    static async getAllUsers() {
-        const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `SELECT * FROM Users Where parentId IS NOT NULL`;
-
-        const request = connection.request();
-        const result = await request.query(sqlQuery);
-
-        connection.close();
-
-        return result.recordset.map(
-            (row) => new User(row.userId, row.username, row.email, row.userType, row.parentId)
-        ); // Convert rows to User objects
-    }
-
     static async getUserById(id) {
         const connection = await sql.connect(dbConfig);
 
@@ -42,7 +27,7 @@ class User {
             result.recordset[0].userID,
             result.recordset[0].username,
             result.recordset[0].email,
-            result.recordset[0].passwordHash,
+            null,
             result.recordset[0].userType,
             result.recordset[0].parentId
             )
