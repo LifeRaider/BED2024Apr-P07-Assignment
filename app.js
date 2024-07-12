@@ -3,6 +3,8 @@ const cors = require("cors");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json"); // Import generated spec
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
 const verifyJWT = require("./middlewares/authorization.js");
@@ -18,6 +20,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware); // Mount the static middleware
 
+// Serve the Swagger UI at a specific route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Routes for requests
 app.get("/test", verifyJWT, usersController.test); // Get all users
 // app.get("/getAllUsers", verifyJWT, usersController.getAllUsers); // Get all users
