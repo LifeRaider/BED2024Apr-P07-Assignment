@@ -33,8 +33,10 @@ app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add 
 app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
 
 app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements); // Get all annoucements
-app.get("/announcements/:classID", verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.get('/announcements/class/:classID', verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
+app.delete("/announcements/:announcementID", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
 
 app.listen(port, async () => {
   try {

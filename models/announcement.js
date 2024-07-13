@@ -49,6 +49,32 @@ class Announcement {
         );
     }
 
+    static async getAnnouncementById(announcementID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `SELECT * FROM Announcements WHERE announcementID = @announcementID`;
+
+        const request = connection.request();
+        request.input("announcementID", announcementID);
+        const result = await request.query(sqlQuery);
+
+        connection.close();
+
+        if (result.recordset.length === 0) {
+            throw new Error('Announcement not found');
+        }
+
+        const row = result.recordset[0];
+        return new Announcement(
+            row.announcementID,
+            row.announcementTitle,
+            row.announcementDes,
+            row.announcementDateTime,
+            row.announcementCreator,
+            row.announcementClass
+        );
+    }
+
     static async createAnnouncement(newAnnouncementData, creatorID) {
         const connection = await sql.connect(dbConfig);
 
@@ -56,8 +82,11 @@ class Announcement {
             DECLARE @newID VARCHAR(10);
             SELECT @newID = 'ANNO' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(announcementID, 5, 5) AS INT)), 0) + 1, '00000') 
             FROM Announcements;
+
             INSERT INTO Announcements (announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass)
             VALUES (@newID, @announcementTitle, @announcementDes, GETDATE(), @announcementCreator, @announcementClass);
+
+            SELECT @newID AS newID;
         `;
 
         const request = connection.request();
@@ -66,12 +95,26 @@ class Announcement {
         request.input("announcementCreator", creatorID);
         request.input("announcementClass", newAnnouncementData.announcementClass);
 
-        await request.query(sqlQuery);
+        const result = await request.query(sqlQuery);
+        const newID = result.recordset[0].newID;
 
         connection.close();
 
-        return this.getAnnouncementsByClassId(newAnnouncementData.announcementClass);
+        return this.getAnnouncementById(newID);
     }
+
+    static async deleteAnnouncement(announcementID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `DELETE FROM Announcements WHERE announcementID = @announcementID`;
+
+        const request = connection.request();
+        request.input("announcementID", announcementID);
+        await request.query(sqlQuery);
+
+        connection.close();
+    }
+    
 }
 
 module.exports = Announcement;
