@@ -67,32 +67,35 @@ Create Table Classes (
 	classDes VARCHAR(200)
 );
 
-Insert Into Classes Values
-('Class01', 'Math01', 'Happy classs that learns about differentiation'),
-('Class02', 'Engish01', 'Sad classs that learns about grammer'),
-('Class03', 'Chinese01', 'Angry classs that learns about 我喜欢冰淇淋'),
-('Class04', 'Science01', 'Depressed classs that learns about mutation')
-
 Create Table Class01 (
-	UserId VARCHAR(4) PRIMARY KEY,
-	FOREIGN KEY (UserId) REFERENCES Users(userId)
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
 Create Table Class02 (
-	UserId VARCHAR(4) PRIMARY KEY,
-	FOREIGN KEY (UserId) REFERENCES Users(userId)
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
 Create Table Class03 (
-	UserId VARCHAR(4) PRIMARY KEY,
-	FOREIGN KEY (UserId) REFERENCES Users(userId)
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
 Create Table Class04 (
-	UserId VARCHAR(4) PRIMARY KEY,
-	FOREIGN KEY (UserId) REFERENCES Users(userId)
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
+Create Table Feedbacks (
+	fbID VARCHAR(4) PRIMARY KEY,
+	fbTitle VARCHAR(50),
+	fbMsg VARCHAR(500),
+	classID VARCHAR(7) FOREIGN KEY (ClassID) REFERENCES Classes(ClassID),
+	postedBy VARCHAR(4) FOREIGN KEY (PostedBy) REFERENCES Users(userId),
+	replyTo VARCHAR(4) FOREIGN KEY (ReplyTo) REFERENCES Feedbacks(fbID),
+);
+Drop table Feedbacks
 
 Insert Into Users Values
 ('A001', 'Admin1', 'Admin1@example.com', '$2a$10$sAjfmmFH5wrJmZVxxSeFHOmH9rzWo71P8QKXXx6ZwubPRnTHesHCO', 'admin', Null),
@@ -123,6 +126,13 @@ Insert Into Users Values
 ('T005', 'Teacher5', 'Teacher5@example.com', '$2a$10$sAjfmmFH5wrJmZVxxSeFHOmH9rzWo71P8QKXXx6ZwubPRnTHesHCO', 'teacher', Null),
 ('T006', 'Teacher6', 'Teacher6@example.com', '$2a$10$sAjfmmFH5wrJmZVxxSeFHOmH9rzWo71P8QKXXx6ZwubPRnTHesHCO', 'teacher', Null);
 
+Insert Into Classes Values
+('Class01', 'Math01', 'Happy classs that learns about differentiation'),
+('Class02', 'Engish01', 'Sad classs that learns about grammer'),
+('Class03', 'Chinese01', 'Angry classs that learns about 我喜欢冰淇淋'),
+('Class04', 'Science01', 'Depressed classs that learns about mutation')
+
+
 
 DECLARE @username VARCHAR(50) = 'hi';
 DECLARE @email VARCHAR(100) = 'hi@hi.com';
@@ -148,3 +158,28 @@ WHERE CAST(SUBSTRING(userID, 2, 4) AS INT) > 10;
 
 
 INSERT INTO Users OUTPUT inserted.userID VALUES ('1000', @username, @email, @passwordHash, @userType, @parentId);
+
+
+Select classID From Classes
+
+Select * From Class01
+
+
+DECLARE @fbTitle VARCHAR(50) = 'hi';
+DECLARE @fbMsg VARCHAR(500) = 'hihihi';
+DECLARE @classID VARCHAR(7) = 'Class01';
+DECLARE @postedBy VARCHAR(4) = 'P001';
+DECLARE @replyTo VARCHAR(4) = null;
+DECLARE @newnewID VARCHAR(4);
+
+
+SELECT @newnewID = 'F' + CAST(FORMAT(MAX(CAST(SUBSTRING(fbID, 2, 4) AS INT)) + 1, '000') AS VARCHAR(4))
+FROM Feedbacks where fbID LIKE 'F%';
+IF @newnewID IS NULL SET @newnewID = 'F001';
+INSERT INTO Feedbacks OUTPUT inserted.fbID VALUES (@newnewID, @fbTitle, @fbMsg, @classID, @postedBy, @replyTo);
+
+Select * From Feedbacks
+
+SELECT * FROM Feedbacks WHERE classID LIKE 'Class01'
+
+SELECT * FROM Feedbacks WHERE fbId LIKE 'F001'

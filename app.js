@@ -3,9 +3,12 @@ const cors = require("cors");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json"); // Import generated spec
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
 const announcementController = require("./controllers/announcementController.js");
+const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
@@ -19,12 +22,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware); // Mount the static middleware
 
+// Serve the Swagger UI at a specific route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Routes for requests
-app.get("/test", verifyJWT, usersController.test); // Get all users
-// app.get("/getAllUsers", verifyJWT, usersController.getAllUsers); // Get all users
+app.get("/test", verifyJWT, usersController.test); // Authorize users
 app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user
-// app.get('/currentUser', usersController.checkAuthenticated); // Check Authentification
+
 app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classes
 app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get class by ID
 app.post("/classes", verifyJWT, classController.createClass); // Create class
@@ -37,6 +41,10 @@ app.get('/announcements/class/:classID', verifyJWT, announcementController.getAn
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
 app.delete("/announcements/:announcementID", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
+app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
+app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
+app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
+app.post("/feedback", verifyJWT, feedbackController.createFeedback); // Create feedback
 
 app.listen(port, async () => {
   try {

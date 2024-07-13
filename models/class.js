@@ -90,27 +90,51 @@ class Class {
         connection.close();
     
         return this.getClassUsers(classID);
+    }
 
-}
-static async getClassUsers(classID) {
-    const connection = await sql.connect(dbConfig);
+    static async getClassUsers(classID) {
+        const connection = await sql.connect(dbConfig);
 
-    const sqlQuery = `
-        DECLARE @sql NVARCHAR(MAX);
-        SET @sql = N'SELECT u.userID, u.username, u.email, u.userType, u.parentID 
-                     FROM ' + QUOTENAME(@classID) + ' c 
-                     JOIN Users u ON c.userID = u.userID';
-        EXEC sp_executesql @sql;
-    `;
+        const sqlQuery = `
+            DECLARE @sql NVARCHAR(MAX);
+            SET @sql = N'SELECT u.userID, u.username, u.email, u.userType, u.parentID 
+                        FROM ' + QUOTENAME(@classID) + ' c 
+                        JOIN Users u ON c.userID = u.userID';
+            EXEC sp_executesql @sql;
+        `;
 
-    const request = connection.request();
-    request.input("classID", sql.VarChar, classID);
-    const result = await request.query(sqlQuery);
+        const request = connection.request();
+        request.input("classID", sql.VarChar, classID);
+        const result = await request.query(sqlQuery);
 
-    connection.close();
+        connection.close();
 
-    return result.recordset;
-}
+        return result.recordset;
+    }
+
+    static async getAllUserClass(userID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `Select classID From Classes`;
+
+        const request = connection.request();
+        const result = await request.query(sqlQuery);
+
+        let sqlQuery2 = ``;
+        result.recordset.forEach(i => {
+            sqlQuery2 += `SELECT '` + i.classID + `' AS ClassName
+                          FROM ` + i.classID + `
+                          WHERE UserId = '` + userID + `'
+                          UNION ALL\n`
+        });
+        sqlQuery2 = sqlQuery2.trim().slice(0, -11);
+        
+        const result2 = await request.query(sqlQuery2);
+        console.log(result2.recordset)
+
+        connection.close();
+        return result2.recordset;
+    }
 
 }
     
