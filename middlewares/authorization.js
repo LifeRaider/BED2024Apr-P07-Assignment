@@ -22,7 +22,7 @@ function verifyJWT(req, res, next) {
             "/feedback(/.*)?": ["admin", "teacher", "parent"],
             "/getAllUsers": ["admin"],
             "/logout": ["admin", "teacher", "parent", "student"],
-            "/announcements$": ["admin"], // Matches "/announcements"
+            "/announcements$": ["admin", "teacher"], // Matches "/announcements"
             "/announcements/.*": ["admin", "teacher", "parent", "student"], // Matches "/announcements/" followed by anything
             "/announcements/:announcementID": ["admin", "teacher"], // Matches "/announcements/:announcementID"
         };

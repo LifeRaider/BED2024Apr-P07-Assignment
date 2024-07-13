@@ -40,7 +40,7 @@ app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements)
 app.get('/announcements/class/:classID', verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
-app.delete("/announcements/:announcementID", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
+app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
 app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
 app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
 app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks

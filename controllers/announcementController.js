@@ -49,7 +49,7 @@ const createAnnouncement = async (req, res) => {
 }
 
 const deleteAnnouncement = async (req, res) => {
-    const announcementID = req.params.announcementID;
+    const announcementID = req.body.announcementID;
     try {
         await Announcement.deleteAnnouncement(announcementID);
         res.status(200).send("Announcement deleted successfully");
