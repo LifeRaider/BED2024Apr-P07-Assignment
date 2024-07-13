@@ -7,6 +7,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json"); // Import generated spec
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
+const announcementController = require("./controllers/announcementController.js");
 const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
 
@@ -35,6 +36,11 @@ app.post("/classes", verifyJWT, classController.createClass); // Create class
 app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
 app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
 
+app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements); // Get all annoucements
+app.get('/announcements/class/:classID', verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
+app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
+app.delete("/announcements/:announcementID", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
 app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
 app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
 app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
