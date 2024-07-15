@@ -7,6 +7,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json"); // Import generated spec
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
+const assignmentController = require("./controllers/assignmentController");
 const announcementController = require("./controllers/announcementController.js");
 const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
@@ -41,6 +42,14 @@ app.get('/announcements/class/:classID', verifyJWT, announcementController.getAn
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
 app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
+
+app.get("/assignments", verifyJWT, assignmentController.getAllAssignments); // Get all assignments
+app.get("/assignments/class/:classID", verifyJWT, assignmentController.getAssignmentsByClassId); // Get assignments by class ID
+app.get("/assignments/:assignmentID", verifyJWT, assignmentController.getAssignmentById); // Get assignment by ID
+app.post("/assignments", verifyJWT, assignmentController.createAssignment); // Create assignment
+app.put("/assignments/:assignmentID", verifyJWT, assignmentController.updateAssignment); // Update assignment
+app.delete("/assignments", verifyJWT, assignmentController.deleteAssignment); // Delete assignment
+
 app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
 app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
 app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
