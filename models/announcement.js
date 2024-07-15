@@ -103,6 +103,44 @@ class Announcement {
         return this.getAnnouncementById(newID);
     }
 
+    static async updateAnnouncement(announcementID, updatedAnnouncementData) {
+        const connection = await sql.connect(dbConfig);
+
+        let updateFields = [];
+        const request = connection.request();
+
+        if (updatedAnnouncementData.announcementTitle !== undefined) {
+            updateFields.push("announcementTitle = @announcementTitle");
+            request.input("announcementTitle", updatedAnnouncementData.announcementTitle);
+        }
+        if (updatedAnnouncementData.announcementDes !== undefined) {
+            updateFields.push("announcementDes = @announcementDes");
+            request.input("announcementDes", updatedAnnouncementData.announcementDes);
+        }
+        if (updatedAnnouncementData.announcementClass !== undefined) {
+            updateFields.push("announcementClass = @announcementClass");
+            request.input("announcementClass", updatedAnnouncementData.announcementClass);
+        }
+
+        if (updateFields.length === 0) {
+            throw new Error("No fields to update");
+        }
+
+        const sqlQuery = `
+            UPDATE Announcements
+            SET ${updateFields.join(", ")}
+            WHERE announcementID = @announcementID;
+        `;
+
+        request.input("announcementID", announcementID);
+
+        await request.query(sqlQuery);
+
+        connection.close();
+
+        return this.getAnnouncementById(announcementID);
+    }
+
     static async deleteAnnouncement(announcementID) {
         const connection = await sql.connect(dbConfig);
 

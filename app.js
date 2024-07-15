@@ -41,6 +41,7 @@ app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements)
 app.get('/announcements/class/:classID', verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
+app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement); // Update annoucement
 app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
 
 app.get("/assignments", verifyJWT, assignmentController.getAllAssignments); // Get all assignments

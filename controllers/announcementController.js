@@ -48,6 +48,19 @@ const createAnnouncement = async (req, res) => {
     }
 }
 
+const updateAnnouncement = async (req, res) => {
+    const announcementID = req.params.announcementID;
+    const updatedAnnouncement = req.body;
+
+    try {
+        const announcement = await Announcement.updateAnnouncement(announcementID, updatedAnnouncement);
+        res.json(announcement);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error updating announcement");
+    }
+}
+
 const deleteAnnouncement = async (req, res) => {
     const announcementID = req.body.announcementID;
     try {
@@ -64,5 +77,6 @@ module.exports = {
     getAnnouncementsByClassId,
     getAnnouncementById,
     createAnnouncement,
+    updateAnnouncement,
     deleteAnnouncement
 };
