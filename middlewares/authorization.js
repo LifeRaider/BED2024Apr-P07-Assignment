@@ -25,6 +25,9 @@ function verifyJWT(req, res, next) {
             "/announcements$": ["admin", "teacher"], // Matches "/announcements"
             "/announcements/.*": ["admin", "teacher", "parent", "student"], // Matches "/announcements/" followed by anything
             "/announcements/:announcementID": ["admin", "teacher"], // Matches "/announcements/:announcementID"
+            "/assignments$": ["admin", "teacher"], // Matches "/assignments"
+            "/assignments/.*": ["admin", "teacher", "parent", "student"], // Matches "/assignments/" followed by anything
+            "/assignments/:assignmentID": ["admin", "teacher"], // Matches "/assignments/:assignmentID"
         };
 
         const requestedEndpoint = req.url;

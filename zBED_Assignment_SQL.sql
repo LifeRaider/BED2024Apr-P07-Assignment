@@ -50,16 +50,16 @@ CREATE TABLE Assignments (
 
 INSERT INTO Assignments (assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass)
 VALUES
-('ASSG00001', 'Algebra Problem Set', 'Complete exercises 1-20 on quadratic equations', '2024-07-12 09:00:00', '2024-07-19 23:59:59', 'T001', 'Class01'),
-('ASSG00002', 'Shakespeare Essay', 'Write a 1000-word analysis on the themes in Hamlet', '2024-07-15 10:30:00', '2024-07-29 23:59:59', 'T002', 'Class02'),
-('ASSG00003', 'Chinese Characters Practice', 'Write a short story using the new characters learned this week', '2024-07-16 14:00:00', '2024-07-23 23:59:59', 'T003', 'Class03'),
-('ASSG00004', 'Ecosystem Project', 'Create a model of a local ecosystem and present findings', '2024-07-18 11:15:00', '2024-08-01 23:59:59', 'T004', 'Class04'),
-('ASSG00005', 'Physics Problem Set', 'Solve problems 5-15 on circular motion', '2024-07-20 13:45:00', '2024-07-27 23:59:59', 'T005', 'Class05'),
-('ASSG00006', 'Chemical Reactions Lab', 'Complete the lab report on observed chemical reactions', '2024-07-22 15:30:00', '2024-07-29 23:59:59', 'T006', 'Class06'),
-('ASSG00007', 'Calculus Integration Methods', 'Solve the integration problems in Chapter 7', '2024-07-23 09:30:00', '2024-07-30 23:59:59', 'T001', 'Class07'),
-('ASSG00008', 'Geometry Proofs', 'Complete the set of geometry proofs handed out in class', '2024-07-25 10:00:00', '2024-08-01 23:59:59', 'T001', 'Class01'),
-('ASSG00009', 'Book Report', 'Write a report on a book of your choice from the reading list', '2024-07-26 14:15:00', '2024-08-09 23:59:59', 'T002', 'Class02'),
-('ASSG00010', 'Science Experiment Design', 'Design an experiment to test a hypothesis of your choice', '2024-07-28 11:30:00', '2024-08-11 23:59:59', 'T004', 'Class04');
+('ASGN00001', 'Algebra Problem Set', 'Complete exercises 1-20 on quadratic equations', '2024-07-12 09:00:00', '2024-07-19 23:59:59', 'T001', 'Class01'),
+('ASGN00002', 'Shakespeare Essay', 'Write a 1000-word analysis on the themes in Hamlet', '2024-07-15 10:30:00', '2024-07-29 23:59:59', 'T002', 'Class02'),
+('ASGN00003', 'Chinese Characters Practice', 'Write a short story using the new characters learned this week', '2024-07-16 14:00:00', '2024-07-23 23:59:59', 'T003', 'Class03'),
+('ASGN00004', 'Ecosystem Project', 'Create a model of a local ecosystem and present findings', '2024-07-18 11:15:00', '2024-08-01 23:59:59', 'T004', 'Class04'),
+('ASGN00005', 'Physics Problem Set', 'Solve problems 5-15 on circular motion', '2024-07-20 13:45:00', '2024-07-27 23:59:59', 'T005', 'Class05'),
+('ASGN00006', 'Chemical Reactions Lab', 'Complete the lab report on observed chemical reactions', '2024-07-22 15:30:00', '2024-07-29 23:59:59', 'T006', 'Class06'),
+('ASGN00007', 'Calculus Integration Methods', 'Solve the integration problems in Chapter 7', '2024-07-23 09:30:00', '2024-07-30 23:59:59', 'T001', 'Class07'),
+('ASGN00008', 'Geometry Proofs', 'Complete the set of geometry proofs handed out in class', '2024-07-25 10:00:00', '2024-08-01 23:59:59', 'T001', 'Class01'),
+('ASGN00009', 'Book Report', 'Write a report on a book of your choice from the reading list', '2024-07-26 14:15:00', '2024-08-09 23:59:59', 'T002', 'Class02'),
+('ASGN00010', 'Science Experiment Design', 'Design an experiment to test a hypothesis of your choice', '2024-07-28 11:30:00', '2024-08-11 23:59:59', 'T004', 'Class04');
 
 Create Table Classes (
 	classID VARCHAR(7) PRIMARY KEY,
