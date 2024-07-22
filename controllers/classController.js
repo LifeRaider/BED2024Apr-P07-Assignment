@@ -75,6 +75,27 @@ const getAllUserClass = async (req, res) => {
   }
 };
 
+const createClassWork = async (req, res) => {
+  const newClassWork = req.body;
+  try {
+    const createdClassWork = await Class.createClassWork(newClassWork);
+    res.status(201).json(createdClassWork);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating class work");
+  }
+};
+
+const getClassWork = async (req, res) => {
+  try {
+    const classWork = await Class.getClassWork();
+    res.json(classWork);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving class work");
+  }
+};
+
 module.exports = {
   getAllClasses,
   getClassById,
@@ -82,4 +103,6 @@ module.exports = {
   addToClass,
   getClassUsers,
   getAllUserClass,
+  createClassWork,
+  getClassWork,
 };
