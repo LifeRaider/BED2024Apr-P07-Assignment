@@ -136,6 +136,88 @@ class Class {
         return result2.recordset;
     }
 
+    static async createClassWork(newClassData) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `DECLARE @newClassWorkID VARCHAR(9);
+                          SELECT @newClassWorkID = 'ASGN' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(assignmentID, 5, 5) AS INT)), 0) + 1, '00000')
+                          FROM Assignments WHERE assignmentID LIKE 'ASGN%';
+                          IF @newClassWorkID IS NULL SET @newClassWorkID = 'ASGN00001';
+                          
+                          INSERT INTO Assignments (assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass)
+                          OUTPUT INSERTED.assignmentID
+                          VALUES (@newClassWorkID, @assignmentTitle, @assignmentDes, @assignmentPostDateTime, @assignmentDueDateTime, @assignmentCreator, @assignmentClass);`;
+    
+        const request = connection.request();
+        request.input("assignmentTitle", sql.NVarChar, newClassData.assignmentTitle);
+        request.input("assignmentDes", sql.NVarChar, newClassData.assignmentDes);
+        request.input("assignmentPostDateTime", sql.DateTime, newClassData.assignmentPostDateTime);
+        request.input("assignmentDueDateTime", sql.DateTime, newClassData.assignmentDueDateTime);
+        request.input("assignmentCreator", sql.VarChar, newClassData.assignmentCreator);
+        request.input("assignmentClass", sql.VarChar, newClassData.assignmentClass);
+    
+        const result = await request.query(sqlQuery);
+    
+        connection.close();
+    
+        // Retrieve the newly created classwork using its ID
+        return this.getClassById(result.recordset[0].assignmentID);
+    }
+
+    static async getClassWorkById(classID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `SELECT * FROM Assignments WHERE classID = @classID`; // Parameterized query
+
+        const request = connection.request();
+        request.input("classID", sql.VarChar, classID);
+        const result = await request.query(sqlQuery);
+
+        connection.close();
+
+        return result.recordset[0];
+    }
+
+    static async createSyllabus(newSyllabusData) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `DECLARE @newSyllabusID VARCHAR(9);
+                          SELECT @newSyllabusID = 'SYL' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(syllabusID, 4, 6) AS INT)), 0) + 1, '000000')
+                          FROM Syllabuses WHERE syllabusID LIKE 'SYL%';
+                          IF @newSyllabusID IS NULL SET @newSyllabusID = 'SYL000001';
+                          
+                          INSERT INTO Syllabuses (syllabusID, syllabusTitle, syllabusDes, syllabusPostDateTime, syllabusClass)
+                          OUTPUT INSERTED.syllabusID
+                          VALUES (@newSyllabusID, @syllabusTitle, @syllabusDes, @syllabusPostDateTime, @syllabusClass);`;
+    
+        const request = connection.request();
+        request.input("syllabusTitle", sql.NVarChar, newSyllabusData.syllabusTitle);
+        request.input("syllabusDes", sql.NVarChar, newSyllabusData.syllabusDes);
+        request.input("syllabusPostDateTime", sql.DateTime, newSyllabusData.syllabusPostDateTime);
+        request.input("syllabusClass", sql.VarChar, newSyllabusData.syllabusClass);
+    
+        const result = await request.query(sqlQuery);
+    
+        connection.close();
+    
+        // Retrieve the newly created syllabus using its ID
+        return this.getSyllabusById(result.recordset[0].syllabusID);
+    }
+
+    static async getSyllabusById(classID) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `SELECT * FROM Syllabuses WHERE syllabusID = @classID`; // Parameterized query
+
+        const request = connection.request();
+        request.input("classID", sql.VarChar, classID);
+        const result = await request.query(sqlQuery);
+
+        connection.close();
+
+        return result.recordset[0];
+    }
+
 }
     
 module.exports = Class;

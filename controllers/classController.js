@@ -86,13 +86,42 @@ const createClassWork = async (req, res) => {
   }
 };
 
-const getClassWork = async (req, res) => {
+const getClassWorkById = async (req, res) => {
+  const classID = req.params.classID;
   try {
-    const classWork = await Class.getClassWork();
-    res.json(classWork);
+    const classObj = await Class.getClassWorkById(classID);
+    if (!classObj) {
+      return res.status(404).send("Class work not found");
+    }
+    res.json(classObj);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error retrieving class work");
+  }
+};
+
+const createSyllabus = async (req, res) => {
+  const newSyllabus = req.body;
+  try {
+    const createdSyllabus = await Class.createSyllabus(newSyllabus);
+    res.status(201).json(createdSyllabus);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating syllabus");
+  }
+};
+
+const getSyllabusById = async (req, res) => {
+  const classID = req.params.classID;
+  try {
+    const classObj = await Class.getSyllabusById(classID);
+    if (!classObj) {
+      return res.status(404).send("Syllabus not found");
+    }
+    res.json(classObj);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving syllabus");
   }
 };
 
@@ -104,5 +133,7 @@ module.exports = {
   getClassUsers,
   getAllUserClass,
   createClassWork,
-  getClassWork,
+  getClassWorkById,
+  createSyllabus,
+  getSyllabusById,
 };
