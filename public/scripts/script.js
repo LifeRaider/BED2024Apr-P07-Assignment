@@ -150,50 +150,93 @@
 
 // ADMIN MAIN PAGE
 // =================================
+document.addEventListener('DOMContentLoaded', () => {
+  fetchClasses();
+
+  const form = document.getElementById('createClassForm');
+  form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      createClass();
+  });
+});
+
 async function fetchClasses() {
   try {
-    console.log('Fetching classes...');
-    const response = await fetch('http://localhost:3000/classes');
-    console.log('Response status:', response.status);
-    if (!response.ok) {
-      throw new Error('Network response was not ok ' + response.statusText);
-    }
-    const data = await response.json();
-    console.log('Fetched data:', data);
-    const classList = document.getElementById('class-list');
-    if (!classList) {
-      console.error('class-list element not found in the DOM');
-      return;
-    }
-    classList.innerHTML = ''; // Clear existing content
+      console.log('Fetching classes...');
+      const response = await fetch('http://localhost:3000/classes');
+      console.log('Response status:', response.status);
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      const data = await response.json();
+      console.log('Fetched data:', data);
+      const classList = document.getElementById('class-list');
+      if (!classList) {
+          console.error('class-list element not found in the DOM');
+          return;
+      }
+      classList.innerHTML = ''; // Clear existing content
 
-    if (data.length === 0) {
-      console.log('No classes found');
-      classList.innerHTML = '<p>No classes available.</p>';
-      return;
-    }
+      if (data.length === 0) {
+          console.log('No classes found');
+          classList.innerHTML = '<p>No classes available.</p>';
+          return;
+      }
 
-    data.forEach((classItem) => {
-      const classElement = document.createElement('div');
-      classElement.className = 'col';
-      classElement.innerHTML = `
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><a href="class.html?class_id=${classItem.classID}">${classItem.className}</a></h5>
-            <p class="card-text">${classItem.classDes}</p>
-          </div>
-        </div>
-      `;
-      classList.appendChild(classElement);
-    });
-    console.log('Classes rendered successfully');
+      data.forEach((classItem) => {
+          const classElement = document.createElement('div');
+          classElement.className = 'col';
+          classElement.innerHTML = `
+              <div class="card h-100">
+                  <div class="card-body">
+                      <h5 class="card-title"><a href="class.html?class_id=${classItem.classID}">${classItem.className}</a></h5>
+                      <p class="card-text">${classItem.classDes}</p>
+                  </div>
+              </div>
+          `;
+          classList.appendChild(classElement);
+      });
+      console.log('Classes rendered successfully');
   } catch (error) {
-    console.error('Error fetching classes:', error);
-    const classList = document.getElementById('class-list');
-    if (classList) {
-      classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
-    }
+      console.error('Error fetching classes:', error);
+      const classList = document.getElementById('class-list');
+      if (classList) {
+          classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
+      }
   }
 }
 
-fetchClasses();
+async function createClass() {
+  const className = document.getElementById('className').value;
+  const classDes = document.getElementById('classDes').value;
+
+  const newClass = {
+      className: className,
+      classDes: classDes
+  };
+
+  try {
+      const response = await fetch('http://localhost:3000/classes', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newClass),
+      });
+
+      if (!response.ok) {
+          const errorMessage = await response.text(); // Use text() to get non-JSON response
+          throw new Error('Network response was not ok: ' + errorMessage);
+      }
+
+      const data = await response.json();
+      console.log('Success:', data);
+      alert('Class created successfully!');
+      document.getElementById('createClassForm').reset();
+      document.querySelector('#createClassModal .btn-close').click(); // Close the modal
+      fetchClasses(); // Refresh the class list
+  } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while creating the class.');
+  }
+}
