@@ -32,7 +32,7 @@ app.post('/login', usersController.login); // Login user
 
 app.get("/classes", classController.getAllClasses); // Get all classes
 app.get("/classes/:classID", classController.getClassById); // Get class by ID
-app.post("/classes", verifyJWT, classController.createClass); // Create class
+app.post("/classes", classController.createClass); // Create class
 
 app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
 app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
