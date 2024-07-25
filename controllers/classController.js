@@ -1,4 +1,4 @@
-const Class = require("../models/Class");
+const Class = require("../models/class");
 
 const getAllClasses = async (req, res) => {
   try {
@@ -75,31 +75,6 @@ const getAllUserClass = async (req, res) => {
   }
 };
 
-const createClassWork = async (req, res) => {
-  const newClassWork = req.body;
-  try {
-    const createdClassWork = await Class.createClassWork(newClassWork);
-    res.status(201).json(createdClassWork);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error creating class work");
-  }
-};
-
-const getClassWorkById = async (req, res) => {
-  const classID = req.params.classID;
-  try {
-    const classObj = await Class.getClassWorkById(classID);
-    if (!classObj) {
-      return res.status(404).send("Class work not found");
-    }
-    res.json(classObj);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error retrieving class work");
-  }
-};
-
 const createSyllabus = async (req, res) => {
   const newSyllabus = req.body;
   try {
@@ -132,8 +107,6 @@ module.exports = {
   addToClass,
   getClassUsers,
   getAllUserClass,
-  createClassWork,
-  getClassWorkById,
   createSyllabus,
   getSyllabusById,
 };

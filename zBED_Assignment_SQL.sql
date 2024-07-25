@@ -132,6 +132,20 @@ Insert Into Classes Values
 ('Class03', 'Chinese01', 'Angry classs that learns about 我喜欢冰淇淋'),
 ('Class04', 'Science01', 'Depressed classs that learns about mutation')
 
+Create Table Syllabus (
+	syllabusID VARCHAR(9) PRIMARY KEY,
+    syllabusTitle VARCHAR(50),
+    syllabusDes VARCHAR(500),
+    syllabusPostDateTime DATETIME,
+    syllabusClass VARCHAR(7),
+    FOREIGN KEY (syllabusClass) REFERENCES Classes(classID)
+)
+
+Insert Into Syllabus Values
+('SYL000001', 'Math Syllabus', 'Detailed syllabus for Math 101', '2024-07-10 09:00:00', 'Class01'),
+('SYL000002', 'English Syllabus', 'Detailed syllabus for English 101', '2024-07-11 10:00:00', 'Class02'),
+('SYL000003', 'Science Syllabus', 'Detailed syllabus for Science 101', '2024-07-12 11:00:00', 'Class03'),
+('SYL000004', 'History Syllabus', 'Detailed syllabus for History 101', '2024-07-13 12:00:00', 'Class04');
 
 
 DECLARE @username VARCHAR(50) = 'hi';

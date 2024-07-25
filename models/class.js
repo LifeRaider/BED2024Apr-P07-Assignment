@@ -136,48 +136,6 @@ class Class {
         return result2.recordset;
     }
 
-    static async createClassWork(newClassData) {
-        const connection = await sql.connect(dbConfig);
-    
-        const sqlQuery = `DECLARE @newClassWorkID VARCHAR(9);
-                          SELECT @newClassWorkID = 'ASGN' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(assignmentID, 5, 5) AS INT)), 0) + 1, '00000')
-                          FROM Assignments WHERE assignmentID LIKE 'ASGN%';
-                          IF @newClassWorkID IS NULL SET @newClassWorkID = 'ASGN00001';
-                          
-                          INSERT INTO Assignments (assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass)
-                          OUTPUT INSERTED.assignmentID
-                          VALUES (@newClassWorkID, @assignmentTitle, @assignmentDes, @assignmentPostDateTime, @assignmentDueDateTime, @assignmentCreator, @assignmentClass);`;
-    
-        const request = connection.request();
-        request.input("assignmentTitle", sql.NVarChar, newClassData.assignmentTitle);
-        request.input("assignmentDes", sql.NVarChar, newClassData.assignmentDes);
-        request.input("assignmentPostDateTime", sql.DateTime, newClassData.assignmentPostDateTime);
-        request.input("assignmentDueDateTime", sql.DateTime, newClassData.assignmentDueDateTime);
-        request.input("assignmentCreator", sql.VarChar, newClassData.assignmentCreator);
-        request.input("assignmentClass", sql.VarChar, newClassData.assignmentClass);
-    
-        const result = await request.query(sqlQuery);
-    
-        connection.close();
-    
-        // Retrieve the newly created classwork using its ID
-        return this.getClassById(result.recordset[0].assignmentID);
-    }
-
-    static async getClassWorkById(classID) {
-        const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `SELECT * FROM Assignments WHERE classID = @classID`; // Parameterized query
-
-        const request = connection.request();
-        request.input("classID", sql.VarChar, classID);
-        const result = await request.query(sqlQuery);
-
-        connection.close();
-
-        return result.recordset[0];
-    }
-
     static async createSyllabus(newSyllabusData) {
         const connection = await sql.connect(dbConfig);
     
