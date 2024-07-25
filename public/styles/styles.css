@@ -1,17 +1,17 @@
 * {
     margin: 0;
-    color: #F2EFEC;
+    /* color: #110704; */
     font-family: Inter;
 }
 
 html{
     height: 100vh;
-    background-color: #090807;
+    background-color: #fcf2ec;
 }
 
-body{
+/* body{
     display: none;
-}
+} */
 
 button{
     border: none;
@@ -72,28 +72,49 @@ input:focus {
     100% {inset: 0 35px 35px 0;}
 }
 
-html:has(#index-page), html:has(#signup-page), html:has(#login-page){
-    background: url("../assets/curved-gradient.svg"), url("../assets/topography.svg"), black;
-}
-
 /* Create account */
-#index-page{
+#index-page, #login-page, #signup-page{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background: url("../assets/topography.svg");
+}
+.left-index{
     display: flex;
     flex-direction: column;
-    margin-top: 32vh;
-    margin-left: 18vw;
-    width: fit-content;
+    width: 35vw;
+    height: calc(72vh - 20px);
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px 0px 0px 10px;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
+    background-color: #fdfaf8;
+    z-index: 1;
+}
+.right-index{
+    width: calc(35vw + 20px);
+    height: 72vh;
+    border-radius: 0px 10px 10px 0px;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.6);
+    background: url(../assets/classroom.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 h1{
     margin: 0;
-    font-size: 50px;
+    font-size: 40px;
     font-weight:600;
 }
 
 h3{
     margin-top: 15px;
-    color: #ABABAB;
+    color: #ababab;
     font-size: 17px;
     font-weight:600;
 }
@@ -109,9 +130,6 @@ h3 a{
     display: flex;
     flex-direction: column;
     margin-top: 45px;
-    width: fit-content;
-    left: -20px;
-    align-self: center;
 }
 .signup button{
     padding-block: 20px;
@@ -120,7 +138,7 @@ h3 a{
     border-radius: 50px;
     font-size: 18px;
     font-weight:600;
-    background-color: #2358A6;
+    background-color: #ff885d;
 }
 .signup a{
     margin-bottom: 20px;
@@ -129,14 +147,6 @@ h3 a{
 
 
 /* Student & Parent Signup */
-#signup-page{
-    margin-top: 24vh;
-    margin-left: 18vw;
-}
-#login-page{
-    margin-top: 32vh;
-    margin-left: 18vw;
-}
 #signup-page form, #login-page form{
     display: flex;
     flex-direction: column;
@@ -146,8 +156,7 @@ h3 a{
 }
 
 #signup-page h2{
-    margin-top: 0;
-    margin-bottom: 4px;
+    margin-bottom: -5px;
     color: #ABABAB;
     font-size: 20px;
     font-weight:600;
@@ -158,7 +167,7 @@ h3 a{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 380px;
+    width: 28vw;
     margin-bottom: 25px;
     padding-block: 10px;
     padding-inline: 20px;
@@ -190,15 +199,17 @@ h3 a{
     font-weight: 400;
     transition: all 0.3s ease;
     pointer-events: none;
+    color: #fdfaf8;
 }
 .innerField input{
     position: relative;
     padding-block: 10px;
-    width: 335px;
+    width: calc(28vw - 45px);
     font-size: 20px;
     font-weight:600;
     box-sizing: border-box;
     background-color: transparent;
+    color: #fdfaf8;
 }
 .innerField input:focus,
 .innerField input:not(:placeholder-shown){
@@ -215,18 +226,19 @@ h3 a{
 .name{
     display: flex;
     flex-direction: row;
-    width: 420px;
+    width: calc(28vw + 40px);
     justify-content: space-between;
 }
 .name .field{
-    width: 155px;
+    width: calc(14vw - 35px);
 }
 .name .field input{
-    width: 110px;
+    width: calc(14vw - 65px);
 }
 
 #submit:disabled {
     cursor: not-allowed;
+    color: initial;
 }
 .createAcc, .loginBtn{
     margin-top: 5px;
@@ -234,11 +246,32 @@ h3 a{
     padding-inline: 55px;
     font-size: 18px;
     font-weight:600;
-    background-color: #2358A6;
+    background-color: #ff885d;
     border-radius: 50px;
 }
 .loginBtn{
     padding-inline: 75px;
+}
+
+@media (min-width: 1360px){
+    .field{
+        width: 380px;
+    }
+    .innerField input{
+        width: 335px;
+    }
+    .name .field input{
+        width: 110px;
+    }
+    .name{
+        width: 420px;
+    }
+    .name .field{
+        width: 155px;
+    }
+    .name .field input{
+        width: 110px;
+    }
 }
 
 /* Warnings */
