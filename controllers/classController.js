@@ -86,10 +86,10 @@ const createSyllabus = async (req, res) => {
   }
 };
 
-const getSyllabusById = async (req, res) => {
+const getSyllabusByClassId = async (req, res) => {
   const classID = req.params.classID;
   try {
-    const classObj = await Class.getSyllabusById(classID);
+    const classObj = await Class.getSyllabusByClassId(classID);
     if (!classObj) {
       return res.status(404).send("Syllabus not found");
     }
@@ -108,5 +108,5 @@ module.exports = {
   getClassUsers,
   getAllUserClass,
   createSyllabus,
-  getSyllabusById,
+  getSyllabusByClassId,
 };

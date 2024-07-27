@@ -136,33 +136,9 @@ class Class {
         return result2.recordset;
     }
 
-    static async createSyllabus(newSyllabusData) {
-        const connection = await sql.connect(dbConfig);
-    
-        const sqlQuery = `DECLARE @newSyllabusID VARCHAR(9);
-                          SELECT @newSyllabusID = 'SYL' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(syllabusID, 4, 6) AS INT)), 0) + 1, '000000')
-                          FROM Syllabuses WHERE syllabusID LIKE 'SYL%';
-                          IF @newSyllabusID IS NULL SET @newSyllabusID = 'SYL000001';
-                          
-                          INSERT INTO Syllabuses (syllabusID, syllabusTitle, syllabusDes, syllabusPostDateTime, syllabusClass)
-                          OUTPUT INSERTED.syllabusID
-                          VALUES (@newSyllabusID, @syllabusTitle, @syllabusDes, @syllabusPostDateTime, @syllabusClass);`;
-    
-        const request = connection.request();
-        request.input("syllabusTitle", sql.NVarChar, newSyllabusData.syllabusTitle);
-        request.input("syllabusDes", sql.NVarChar, newSyllabusData.syllabusDes);
-        request.input("syllabusPostDateTime", sql.DateTime, newSyllabusData.syllabusPostDateTime);
-        request.input("syllabusClass", sql.VarChar, newSyllabusData.syllabusClass);
-    
-        const result = await request.query(sqlQuery);
-    
-        connection.close();
-    
-        // Retrieve the newly created syllabus using its ID
-        return this.getSyllabusById(result.recordset[0].syllabusID);
-    }
 
-    static async getSyllabusById(classID) {
+
+    static async getSyllabusByClassId(classID) {
         const connection = await sql.connect(dbConfig);
 
         const sqlQuery = `SELECT * FROM Syllabuses WHERE syllabusID = @classID`; // Parameterized query
