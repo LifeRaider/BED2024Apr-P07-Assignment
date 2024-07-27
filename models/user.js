@@ -81,7 +81,24 @@ class User {
         return this.getUserById(result.recordset[0].userID);
     }
 
-    
+    static async getAllUsers() {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `SELECT * FROM Users`;
+
+        const result = await connection.query(sqlQuery);
+
+        connection.close();
+
+        return result.recordset.map((record) => new User(
+            record.userID,
+            record.username,
+            record.email,
+            record.passwordHash,
+            record.userType,
+            record.parentId
+        ));
+    }
 }
 
 module.exports = User;
