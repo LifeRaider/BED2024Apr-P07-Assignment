@@ -100,7 +100,7 @@ h3 a{
 
 
 
-.navbar{
+/* .navbar{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -134,9 +134,107 @@ h3 a{
 }
 .navbar a:hover{
     opacity: 0.65;
+} */
+
+
+
+html:has(.container){
+    background-color: #fdc1a1;
+}
+.container {
+    padding-top: 40px;
+    padding-inline: 30px;
+}
+header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding-left: 30px;
+}
+.logo{
+    margin-right: 40px;
+}
+.logo img{
+    height: 50px;
+}
+nav{
+    display: flex;
+    align-items: center;
+}
+nav a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #333;
+}
+.side-header{
+    margin-right: 30px;
+}
+.side-header a{
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+}
+.main-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 40px;
+    border-radius: 20px 0 20px 20px;
+    background-color:#fcf2ec;
+}
+.main-content::before {
+    content: '';
+    position: absolute;
+    top: -70px;
+    right: 0;
+    width: 275px;
+    height: 70px;
+    border-radius: 0px 20px 0 0;
+    background-color: #fcf2ec;
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+    z-index: -1;
 }
 
 
+.text-content {
+    flex: 1;
+}
+h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+.image-content {
+    flex: 1;
+    text-align: right;
+}
+.image-content img {
+    width: 40vw;
+    /* margin-right: 0px;
+    max-width: 100%; */
+    /* border-radius: 50%; */
+}
+.rotating-text {
+    position: absolute;
+    right: 20%;
+    top: 50%;
+    width: 100px;
+    height: 100px;
+    animation: rotate 10s linear infinite;
+}
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+
+
+
+/* for footer */
 #test{
     height: calc(100vh - 80px);
 }
