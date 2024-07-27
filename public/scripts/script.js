@@ -189,7 +189,7 @@ async function fetchClasses() {
           classElement.innerHTML = `
               <div class="card h-100">
                   <div class="card-body">
-                      <h5 class="card-title"><a href="class.html?class_id=${classItem.classID}">${classItem.className}</a></h5>
+                      <h5 class="card-title"><a href="class.html?class_id=${classItem.classID}">${classItem.className}</a> (${classItem.classID})</h5>
                       <p class="card-text">${classItem.classDes}</p>
                   </div>
               </div>

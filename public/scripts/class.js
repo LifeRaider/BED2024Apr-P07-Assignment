@@ -70,7 +70,7 @@ function displayClassDetails(classData) {
     classDetails.innerHTML = `
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">${classData.className}</h5>
+                <h5 class="card-title">${classData.className} (${classData.classID})</h5>
                 <p class="card-text">${classData.classDes}</p>
             </div>
         </div>
@@ -282,7 +282,12 @@ async function showAddUserModal() {
         const classId = getClassIdFromUrl();
         const [allUsers, classUsers] = await Promise.all([
             fetch('http://localhost:3000/users').then(res => res.json()),
-            fetch(`http://localhost:3000/classes/${classId}/ClassUsers`).then(res => res.json())
+            fetch(`http://localhost:3000/classes/${classId}/ClassUsers`)
+                .then(res => res.json())
+                .catch(err => {
+                    console.warn('Failed to fetch class users, assuming empty class:', err);
+                    return []; // Return an empty array if fetching class users fails
+                })
         ]);
 
         const filteredUsers = filterAndSortUsers(allUsers, classUsers);
