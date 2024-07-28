@@ -29,23 +29,27 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/test", verifyJWT, usersController.test); // Authorize users
 app.post("/register", usersController.register); // Create user
 app.post('/login', usersController.login); // Login user
+app.get("/users", usersController.getAllUsers); // Get all users
 
-app.get("/classes", verifyJWT, classController.getAllClasses); // Get all classes
-app.get("/classes/:classID", verifyJWT, classController.getClassById); // Get class by ID
-app.post("/classes", verifyJWT, classController.createClass); // Create class
+app.get("/classes", classController.getAllClasses); // Get all classes
+app.get("/classes/:classID", classController.getClassById); // Get class by ID
+app.post("/classes", classController.createClass); // Create class
+app.put("/classes/:classID", classController.updateClass); // Update class
+app.delete("/classes", classController.deleteClass); // Delete
 
-app.put("/classes/:classID/add", verifyJWT, classController.addToClass); // Add Student/Teacher to Class
-app.get("/classes/:classID/classUsers", verifyJWT, classController.getClassUsers); // Retrieve Class Students
+app.put("/classes/:classID/add", classController.addToClass); // Add Student/Teacher to Class
+app.put("/classes/:classID/remove", classController.removeFromClass); // Remove Student/Teacher from Class
+app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retrieve Class Students
 
-app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements); // Get all annoucements
-app.get('/announcements/class/:classID', verifyJWT, announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
+app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
 app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement); // Update annoucement
-app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
+app.delete("/announcements", announcementController.deleteAnnouncement); // Delete annoucement
 
 app.get("/assignments", verifyJWT, assignmentController.getAllAssignments); // Get all assignments
-app.get("/assignments/class/:classID", verifyJWT, assignmentController.getAssignmentsByClassId); // Get assignments by class ID
+app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId); // Get assignments by class ID
 app.get("/assignments/:assignmentID", verifyJWT, assignmentController.getAssignmentById); // Get assignment by ID
 app.post("/assignments", verifyJWT, assignmentController.createAssignment); // Create assignment
 app.put("/assignments/:assignmentID", verifyJWT, assignmentController.updateAssignment); // Update assignment

@@ -47,6 +47,18 @@ const addToClass = async (req, res) => {
   }
 };
 
+const removeFromClass = async (req, res) => {
+  const { classID } = req.params;
+  const { userID } = req.body;
+  try {
+    const updatedClass = await Class.removeFromClass(classID, userID);
+    res.status(200).json(updatedClass);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getClassUsers = async (req, res) => {
   const classID = req.params.classID;
   try {
@@ -75,53 +87,26 @@ const getAllUserClass = async (req, res) => {
   }
 };
 
-const createClassWork = async (req, res) => {
-  const newClassWork = req.body;
-  try {
-    const createdClassWork = await Class.createClassWork(newClassWork);
-    res.status(201).json(createdClassWork);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error creating class work");
-  }
-};
-
-const getClassWorkById = async (req, res) => {
+const updateClass = async (req, res) => {
   const classID = req.params.classID;
+  const updatedClassData = req.body;
   try {
-    const classObj = await Class.getClassWorkById(classID);
-    if (!classObj) {
-      return res.status(404).send("Class work not found");
-    }
-    res.json(classObj);
+    const updatedClass = await Class.updateClass(classID, updatedClassData);
+    res.status(200).json(updatedClass);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error retrieving class work");
+    res.status(500).send("Error updating class");
   }
-};
+}
 
-const createSyllabus = async (req, res) => {
-  const newSyllabus = req.body;
+const deleteClass = async (req, res) => {
+  const classID = req.body.classID;
   try {
-    const createdSyllabus = await Class.createSyllabus(newSyllabus);
-    res.status(201).json(createdSyllabus);
+    await Class.deleteClass(classID);
+    res.status(200).send("Class deleted successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error creating syllabus");
-  }
-};
-
-const getSyllabusById = async (req, res) => {
-  const classID = req.params.classID;
-  try {
-    const classObj = await Class.getSyllabusById(classID);
-    if (!classObj) {
-      return res.status(404).send("Syllabus not found");
-    }
-    res.json(classObj);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error retrieving syllabus");
+    res.status(500).send("Error deleting class");
   }
 };
 
@@ -132,8 +117,7 @@ module.exports = {
   addToClass,
   getClassUsers,
   getAllUserClass,
-  createClassWork,
-  getClassWorkById,
-  createSyllabus,
-  getSyllabusById,
+  updateClass,
+  deleteClass,
+  removeFromClass
 };

@@ -92,24 +92,50 @@ class Class {
         return this.getClassUsers(classID);
     }
 
+    static async removeFromClass(classID, userID) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `  DECLARE @sql NVARCHAR(MAX);
+                            SET @sql = N'DELETE FROM ' + QUOTENAME(@classID) + ' WHERE userID = @userID';
+                            EXEC sp_executesql @sql, N'@userID NVARCHAR(50)', @userID;`;
+    
+        const request = connection.request();
+        request.input("classID", classID);
+        request.input("userID", userID);
+    
+        await request.query(sqlQuery);
+    
+        connection.close();
+    
+        return this.getClassUsers(classID);
+    }
+
     static async getClassUsers(classID) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `
-            DECLARE @sql NVARCHAR(MAX);
-            SET @sql = N'SELECT u.userID, u.username, u.email, u.userType, u.parentID 
-                        FROM ' + QUOTENAME(@classID) + ' c 
-                        JOIN Users u ON c.userID = u.userID';
-            EXEC sp_executesql @sql;
-        `;
+        try {
+            const sqlQuery = `
+                DECLARE @sql NVARCHAR(MAX);
+                SET @sql = N'SELECT u.userID, u.username, u.email, u.userType 
+                            FROM ' + QUOTENAME(@classID) + ' c 
+                            JOIN Users u ON c.userID = u.userID
+                            ORDER BY 
+                                CASE 
+                                    WHEN u.userID LIKE ''T%'' THEN 1
+                                    WHEN u.userID LIKE ''S%'' THEN 2
+                                    ELSE 3
+                                END';
+                EXEC sp_executesql @sql;
+            `;
 
-        const request = connection.request();
-        request.input("classID", sql.VarChar, classID);
-        const result = await request.query(sqlQuery);
+            const request = connection.request();
+            request.input("classID", sql.VarChar, classID);
+            const result = await request.query(sqlQuery);
 
-        connection.close();
-
-        return result.recordset;
+            return result.recordset;
+        } finally {
+            await connection.close();
+        }
     }
 
     static async getAllUserClass(userID) {
@@ -136,88 +162,76 @@ class Class {
         return result2.recordset;
     }
 
-    static async createClassWork(newClassData) {
-        const connection = await sql.connect(dbConfig);
-    
-        const sqlQuery = `DECLARE @newClassWorkID VARCHAR(9);
-                          SELECT @newClassWorkID = 'ASGN' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(assignmentID, 5, 5) AS INT)), 0) + 1, '00000')
-                          FROM Assignments WHERE assignmentID LIKE 'ASGN%';
-                          IF @newClassWorkID IS NULL SET @newClassWorkID = 'ASGN00001';
-                          
-                          INSERT INTO Assignments (assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass)
-                          OUTPUT INSERTED.assignmentID
-                          VALUES (@newClassWorkID, @assignmentTitle, @assignmentDes, @assignmentPostDateTime, @assignmentDueDateTime, @assignmentCreator, @assignmentClass);`;
-    
-        const request = connection.request();
-        request.input("assignmentTitle", sql.NVarChar, newClassData.assignmentTitle);
-        request.input("assignmentDes", sql.NVarChar, newClassData.assignmentDes);
-        request.input("assignmentPostDateTime", sql.DateTime, newClassData.assignmentPostDateTime);
-        request.input("assignmentDueDateTime", sql.DateTime, newClassData.assignmentDueDateTime);
-        request.input("assignmentCreator", sql.VarChar, newClassData.assignmentCreator);
-        request.input("assignmentClass", sql.VarChar, newClassData.assignmentClass);
-    
-        const result = await request.query(sqlQuery);
-    
-        connection.close();
-    
-        // Retrieve the newly created classwork using its ID
-        return this.getClassById(result.recordset[0].assignmentID);
-    }
-
-    static async getClassWorkById(classID) {
+    static async updateClass(classID, updatedClassData) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Assignments WHERE classID = @classID`; // Parameterized query
-
+        let updateFields = [];
         const request = connection.request();
-        request.input("classID", sql.VarChar, classID);
-        const result = await request.query(sqlQuery);
+
+        if (updatedClassData.className !== undefined) {
+            updateFields.push("className = @className");
+            request.input("className", updatedClassData.className);
+        }
+        if (updatedClassData.classDes !== undefined) {
+            updateFields.push("classDes = @classDes");
+            request.input("classDes", updatedClassData.classDes);
+        }
+
+        if (updateFields.length === 0) {
+            throw new Error("No fields to update");
+        }
+
+        const sqlQuery = `
+            UPDATE Classes
+            SET ${updateFields.join(", ")}
+            WHERE classID = @classID;
+        `;
+
+        request.input("classID", classID);
+
+        await request.query(sqlQuery);
 
         connection.close();
 
-        return result.recordset[0];
+        return this.getClassById(classID);
     }
 
-    static async createSyllabus(newSyllabusData) {
+    static async deleteClass(classID) {
         const connection = await sql.connect(dbConfig);
-    
-        const sqlQuery = `DECLARE @newSyllabusID VARCHAR(9);
-                          SELECT @newSyllabusID = 'SYL' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(syllabusID, 4, 6) AS INT)), 0) + 1, '000000')
-                          FROM Syllabuses WHERE syllabusID LIKE 'SYL%';
-                          IF @newSyllabusID IS NULL SET @newSyllabusID = 'SYL000001';
-                          
-                          INSERT INTO Syllabuses (syllabusID, syllabusTitle, syllabusDes, syllabusPostDateTime, syllabusClass)
-                          OUTPUT INSERTED.syllabusID
-                          VALUES (@newSyllabusID, @syllabusTitle, @syllabusDes, @syllabusPostDateTime, @syllabusClass);`;
-    
-        const request = connection.request();
-        request.input("syllabusTitle", sql.NVarChar, newSyllabusData.syllabusTitle);
-        request.input("syllabusDes", sql.NVarChar, newSyllabusData.syllabusDes);
-        request.input("syllabusPostDateTime", sql.DateTime, newSyllabusData.syllabusPostDateTime);
-        request.input("syllabusClass", sql.VarChar, newSyllabusData.syllabusClass);
-    
-        const result = await request.query(sqlQuery);
-    
-        connection.close();
-    
-        // Retrieve the newly created syllabus using its ID
-        return this.getSyllabusById(result.recordset[0].syllabusID);
+        const transaction = new sql.Transaction(connection);
+
+        try {
+            await transaction.begin();
+
+            // Delete related announcements
+            await transaction.request()
+                .input("classID", sql.VarChar, classID)
+                .query("DELETE FROM Announcements WHERE announcementClass = @classID");
+
+            // Delete related assignments
+            await transaction.request()
+                .input("classID", sql.VarChar, classID)
+                .query("DELETE FROM Assignments WHERE assignmentClass = @classID");
+
+            // Delete the class-specific table
+            await transaction.request()
+                .input("classID", sql.VarChar, classID)
+                .query(`DROP TABLE ${classID}`);
+
+            // Delete the class from the Classes table
+            await transaction.request()
+                .input("classID", sql.VarChar, classID)
+                .query("DELETE FROM Classes WHERE classID = @classID");
+
+            await transaction.commit();
+        } catch (error) {
+            await transaction.rollback();
+            console.error("Error in deleteClass:", error);
+            throw error;
+        } finally {
+            await connection.close();
+        }
     }
-
-    static async getSyllabusById(classID) {
-        const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `SELECT * FROM Syllabuses WHERE syllabusID = @classID`; // Parameterized query
-
-        const request = connection.request();
-        request.input("classID", sql.VarChar, classID);
-        const result = await request.query(sqlQuery);
-
-        connection.close();
-
-        return result.recordset[0];
-    }
-
 }
     
 module.exports = Class;

@@ -50,11 +50,12 @@ const createAnnouncement = async (req, res) => {
 
 const updateAnnouncement = async (req, res) => {
     const announcementID = req.params.announcementID;
-    const updatedAnnouncement = req.body;
+    const updatedData = req.body;
+    const editorID = req.user.id; // Assuming you have user information in the request
 
     try {
-        const announcement = await Announcement.updateAnnouncement(announcementID, updatedAnnouncement);
-        res.json(announcement);
+        const updatedAnnouncement = await Announcement.updateAnnouncement(announcementID, updatedData, editorID);
+        res.json(updatedAnnouncement);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error updating announcement");
@@ -62,7 +63,8 @@ const updateAnnouncement = async (req, res) => {
 }
 
 const deleteAnnouncement = async (req, res) => {
-    const announcementID = req.body.announcementID;
+    const { announcementID } = req.body;
+
     try {
         await Announcement.deleteAnnouncement(announcementID);
         res.status(200).send("Announcement deleted successfully");
