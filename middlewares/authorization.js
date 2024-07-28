@@ -28,6 +28,8 @@ function verifyJWT(req, res, next) {
             "/assignments$": ["admin", "teacher"], // Matches "/assignments"
             "/assignments/.*": ["admin", "teacher", "parent", "student"], // Matches "/assignments/" followed by anything
             "/assignments/:assignmentID": ["admin", "teacher"], // Matches "/assignments/:assignmentID"
+            "/syllabus$": ["admin", "teacher", "parent", "student"], // Matches Syllabus
+            "/syllabus/:syllabusID": ["admin", "teacher", "parent", "student"]// Matches "syllabus/:syllabusID"
         };
 
         const requestedEndpoint = req.url;
