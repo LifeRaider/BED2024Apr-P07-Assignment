@@ -43,17 +43,17 @@ app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retri
 
 app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
 app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
-app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
-app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
-app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement); // Update annoucement
+app.get('/announcements/:announcementID', announcementController.getAnnouncementById);
+app.post("/announcements", announcementController.createAnnouncement); // Create annoucement
+app.put("/announcements/:announcementID", announcementController.updateAnnouncement); // Update annoucement
 app.delete("/announcements", announcementController.deleteAnnouncement); // Delete annoucement
 
-app.get("/assignments", verifyJWT, assignmentController.getAllAssignments); // Get all assignments
+app.get("/assignments", assignmentController.getAllAssignments); // Get all assignments
 app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId); // Get assignments by class ID
-app.get("/assignments/:assignmentID", verifyJWT, assignmentController.getAssignmentById); // Get assignment by ID
-app.post("/assignments", verifyJWT, assignmentController.createAssignment); // Create assignment
-app.put("/assignments/:assignmentID", verifyJWT, assignmentController.updateAssignment); // Update assignment
-app.delete("/assignments", verifyJWT, assignmentController.deleteAssignment); // Delete assignment
+app.get("/assignments/:assignmentID", assignmentController.getAssignmentById); // Get assignment by ID
+app.post("/assignments", assignmentController.createAssignment); // Create assignment
+app.put("/assignments/:assignmentID", assignmentController.updateAssignment); // Update assignment
+app.delete("/assignments", assignmentController.deleteAssignment); // Delete assignment
 
 app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
 app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes

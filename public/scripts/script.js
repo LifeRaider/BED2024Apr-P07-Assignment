@@ -127,6 +127,8 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
     .then(async response => {
       if (response.ok) {
         const data = await response.json()
+        const user = data.user
+        localStorage.setItem('data', JSON.stringify(user));
         if (window.location.href.includes("login.html") || window.location.href.includes("signup") || window.location.href.includes("index")) {
           window.location.href = "main.html"
         } else {
@@ -139,8 +141,9 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
     })
     .catch(error => {
       console.error('Error:', error);
+      localStorage.setItem('info', null);
       if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
-        window.location.href = '/public/login.html'; // Redirect to login
+        window.location.href = '/public/login.html'; // Redirect to login`
       } else {
         document.body.style.display = 'block';
       }
@@ -170,7 +173,6 @@ async function fetchClasses() {
   try {
       console.log('Fetching classes...');
       const response = await fetch('http://localhost:3000/classes');
-      print("HI im herre")
       console.log('Response status:', response.status);
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
