@@ -477,8 +477,11 @@ async function postAnnouncement() {
     const newAnnouncementData = {
         announcementTitle: title,
         announcementDes: description,
-        announcementClass: classId
+        announcementClass: classId,
+        creatorID: JSON.parse(localStorage.getItem('user')).id,
+        creatorUsername: JSON.parse(localStorage.getItem('user')).username
     };
+    console.log(newAnnouncementData);
 
     try {
         const response = await fetch('http://localhost:3000/announcements', {
@@ -509,60 +512,12 @@ async function postAnnouncement() {
     }
 }
 
-let currentAnnouncementId = null;
-
-function showEditAnnouncementModal(event) {
-    const announcementId = event.target.getAttribute('data-announcement-id');
-    currentAnnouncementId = announcementId;
-    const announcement = getAnnouncementById(announcementId);
-    
-    document.getElementById('editAnnouncementTitle').value = announcement.announcementTitle;
-    document.getElementById('editAnnouncementDes').value = announcement.announcementDes;
-    
-    const modal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
-    modal.show();
-}
-
 function showDeleteAnnouncementConfirmation(event) {
     const announcementId = event.target.getAttribute('data-announcement-id');
     currentAnnouncementId = announcementId;
     
     const modal = new bootstrap.Modal(document.getElementById('deleteAnnouncementModal'));
     modal.show();
-}
-
-function getAnnouncementById(announcementId) {
-    // This function should return the announcement object from your local data
-    // You might need to modify this based on how you're storing the announcements
-    return announcements.find(a => a.announcementID === announcementId);
-}
-
-async function editAnnouncement() {
-    const title = document.getElementById('editAnnouncementTitle').value;
-    const description = document.getElementById('editAnnouncementDes').value;
-    
-    try {
-        const response = await fetch(`http://localhost:3000/announcements/${currentAnnouncementId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ announcementTitle: title, announcementDes: description }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to edit announcement');
-        }
-
-        const updatedAnnouncement = await response.json();
-        updateAnnouncementInUI(updatedAnnouncement);
-        
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnouncementModal'));
-        modal.hide();
-    } catch (error) {
-        console.error('Error editing announcement:', error);
-        alert('Failed to edit announcement. Please try again.');
-    }
 }
 
 async function deleteAnnouncement() {
@@ -586,23 +541,6 @@ async function deleteAnnouncement() {
     } catch (error) {
         console.error('Error deleting announcement:', error);
         alert('Failed to delete announcement. Please try again.');
-    }
-}
-
-function updateAnnouncementInUI(updatedAnnouncement) {
-    const announcementCard = document.querySelector(`[data-announcement-id="${updatedAnnouncement.announcementID}"]`);
-    if (announcementCard) {
-        announcementCard.querySelector('.card-title').textContent = updatedAnnouncement.announcementTitle;
-        announcementCard.querySelector('.card-text').textContent = updatedAnnouncement.announcementDes;
-        // Update edited by information
-        const editedByInfo = `
-            <p class="card-text">
-                <small class="text-muted">
-                    Edited by: ${updatedAnnouncement.editedByUsername} (${updatedAnnouncement.editedBy}) on ${new Date(updatedAnnouncement.editedDateTime).toLocaleString()}
-                </small>
-            </p>
-        `;
-        announcementCard.querySelector('.card-body').insertAdjacentHTML('beforeend', editedByInfo);
     }
 }
 

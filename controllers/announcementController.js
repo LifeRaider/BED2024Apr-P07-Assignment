@@ -37,10 +37,9 @@ const getAnnouncementById = async (req, res) => {
 
 const createAnnouncement = async (req, res) => {
     const newAnnouncement = req.body;
-    const creatorID = req.user.id; // Correct field name
 
     try {
-        const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement, creatorID);
+        const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement);
         res.status(201).json(createdAnnouncement); // Return the created announcement
     } catch (error) {
         console.error(error);

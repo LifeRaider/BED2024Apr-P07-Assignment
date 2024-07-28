@@ -81,7 +81,7 @@ class Announcement {
         );
     }
 
-    static async createAnnouncement(newAnnouncementData, creatorID) {
+    static async createAnnouncement(newAnnouncementData) {
         const connection = await sql.connect(dbConfig);
 
         const sqlQuery = `
@@ -98,7 +98,7 @@ class Announcement {
         const request = connection.request();
         request.input("announcementTitle", newAnnouncementData.announcementTitle);
         request.input("announcementDes", newAnnouncementData.announcementDes);
-        request.input("announcementCreator", creatorID);
+        request.input("announcementCreator", newAnnouncementData.creatorID);
         request.input("announcementClass", newAnnouncementData.announcementClass);
 
         const result = await request.query(sqlQuery);
