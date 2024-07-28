@@ -117,29 +117,29 @@ class Announcement {
 
     static async createAnnouncement(newAnnouncementData) {
         const connection = await sql.connect(dbConfig);
-
+    
         const sqlQuery = `
             DECLARE @newID VARCHAR(10);
             SELECT @newID = 'ANNO' + FORMAT(ISNULL(MAX(CAST(SUBSTRING(announcementID, 5, 5) AS INT)), 0) + 1, '00000') 
             FROM Announcements;
-
+    
             INSERT INTO Announcements (announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass)
             VALUES (@newID, @announcementTitle, @announcementDes, SYSUTCDATETIME(), @announcementCreator, @announcementClass);
-
+    
             SELECT @newID AS newID;
         `;
-
+    
         const request = connection.request();
         request.input("announcementTitle", newAnnouncementData.announcementTitle);
         request.input("announcementDes", newAnnouncementData.announcementDes);
-        request.input("announcementCreator", newAnnouncementData.creatorID);
+        request.input("announcementCreator", newAnnouncementData.announcementCreator);
         request.input("announcementClass", newAnnouncementData.announcementClass);
-
+    
         const result = await request.query(sqlQuery);
         const newID = result.recordset[0].newID;
-
+    
         connection.close();
-
+    
         return this.getAnnouncementById(newID);
     }
 

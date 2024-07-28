@@ -38,6 +38,13 @@ const getAnnouncementById = async (req, res) => {
 const createAnnouncement = async (req, res) => {
     const newAnnouncement = req.body;
 
+    // Check if user information is available
+    if (req.user && req.user.id) {
+        newAnnouncement.announcementCreator = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+
     try {
         const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement);
         res.status(201).json(createdAnnouncement);
@@ -51,6 +58,13 @@ const updateAnnouncement = async (req, res) => {
     const announcementID = req.params.announcementID;
     const updatedAnnouncement = req.body;
 
+    // Check if user information is available
+    if (req.user && req.user.id) {
+        updatedAnnouncement.editedBy = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+
     try {
         const announcement = await Announcement.updateAnnouncement(announcementID, updatedAnnouncement);
         res.json(announcement);
@@ -62,6 +76,8 @@ const updateAnnouncement = async (req, res) => {
 
 const deleteAnnouncement = async (req, res) => {
     const { announcementID } = req.body;
+
+    // You might want to add a check here to ensure the user has permission to delete the announcement
 
     try {
         await Announcement.deleteAnnouncement(announcementID);

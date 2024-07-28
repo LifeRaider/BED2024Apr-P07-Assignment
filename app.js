@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
-const bodyParser = require("body-parser"); // Import body-parser
+const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger-output.json"); // Import generated spec
+const swaggerDocument = require("./swagger-output.json");
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
 const assignmentController = require("./controllers/assignmentController");
@@ -13,52 +13,52 @@ const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable or default port
+const port = process.env.PORT || 3000;
 
-const staticMiddleware = express.static("public"); // Path to the public folder
+const staticMiddleware = express.static("public");
 
 app.use(cors());
-// Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
-app.use(staticMiddleware); // Mount the static middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(staticMiddleware);
 
-// Serve the Swagger UI at a specific route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// Routes for requests
-app.get("/test", verifyJWT, usersController.test); // Authorize users
-app.post("/register", usersController.register); // Create user
-app.post('/login', usersController.login); // Login user
-app.get("/users", usersController.getAllUsers); // Get all users
 
-app.get("/classes", classController.getAllClasses); // Get all classes
-app.get("/classes/:classID", classController.getClassById); // Get class by ID
-app.post("/classes", classController.createClass); // Create class
-app.put("/classes/:classID", classController.updateClass); // Update class
-app.delete("/classes", classController.deleteClass); // Delete
+// Routes
+app.get("/test", verifyJWT, usersController.test);
+app.post("/register", usersController.register);
+app.post('/login', usersController.login);
+app.get("/users", usersController.getAllUsers);
 
-app.put("/classes/:classID/add", classController.addToClass); // Add Student/Teacher to Class
-app.put("/classes/:classID/remove", classController.removeFromClass); // Remove Student/Teacher from Class
-app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retrieve Class Students
+app.get("/classes", classController.getAllClasses);
+app.get("/classes/:classID", classController.getClassById);
+app.post("/classes", classController.createClass);
+app.put("/classes/:classID", classController.updateClass);
+app.delete("/classes", classController.deleteClass);
 
-app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
-app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.put("/classes/:classID/add", classController.addToClass);
+app.put("/classes/:classID/remove", classController.removeFromClass);
+app.get("/classes/:classID/classUsers", classController.getClassUsers);
+
+// Announcement routes
+app.get("/announcements", announcementController.getAllAnnouncements);
+app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId);
 app.get('/announcements/:announcementID', announcementController.getAnnouncementById);
-app.post("/announcements", announcementController.createAnnouncement); // Create annoucement
-app.put("/announcements/:announcementID", announcementController.updateAnnouncement); // Update annoucement
-app.delete("/announcements", announcementController.deleteAnnouncement); // Delete annoucement
+app.post("/announcements", verifyJWT, announcementController.createAnnouncement);  // Add verifyJWT here
+app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement);  // And here
+app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement);  // And here
 
-app.get("/assignments", assignmentController.getAllAssignments); // Get all assignments
-app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId); // Get assignments by class ID
-app.get("/assignments/:assignmentID", assignmentController.getAssignmentById); // Get assignment by ID
-app.post("/assignments", assignmentController.createAssignment); // Create assignment
-app.put("/assignments/:assignmentID", assignmentController.updateAssignment); // Update assignment
-app.delete("/assignments", assignmentController.deleteAssignment); // Delete assignment
+app.get("/assignments", assignmentController.getAllAssignments);
+app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId);
+app.get("/assignments/:assignmentID", assignmentController.getAssignmentById);
+app.post("/assignments", verifyJWT, assignmentController.createAssignment);
+app.put("/assignments/:assignmentID", verifyJWT, assignmentController.updateAssignment);
+app.delete("/assignments", verifyJWT, assignmentController.deleteAssignment);
 
-app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
-app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
-app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
-app.post("/feedback", verifyJWT, feedbackController.createFeedback); // Create feedback
+app.post("/registerTeacher", verifyJWT, usersController.register);
+app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass);
+app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID);
+app.post("/feedback", verifyJWT, feedbackController.createFeedback);
 
 app.listen(port, async () => {
   try {

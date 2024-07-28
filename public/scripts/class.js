@@ -1,3 +1,8 @@
+function getAuthHeader() {
+    const token = localStorage.getItem('token');
+    return token ? `Bearer ${token}` : '';
+}
+
 let currentAnnouncementId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.error('No class_id found in the URL');
     }
+
+    document.addEventListener('click', function(event) {
+        if (event.target && event.target.id === 'editClassBtn') {
+            showEditClassModal();
+        }
+        if (event.target && event.target.id === 'deleteClassBtn') {
+            showDeleteClassModal();
+        }
+    });
+
+    document.getElementById('saveClassChanges').addEventListener('click', updateClass);
+    document.getElementById('confirmDeleteClass').addEventListener('click', deleteClass);
 
     // Add event listener for the confirm remove user button
     document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
@@ -34,8 +51,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listener for the confirm edit announcement button
     document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
+
+    // Add event listener for the add assignment button
+    document.getElementById('addAssignmentBtn').addEventListener('click', showAddAssignmentModal);
+
+    // Add event listener for the post assignment button
+    document.getElementById('postAssignmentBtn').addEventListener('click', postAssignment);
+
+    // Add event listener for the delete assignment button
+    document.getElementById('confirmDeleteAssignment').addEventListener('click', deleteAssignment);
+
+    // Add event listener for the save assignment changes button
+    document.getElementById('saveAssignmentChanges').addEventListener('click', showConfirmEditAssignmentModal);
+
+    // Add event listener for the confirm edit assignment button
+    document.getElementById('confirmEditAssignment').addEventListener('click', editAssignment);
+
+    // Add event listener for the edit class button
+    document.getElementById('editClassBtn').addEventListener('click', showEditClassModal);
+
+    // Add event listener for the save class changes button
+    document.getElementById('saveClassChanges').addEventListener('click', updateClass);
 });
 
+function showDeleteClassModal() {
+    const modal = new bootstrap.Modal(document.getElementById('deleteClassModal'));
+    modal.show();
+}
 
 function getClassIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -70,7 +112,11 @@ async function fetchAnnouncements(classId) {
 
 async function fetchAssignments(classId) {
     try {
-        const response = await fetch(`http://localhost:3000/assignments/class/${classId}`);
+        const response = await fetch(`http://localhost:3000/assignments/class/${classId}`, {
+            headers: {
+                'Authorization': getAuthHeader()
+            }
+        });
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -88,6 +134,10 @@ function displayClassDetails(classData) {
             <div class="card-body">
                 <h5 class="card-title">${classData.className} (${classData.classID})</h5>
                 <p class="card-text">${classData.classDes}</p>
+                <div class="btn-group" role="group" aria-label="Class actions">
+                    <button id="editClassBtn" class="btn btn-primary">Edit Class</button>
+                    <button id="deleteClassBtn" class="btn btn-danger">Delete Class</button>
+                </div>
             </div>
         </div>
     `;
@@ -137,6 +187,20 @@ function displayAnnouncements(announcements) {
     });
 }
 
+function showEditClassModal() {
+    const modal = new bootstrap.Modal(document.getElementById('editClassModal'));
+    
+    // Populate the form with current class details
+    const classDetails = document.getElementById('class-details');
+    const className = classDetails.querySelector('.card-title').textContent.split('(')[0].trim();
+    const classDes = classDetails.querySelector('.card-text').textContent;
+    
+    document.getElementById('editClassName').value = className;
+    document.getElementById('editClassDes').value = classDes;
+    
+    modal.show();
+}
+
 function showEditAnnouncementModal(event) {
     const announcementId = event.target.getAttribute('data-announcement-id');
     currentAnnouncementId = announcementId;
@@ -183,6 +247,7 @@ async function editAnnouncement() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()  // Add this line
             },
             body: JSON.stringify(updatedAnnouncementData),
         });
@@ -213,14 +278,29 @@ function displayAssignments(assignments) {
     }
     
     assignmentsList.innerHTML = assignments.map(assignment => `
-        <div class="card mb-3">
+        <div class="card mb-3" data-assignment-id="${assignment.assignmentID}">
             <div class="card-body">
                 <h5 class="card-title">${assignment.assignmentTitle}</h5>
                 <p class="card-text">${assignment.assignmentDes}</p>
+                <p class="card-text"><small class="text-muted">Posted on: ${new Date(assignment.assignmentPostDateTime).toLocaleString()}</small></p>
                 <p class="card-text"><small class="text-muted">Due: ${new Date(assignment.assignmentDueDateTime).toLocaleString()}</small></p>
+                <p class="card-text"><small class="text-muted">Created by: ${assignment.creatorUsername} (${assignment.assignmentCreator})</small></p>
+                ${assignment.editedBy ? `
+                <p class="card-text"><small class="text-muted">Last edited by: ${assignment.editedByUsername} (${assignment.editedBy}) on ${new Date(assignment.editedDateTime).toLocaleString()}</small></p>
+                ` : ''}
+                <button class="btn btn-primary btn-sm edit-assignment" data-assignment-id="${assignment.assignmentID}">Edit</button>
+                <button class="btn btn-danger btn-sm delete-assignment" data-assignment-id="${assignment.assignmentID}">Delete</button>
             </div>
         </div>
     `).join('');
+
+    document.querySelectorAll('.delete-assignment').forEach(button => {
+        button.addEventListener('click', showDeleteAssignmentConfirmation);
+    });
+
+    document.querySelectorAll('.edit-assignment').forEach(button => {
+        button.addEventListener('click', showEditAssignmentModal);
+    });
 }
 
 async function updateClass() {
@@ -238,6 +318,7 @@ async function updateClass() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()
             },
             body: JSON.stringify(updatedData),
         });
@@ -267,6 +348,7 @@ async function deleteClass() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()
             },
             body: JSON.stringify({ classID: classId }),
         });
@@ -280,7 +362,7 @@ async function deleteClass() {
         // Close the modal and redirect to the main page
         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteClassModal'));
         modal.hide();
-        window.location.href = 'landing-page.html';
+        window.location.href = 'landing-page.html'; // or wherever you want to redirect after deletion
     } catch (error) {
         console.error('Error deleting class:', error);
         alert('Failed to delete class. Please try again.');
@@ -543,17 +625,15 @@ async function postAnnouncement() {
     const newAnnouncementData = {
         announcementTitle: title,
         announcementDes: description,
-        announcementClass: classId,
-        creatorID: JSON.parse(localStorage.getItem('user')).id,
-        creatorUsername: JSON.parse(localStorage.getItem('user')).username
+        announcementClass: classId
     };
-    console.log(newAnnouncementData);
 
     try {
         const response = await fetch('http://localhost:3000/announcements', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()
             },
             body: JSON.stringify(newAnnouncementData),
         });
@@ -592,6 +672,7 @@ async function deleteAnnouncement() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()  // Add this line
             },
             body: JSON.stringify({ announcementID: currentAnnouncementId }),
         });
@@ -614,5 +695,196 @@ function removeAnnouncementFromUI(announcementId) {
     const announcementCard = document.querySelector(`[data-announcement-id="${announcementId}"]`);
     if (announcementCard) {
         announcementCard.remove();
+    }
+}
+
+function showAddAssignmentModal() {
+    const addAssignmentModal = new bootstrap.Modal(document.getElementById('addAssignmentModal'));
+    addAssignmentModal.show();
+}
+
+function validateDateTime(date, time) {
+    const now = new Date();
+    const [hours, minutes] = time.split(':').map(Number);
+    const dueDateTime = new Date(date);
+    dueDateTime.setHours(hours, minutes);
+
+    return dueDateTime > now;
+}
+
+async function postAssignment() {
+    const classId = getClassIdFromUrl();
+    const title = document.getElementById('assignmentTitle').value;
+    const description = document.getElementById('assignmentDes').value;
+    const dueDate = document.getElementById('assignmentDueDate').value;
+    const dueTime = document.getElementById('assignmentDueTime').value;
+
+    if (!title || !description || !dueDate || !dueTime) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    if (!validateDateTime(dueDate, dueTime)) {
+        alert('Due date and time must be in the future');
+        return;
+    }
+
+    const dueDateTime = new Date(`${dueDate}T${dueTime}`).toISOString();
+
+    const newAssignmentData = {
+        assignmentTitle: title,
+        assignmentDes: description,
+        assignmentDueDateTime: dueDateTime,
+        assignmentClass: classId
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/assignments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()
+            },
+            body: JSON.stringify(newAssignmentData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const result = await response.json();
+        console.log('Assignment posted successfully:', result);
+        
+        // Close the modal and refresh the assignments
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAssignmentModal'));
+        modal.hide();
+        fetchAssignments(classId);
+
+        // Clear the form
+        document.getElementById('addAssignmentForm').reset();
+    } catch (error) {
+        console.error('Error posting assignment:', error);
+        alert('Failed to post assignment. Please try again.');
+    }
+}
+
+function showDeleteAssignmentConfirmation(event) {
+    const assignmentId = event.target.getAttribute('data-assignment-id');
+    currentAssignmentId = assignmentId;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteAssignmentModal'));
+    modal.show();
+}
+
+async function deleteAssignment() {
+    try {
+        const response = await fetch(`http://localhost:3000/assignments`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()  // Add this line
+            },
+            body: JSON.stringify({ assignmentID: currentAssignmentId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete assignment');
+        }
+
+        removeAssignmentFromUI(currentAssignmentId);
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAssignmentModal'));
+        modal.hide();
+    } catch (error) {
+        console.error('Error deleting assignment:', error);
+        alert('Failed to delete assignment. Please try again.');
+    }
+}
+
+function removeAssignmentFromUI(assignmentId) {
+    const assignmentCard = document.querySelector(`[data-assignment-id="${assignmentId}"]`);
+    if (assignmentCard) {
+        assignmentCard.remove();
+    }
+}
+
+function showEditAssignmentModal(event) {
+    const assignmentId = event.target.getAttribute('data-assignment-id');
+    currentAssignmentId = assignmentId;
+    
+    const assignmentCard = event.target.closest('.card');
+    const title = assignmentCard.querySelector('.card-title').textContent;
+    const description = assignmentCard.querySelector('.card-text').textContent;
+    const dueDateTime = new Date(assignmentCard.querySelector('.text-muted').textContent.replace('Due: ', ''));
+
+    document.getElementById('editAssignmentTitle').value = title;
+    document.getElementById('editAssignmentDes').value = description;
+    document.getElementById('editAssignmentDueDate').value = dueDateTime.toISOString().split('T')[0];
+    document.getElementById('editAssignmentDueTime').value = dueDateTime.toTimeString().split(' ')[0].substr(0, 5);
+
+    const modal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
+    modal.show();
+}
+
+function showConfirmEditAssignmentModal() {
+    const editModal = bootstrap.Modal.getInstance(document.getElementById('editAssignmentModal'));
+    editModal.hide();
+
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmEditAssignmentModal'));
+    confirmModal.show();
+}
+
+async function editAssignment() {
+    const title = document.getElementById('editAssignmentTitle').value;
+    const description = document.getElementById('editAssignmentDes').value;
+    const dueDate = document.getElementById('editAssignmentDueDate').value;
+    const dueTime = document.getElementById('editAssignmentDueTime').value;
+    const classId = getClassIdFromUrl();
+
+    if (!title || !description || !dueDate || !dueTime) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    if (!validateDateTime(dueDate, dueTime)) {
+        alert('Due date and time must be in the future');
+        return;
+    }
+
+    const dueDateTime = new Date(`${dueDate}T${dueTime}`).toISOString();
+
+    const updatedAssignmentData = {
+        assignmentID: currentAssignmentId,
+        assignmentTitle: title,
+        assignmentDes: description,
+        assignmentDueDateTime: dueDateTime,
+        editedBy: JSON.parse(localStorage.getItem('user')).id
+    };
+
+    try {
+        const response = await fetch(`http://localhost:3000/assignments/${currentAssignmentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAuthHeader()
+            },
+            body: JSON.stringify(updatedAssignmentData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const result = await response.json();
+        console.log('Assignment updated successfully:', result);
+        
+        // Close the modal and refresh the assignments
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmEditAssignmentModal'));
+        modal.hide();
+        fetchAssignments(classId);
+
+    } catch (error) {
+        console.error('Error updating assignment:', error);
+        alert('Failed to update assignment. Please try again.');
     }
 }
