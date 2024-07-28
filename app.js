@@ -55,10 +55,10 @@ app.post("/assignments", assignmentController.createAssignment); // Create assig
 app.put("/assignments/:assignmentID", assignmentController.updateAssignment); // Update assignment
 app.delete("/assignments", assignmentController.deleteAssignment); // Delete assignment
 
-app.post("/registerTeacher", verifyJWT, usersController.register); // Create teacher
-app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // Get All User's Classes
-app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
-app.post("/feedback", verifyJWT, feedbackController.createFeedback); // Create feedback
+app.post("/registerTeacher", usersController.register); // Create teacher
+app.get("/userClasses/:userID", classController.getAllUserClass); // Get All User's Classes
+app.get("/feedback/:classID", feedbackController.getFeedbacksByClassID); // Get feedbacks
+app.post("/feedback", feedbackController.createFeedback); // Create feedback
 
 app.listen(port, async () => {
   try {

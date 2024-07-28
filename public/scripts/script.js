@@ -157,28 +157,36 @@ if (window.location.href.includes("main.html")) {
 
 // ADMIN MAIN PAGE
 // =================================
-if (window.location.href.includes("landingPage.html")) {
+if (window.location.href.includes("landingPage.html") || window.location.href.includes("home.html")) {
   document.addEventListener('DOMContentLoaded', () => {
     fetchClasses();
   
-    const form = document.getElementById('createClassForm');
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        createClass();
-    });
+    if (window.location.href.includes("landingPage.html")) {
+      const form = document.getElementById('createClassForm');
+      form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          createClass();
+      });
+    }
   });
 }
 
 async function fetchClasses() {
   try {
       console.log('Fetching classes...');
-      const response = await fetch('http://localhost:3000/classes');
+      var retrievedData = localStorage.getItem('data');
+      var user = JSON.parse(retrievedData)
+      var response;
+      if (window.location.href.includes("landingPage.html")) {
+        response = await fetch('http://localhost:3000/classes');
+      } else {
+        response = await fetch(`http://localhost:3000/userClasses/${user.id}`);
+      }
       console.log('Response status:', response.status);
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
       }
       const data = await response.json();
-      console.log('Fetched data:', data);
       const classList = document.getElementById('class-list');
       if (!classList) {
           console.error('class-list element not found in the DOM');
@@ -195,10 +203,16 @@ async function fetchClasses() {
       data.forEach((classItem) => {
           const classElement = document.createElement('div');
           classElement.className = 'col';
+          classElement.style = 'padding: 10px;';
+          if (window.location.href.includes("landingPage.html")) {
+            link = 'adminClass';
+          } else {
+            link = 'class';
+          }
           classElement.innerHTML = `
               <div class="card h-100">
                   <div class="card-body">
-                      <h5 class="card-title"><a href="class.html?class_id=${classItem.classID}">${classItem.className}</a> (${classItem.classID})</h5>
+                      <h5 class="card-title"><a href="${link}.html?class_id=${classItem.classID}">${classItem.className}</a> (${classItem.classID})</h5>
                       <p class="card-text">${classItem.classDes}</p>
                   </div>
               </div>

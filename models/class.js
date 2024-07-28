@@ -156,7 +156,6 @@ class Class {
         sqlQuery2 = sqlQuery2.trim().slice(0, -11);
         
         const result2 = await request.query(sqlQuery2);
-        console.log(result2.recordset)
 
         connection.close();
         return result2.recordset;
