@@ -34,34 +34,6 @@
         <div id="class-users-list"></div>
     </div>
 
-        <!-- Edit Class Modal -->
-    <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editClassModalLabel">Edit Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editClassForm">
-                        <div class="mb-3">
-                            <label for="editClassName" class="form-label">Class Name</label>
-                            <input type="text" class="form-control" id="editClassName" name="editClassName">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editClassDes" class="form-label">Class Description</label>
-                            <textarea class="form-control" id="editClassDes" name="editClassDes" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="updateClass()">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Delete Class Modal -->
     <div class="modal fade" id="deleteClassModal" tabindex="-1" aria-labelledby="deleteClassModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -162,34 +134,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Edit Announcement Modal -->
-      <div class="modal fade" id="editAnnouncementModal" tabindex="-1" aria-labelledby="editAnnouncementModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editAnnouncementModalLabel">Edit Announcement</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editAnnouncementForm">
-                        <div class="mb-3">
-                            <label for="editAnnouncementTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="editAnnouncementTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editAnnouncementDes" class="form-label">Description</label>
-                            <textarea class="form-control" id="editAnnouncementDes" rows="3" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="confirmEditAnnouncement">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Delete Announcement Modal -->
     <div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" aria-labelledby="deleteAnnouncementModalLabel" aria-hidden="true">

@@ -49,12 +49,11 @@ const createAnnouncement = async (req, res) => {
 
 const updateAnnouncement = async (req, res) => {
     const announcementID = req.params.announcementID;
-    const updatedData = req.body;
-    const editorID = req.user.id; // Assuming you have user information in the request
+    const updatedAnnouncement = req.body;
 
     try {
-        const updatedAnnouncement = await Announcement.updateAnnouncement(announcementID, updatedData, editorID);
-        res.json(updatedAnnouncement);
+        const announcement = await Announcement.updateAnnouncement(announcementID, updatedAnnouncement);
+        res.json(announcement);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error updating announcement");

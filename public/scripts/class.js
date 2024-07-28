@@ -24,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add event listener for the post announcement button
     document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
 
-    // Add event listener for the edit class button
-    document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
-
     // Add event listener for the delete class button
     document.getElementById('confirmDeleteAnnouncement').addEventListener('click', deleteAnnouncement);
 });
@@ -45,7 +42,6 @@ async function fetchClassDetails(classId) {
         }
         const classData = await response.json();
         displayClassDetails(classData);
-        populateEditForm(classData);
     } catch (error) {
         console.error('Error fetching class details:', error);
     }
@@ -111,23 +107,10 @@ function displayAnnouncements(announcements) {
                         Created by: ${announcement.creatorUsername} (${announcement.announcementCreator})
                     </small>
                 </p>
-                ${announcement.editedBy ? `
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Edited by: ${announcement.editedByUsername} (${announcement.editedBy}) on ${new Date(announcement.editedDateTime).toLocaleString()}
-                        </small>
-                    </p>
-                ` : ''}
-                <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
                 <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
             </div>
         </div>
     `).join('');
-
-    // Add event listeners for edit and delete buttons
-    document.querySelectorAll('.edit-announcement').forEach(button => {
-        button.addEventListener('click', showEditAnnouncementModal);
-    });
 
     document.querySelectorAll('.delete-announcement').forEach(button => {
         button.addEventListener('click', showDeleteAnnouncementConfirmation);
@@ -150,11 +133,6 @@ function displayAssignments(assignments) {
             </div>
         </div>
     `).join('');
-}
-
-function populateEditForm(classData) {
-    document.getElementById('editClassName').value = classData.className;
-    document.getElementById('editClassDes').value = classData.classDes;
 }
 
 async function updateClass() {
