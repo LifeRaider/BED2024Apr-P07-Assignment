@@ -232,6 +232,34 @@ class Class {
             await connection.close();
         }
     }
+
+    static async createSyllabus(classID, syllabusSubject, syllabusContent) {
+        const connection = await sql.connect(dbConfig);
+        const sqlQuery = `
+            INSERT INTO Syllabus (classID, syllabusSubject, syllabusContent)
+            OUTPUT INSERTED.syllabusID
+            VALUES (@classID, @syllabusContent);
+        `;
+        const request = connection.request();
+        request.input("classID", sql.VarChar, classID);
+        request.input("syllabusContent", sql.NVarChar, syllabusContent);
+        request.input("syllabusSubject", sql.NVarChar, syllabusSubject);
+        const result = await request.query(sqlQuery);
+        connection.close();
+        return result.recordset[0];
+    }
+
+    static async getSyllabusByClassId(classID) {
+        const connection = await sql.connect(dbConfig);
+        const sqlQuery = `
+            SELECT * FROM Syllabus WHERE classID = @classID;
+        `;
+        const request = connection.request();
+        request.input("classID", sql.VarChar, classID);
+        const result = await request.query(sqlQuery);
+        connection.close();
+        return result.recordset; // Return the syllabus recordset
+    }
 }
     
 module.exports = Class;

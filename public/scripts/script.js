@@ -167,6 +167,12 @@ if (window.location.href.includes("landingPage.html")) {
         createClass();
     });
   });
+
+  const createSyllabusForm = document.getElementById('createSyllabusForm');
+  createSyllabusForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      createSyllabus();
+  });
 }
 
 async function fetchClasses() {
@@ -249,3 +255,80 @@ async function createClass() {
       alert('An error occurred while creating the class.');
   }
 }
+
+
+async function createSyllabus() {
+  const classID = document.getElementById('syllabusClassID').value;
+  const syllabusSubject = document.getElementById('syllabusSubject').value;
+  const syllabusContent = document.getElementById('syllabusContent').value;
+
+  const newSyllabus = {
+    classID: classID,
+    syllabusSubject: syllabusSubject,
+    syllabusContent: syllabusContent
+  };
+
+  try {
+    const response = await fetch('http://localhost:3000/syllabus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newSyllabus),
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error('Network response was not ok: ' + errorMessage);
+    }
+
+    const data = await response.json();
+    console.log('Success:', data);
+    alert('Syllabus created successfully!');
+    document.getElementById('createSyllabusForm').reset();
+    document.querySelector('#createSyllabusModal .btn-close').click(); // Close the modal
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while creating the syllabus.');
+  }
+}
+
+async function getSyllabusByClassId(classID) {
+  try {
+    const response = await fetch(`http://localhost:3000/syllabus/${classID}`);
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+
+    const data = await response.json();
+    const syllabusDetails = document.getElementById('syllabus-details');
+    syllabusDetails.innerHTML = '';
+
+    if (data.length === 0) {
+      syllabusDetails.innerHTML = '<p>No syllabus available for this class.</p>';
+      return;
+    }
+
+    data.forEach((syllabus) => {
+      const syllabusElement = document.createElement('div');
+      syllabusElement.className = 'syllabus-item';
+      syllabusElement.innerHTML = `
+        <h3>Syllabus ID: ${syllabus.syllabusID}</h3>
+        <p>${syllabus.syllabusContent}</p>
+      `;
+      syllabusDetails.appendChild(syllabusElement);
+    });
+  } catch (error) {
+    console.error('Error fetching syllabus:', error);
+    document.getElementById('syllabus-details').innerHTML = '<p>Error loading syllabus. Please try again later.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.href.includes("class.html")) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const classID = urlParams.get('class_id');
+    getSyllabusByClassId(classID);
+  }
+});

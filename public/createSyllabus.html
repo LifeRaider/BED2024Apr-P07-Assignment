@@ -1,0 +1,30 @@
+
+<div class="modal fade" id="createSyllabusModal" tabindex="-1" aria-labelledby="createSyllabusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createSyllabusModalLabel">Create Syllabus</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createSyllabusForm">
+            <div class="mb-3">
+              <label for="syllabusClassID" class="form-label">Class ID</label>
+              <input type="text" class="form-control" id="syllabusClassID" required>
+            </div>
+            <div class="mb-3">
+              <label for="syllabusContent" class="form-label">Syllabus Content</label>
+              <textarea class="form-control" id="syllabusContent" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Syllabus</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="syllabus-content">
+    <h2>Syllabus Content</h2>
+    <div id="syllabus-details"></div>
+  </div>
+  

@@ -187,3 +187,14 @@ Select * From Feedbacks
 SELECT * FROM Feedbacks WHERE classID LIKE 'Class01'
 
 SELECT * FROM Feedbacks WHERE fbId LIKE 'F001'
+
+CREATE TABLE Syllabus (
+    syllabusID VARCHAR(4) PRIMARY KEY,
+    classID VARCHAR(7) FOREIGN KEY REFERENCES Classes(classID),
+	syllabusSubject NVARCHAR(MAX),
+    syllabusContent NVARCHAR(MAX)
+);
+
+INSERT INTO Syllabus VALUES
+('S001', 'Class01', 'Mathematics', 'Differentiation and Integration topics'),
+('S002', 'Class02', 'English', 'Grammar and Literature topics');

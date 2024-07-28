@@ -60,6 +60,10 @@ app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass); // 
 app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID); // Get feedbacks
 app.post("/feedback", verifyJWT, feedbackController.createFeedback); // Create feedback
 
+app.post("/syllabus", classController.createSyllabus);//Create Syllabus
+app.get("/syllabus/:classID", classController.getSyllabusByClassId);//Get Syllabus by Class ID
+
+
 app.listen(port, async () => {
   try {
     // Connect to the database

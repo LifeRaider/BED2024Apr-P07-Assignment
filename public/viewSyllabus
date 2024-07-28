@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Syllabus</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Syllabus Details</h1>
+  </header>
+  <main>
+    <div id="syllabus-container">
+      <h2 id="class-title">Class: </h2>
+      <div id="syllabus-details"></div>
+    </div>
+  </main>
+  <script src="app.js"></script> 
+</body>
+</html>

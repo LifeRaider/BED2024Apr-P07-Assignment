@@ -110,6 +110,31 @@ const deleteClass = async (req, res) => {
   }
 };
 
+const getSyllabusByClassId = async (req, res) => {
+  const syllabusID = req.params.classID;
+  try {
+    const classObj = await Class.getSyllabusByClassId(syllabusID);
+    if (!classObj) {
+      return res.status(404).send("Syllabus not found");
+    }
+    res.json(classObj);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving syllabus");
+  }
+};
+
+const createSyllabus = async (req, res) => {
+  const newSyllabus = req.body;
+  try {
+    const createdSyllabus = await Class.createSyllabus(newSyllabus);
+    res.status(201).json(createdSyllabus);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating syllabus");
+  }
+};
+
 module.exports = {
   getAllClasses,
   getClassById,
@@ -119,5 +144,7 @@ module.exports = {
   getAllUserClass,
   updateClass,
   deleteClass,
-  removeFromClass
+  removeFromClass,
+  getSyllabusByClassId,
+  createSyllabus
 };
