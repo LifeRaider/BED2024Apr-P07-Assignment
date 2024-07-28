@@ -37,11 +37,17 @@ const getAnnouncementById = async (req, res) => {
 
 const createAnnouncement = async (req, res) => {
     const newAnnouncement = req.body;
-    const creatorID = req.user.id; // Correct field name
+
+    // Check if user information is available
+    if (req.user && req.user.id) {
+        newAnnouncement.announcementCreator = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
 
     try {
-        const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement, creatorID);
-        res.status(201).json(createdAnnouncement); // Return the created announcement
+        const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement);
+        res.status(201).json(createdAnnouncement);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error creating announcement");
@@ -50,12 +56,18 @@ const createAnnouncement = async (req, res) => {
 
 const updateAnnouncement = async (req, res) => {
     const announcementID = req.params.announcementID;
-    const updatedData = req.body;
-    const editorID = req.user.id; // Assuming you have user information in the request
+    const updatedAnnouncement = req.body;
+
+    // Check if user information is available
+    if (req.user && req.user.id) {
+        updatedAnnouncement.editedBy = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
 
     try {
-        const updatedAnnouncement = await Announcement.updateAnnouncement(announcementID, updatedData, editorID);
-        res.json(updatedAnnouncement);
+        const announcement = await Announcement.updateAnnouncement(announcementID, updatedAnnouncement);
+        res.json(announcement);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error updating announcement");
@@ -64,6 +76,8 @@ const updateAnnouncement = async (req, res) => {
 
 const deleteAnnouncement = async (req, res) => {
     const { announcementID } = req.body;
+
+    // You might want to add a check here to ensure the user has permission to delete the announcement
 
     try {
         await Announcement.deleteAnnouncement(announcementID);

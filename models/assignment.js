@@ -2,7 +2,7 @@ const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class Assignment {
-    constructor(assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass) {
+    constructor(assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass, editedBy, editedDateTime) {
         this.assignmentID = assignmentID;
         this.assignmentTitle = assignmentTitle;
         this.assignmentDes = assignmentDes;
@@ -10,27 +10,52 @@ class Assignment {
         this.assignmentDueDateTime = assignmentDueDateTime;
         this.assignmentCreator = assignmentCreator;
         this.assignmentClass = assignmentClass;
+        this.editedBy = editedBy;
+        this.editedDateTime = editedDateTime;
     }
 
     static async getAllAssignments() {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Assignments`;
+        const sqlQuery = `
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Assignments a
+            LEFT JOIN Users u1 ON a.assignmentCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+        `;
 
         const request = connection.request();
         const result = await request.query(sqlQuery);
 
         connection.close();
 
-        return result.recordset.map(
-            (row) => new Assignment(row.assignmentID, row.assignmentTitle, row.assignmentDes, row.assignmentPostDateTime, row.assignmentDueDateTime, row.assignmentCreator, row.assignmentClass)
-        );
+        return result.recordset.map(row => ({
+            ...new Assignment(
+                row.assignmentID,
+                row.assignmentTitle,
+                row.assignmentDes,
+                row.assignmentPostDateTime,
+                row.assignmentDueDateTime,
+                row.assignmentCreator,
+                row.assignmentClass,
+                row.editedBy,
+                row.editedDateTime
+            ),
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
+        }));
     }
 
     static async getAssignmentsByClassId(classID) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Assignments WHERE assignmentClass = @classID`;
+        const sqlQuery = `
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Assignments a
+            LEFT JOIN Users u1 ON a.assignmentCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+            WHERE a.assignmentClass = @classID
+        `;
 
         const request = connection.request();
         request.input("classID", classID);
@@ -38,23 +63,33 @@ class Assignment {
 
         connection.close();
 
-        return result.recordset.map(row => 
-            new Assignment(
+        return result.recordset.map(row => ({
+            ...new Assignment(
                 row.assignmentID,
                 row.assignmentTitle,
                 row.assignmentDes,
                 row.assignmentPostDateTime,
                 row.assignmentDueDateTime,
                 row.assignmentCreator,
-                row.assignmentClass
-            )
-        );
+                row.assignmentClass,
+                row.editedBy,
+                row.editedDateTime
+            ),
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
+        }));
     }
 
     static async getAssignmentById(assignmentID) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Assignments WHERE assignmentID = @assignmentID`;
+        const sqlQuery = `
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Assignments a
+            LEFT JOIN Users u1 ON a.assignmentCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+            WHERE a.assignmentID = @assignmentID
+        `;
 
         const request = connection.request();
         request.input("assignmentID", assignmentID);
@@ -67,18 +102,24 @@ class Assignment {
         }
 
         const row = result.recordset[0];
-        return new Assignment(
-            row.assignmentID,
-            row.assignmentTitle,
-            row.assignmentDes,
-            row.assignmentPostDateTime,
-            row.assignmentDueDateTime,
-            row.assignmentCreator,
-            row.assignmentClass
-        );
+        return {
+            ...new Assignment(
+                row.assignmentID,
+                row.assignmentTitle,
+                row.assignmentDes,
+                row.assignmentPostDateTime,
+                row.assignmentDueDateTime,
+                row.assignmentCreator,
+                row.assignmentClass,
+                row.editedBy,
+                row.editedDateTime
+            ),
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
+        };
     }
 
-    static async createAssignment(newAssignmentData, creatorID) {
+    static async createAssignment(newAssignmentData) {
         const connection = await sql.connect(dbConfig);
 
         const sqlQuery = `
@@ -87,7 +128,7 @@ class Assignment {
             FROM Assignments;
 
             INSERT INTO Assignments (assignmentID, assignmentTitle, assignmentDes, assignmentPostDateTime, assignmentDueDateTime, assignmentCreator, assignmentClass)
-            VALUES (@newID, @assignmentTitle, @assignmentDes, GETDATE(), @assignmentDueDateTime, @assignmentCreator, @assignmentClass);
+            VALUES (@newID, @assignmentTitle, @assignmentDes, SYSUTCDATETIME(), @assignmentDueDateTime, @assignmentCreator, @assignmentClass);
 
             SELECT @newID AS newID;
         `;
@@ -96,7 +137,7 @@ class Assignment {
         request.input("assignmentTitle", newAssignmentData.assignmentTitle);
         request.input("assignmentDes", newAssignmentData.assignmentDes);
         request.input("assignmentDueDateTime", newAssignmentData.assignmentDueDateTime);
-        request.input("assignmentCreator", creatorID);
+        request.input("assignmentCreator", newAssignmentData.creatorID);
         request.input("assignmentClass", newAssignmentData.assignmentClass);
 
         const result = await request.query(sqlQuery);
@@ -125,9 +166,9 @@ class Assignment {
             updateFields.push("assignmentDueDateTime = @assignmentDueDateTime");
             request.input("assignmentDueDateTime", updatedAssignmentData.assignmentDueDateTime);
         }
-        if (updatedAssignmentData.assignmentClass !== undefined) {
-            updateFields.push("assignmentClass = @assignmentClass");
-            request.input("assignmentClass", updatedAssignmentData.assignmentClass);
+        if (updatedAssignmentData.editedBy !== undefined) {
+            updateFields.push("editedBy = @editedBy, editedDateTime = SYSUTCDATETIME()");
+            request.input("editedBy", updatedAssignmentData.editedBy);
         }
 
         if (updateFields.length === 0) {
@@ -138,15 +179,40 @@ class Assignment {
             UPDATE Assignments
             SET ${updateFields.join(", ")}
             WHERE assignmentID = @assignmentID;
+
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Assignments a
+            LEFT JOIN Users u1 ON a.assignmentCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+            WHERE a.assignmentID = @assignmentID;
         `;
 
         request.input("assignmentID", assignmentID);
 
-        await request.query(sqlQuery);
+        const result = await request.query(sqlQuery);
 
         connection.close();
 
-        return this.getAssignmentById(assignmentID);
+        if (result.recordset.length === 0) {
+            throw new Error('Assignment not found');
+        }
+
+        const updatedAssignment = result.recordset[0];
+        return {
+            ...new Assignment(
+                updatedAssignment.assignmentID,
+                updatedAssignment.assignmentTitle,
+                updatedAssignment.assignmentDes,
+                updatedAssignment.assignmentPostDateTime,
+                updatedAssignment.assignmentDueDateTime,
+                updatedAssignment.assignmentCreator,
+                updatedAssignment.assignmentClass,
+                updatedAssignment.editedBy,
+                updatedAssignment.editedDateTime
+            ),
+            creatorUsername: updatedAssignment.creatorUsername,
+            editedByUsername: updatedAssignment.editedByUsername
+        };
     }
 
     static async deleteAssignment(assignmentID) {
