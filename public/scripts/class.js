@@ -118,7 +118,7 @@ function displayAnnouncements(announcements) {
                         </small>
                     </p>
                 ` : ''}
-                ${window.location.href.includes("adminClass.html") ? `
+                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
                     <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
                     <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
                 ` : ``}
@@ -259,7 +259,7 @@ function displayClassUsers(users) {
                 <h5 class="card-title">${user.username} (${user.userID})</h5>
                 <p class="card-text">Role: ${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</p>
                 <p class="card-text">Email: ${user.email}</p>
-                ${(window.location.href.includes("adminClass.html")) ? `
+                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
                     <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">Remove User</button>
                 ` : ``}
                 

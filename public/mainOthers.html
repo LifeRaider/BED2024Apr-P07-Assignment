@@ -15,15 +15,19 @@
     <nav class="navbar">
       <button><img src="assets/BJs-logo.png"></button>
       <ul>
-          <li><a href="#Home">Home</a></li>
-          <li><a href="#Announcement">Announcement</a></li>
-          <li><a href="#Assignments">Assignments</a></li>
-          <li><a href="#Tests">Tests</a></li>
-          <li><a href="#Overview">Overview</a></li>
-          <li><a href="#Feedback">Feedback</a></li>
-        </ul>
+          <li><a href="mainAdmin.html">Classes</a></li>
+          <li><a href="adminTeachers.html">Teachers</a></li>
+          <li><a href="adminParents.html">Parents</a></li>
+          <li><a href="adminStudents.html">Students</a></li>
+      </ul>
     </nav>
-    <section id="test">
+
+    <section>
+      <div class="welcome">
+        <h1 id="main-title">Welcome </h1>
+        <button onclick="logout()" style="height: 30px; width: fit-content; background-color: rgb(62, 80, 82);">Logout</button>
+      </div>
+
       <div class="classes-container" style="background-color: #fcf2ec; padding: 40px;">
         <h1>Class List</h1>
         <div id="class-list" class="row row-cols-1 row-cols-md-3">
