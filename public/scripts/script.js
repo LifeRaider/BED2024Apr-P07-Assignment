@@ -131,8 +131,6 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
           window.location.href = "main.html"
         } else {
           document.body.style.display = 'block';
-          const userInfoDiv = document.getElementById('main-title');
-          userInfoDiv.innerHTML += data.user.id.slice(0, 4);
         }
         return data;
       }
@@ -148,22 +146,31 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       }
     });
 
+// main page
+if (window.location.href.includes("main.html")) {
+  const userInfoDiv = document.getElementById('main-title');
+  userInfoDiv.innerHTML += data.user.id.slice(0, 4);
+}
+
 // ADMIN MAIN PAGE
 // =================================
-document.addEventListener('DOMContentLoaded', () => {
-  fetchClasses();
-
-  const form = document.getElementById('createClassForm');
-  form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      createClass();
+if (window.location.href.includes("landingPage.html")) {
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchClasses();
+  
+    const form = document.getElementById('createClassForm');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        createClass();
+    });
   });
-});
+}
 
 async function fetchClasses() {
   try {
       console.log('Fetching classes...');
       const response = await fetch('http://localhost:3000/classes');
+      print("HI im herre")
       console.log('Response status:', response.status);
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);

@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000; // Use environment variable or default po
 
 const staticMiddleware = express.static("public"); // Path to the public folder
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
