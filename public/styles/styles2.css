@@ -210,7 +210,7 @@ footer{
     text-decoration: none;
     color: #000;
      /* existing styles */
-    background-image: linear-gradient(to left, #fff 50%, #ff885d 50%);
+    background-image: linear-gradient(to left, #fff0 50%, #ff885d 50%);
     background-size: 201% 100%;
     background-position: 100% 100%;
     transition: background-position 0.25s ease-in-out;

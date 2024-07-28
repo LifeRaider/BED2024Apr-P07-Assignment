@@ -37,34 +37,30 @@ app.post("/classes", classController.createClass);
 app.put("/classes/:classID", classController.updateClass);
 app.delete("/classes", classController.deleteClass);
 
-app.put("/classes/:classID/add", classController.addToClass);
-app.put("/classes/:classID/remove", classController.removeFromClass);
-app.get("/classes/:classID/classUsers", classController.getClassUsers);
-
 // Classes
 app.put("/classes/:classID/add", classController.addToClass); // Add Student/Teacher to Class
 app.put("/classes/:classID/remove", classController.removeFromClass); // Remove Student/Teacher from Class
 app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retrieve Class Students
 
 // Announcement routes
-app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
-app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
+app.get("/announcements", announcementController.getAllAnnouncements);
+app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId);
 app.get('/announcements/:announcementID', announcementController.getAnnouncementById);
-app.post("/announcements", announcementController.createAnnouncement); // Create annoucement
-app.put("/announcements/:announcementID", announcementController.updateAnnouncement); // Update annoucement
-app.delete("/announcements", announcementController.deleteAnnouncement); // Delete annoucement
+app.post("/announcements", verifyJWT, announcementController.createAnnouncement);  // Add verifyJWT here
+app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement);  // And here
+app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement);  // And here
 
-app.get("/assignments", assignmentController.getAllAssignments); // Get all assignments
-app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId); // Get assignments by class ID
-app.get("/assignments/:assignmentID", assignmentController.getAssignmentById); // Get assignment by ID
-app.post("/assignments", assignmentController.createAssignment); // Create assignment
-app.put("/assignments/:assignmentID", assignmentController.updateAssignment); // Update assignment
-app.delete("/assignments", assignmentController.deleteAssignment); // Delete assignment
+app.get("/assignments", assignmentController.getAllAssignments);
+app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId);
+app.get("/assignments/:assignmentID", assignmentController.getAssignmentById);
+app.post("/assignments", verifyJWT, assignmentController.createAssignment);
+app.put("/assignments/:assignmentID", verifyJWT, assignmentController.updateAssignment);
+app.delete("/assignments", verifyJWT, assignmentController.deleteAssignment);
 
-app.post("/registerTeacher", usersController.register); // Create teacher
-app.get("/userClasses/:userID", classController.getAllUserClass); // Get All User's Classes
-app.get("/feedback/:classID", feedbackController.getFeedbacksByClassID); // Get feedbacks
-app.post("/feedback", feedbackController.createFeedback); // Create feedback
+app.post("/registerTeacher", verifyJWT, usersController.register);
+app.get("/userClasses/:userID", verifyJWT, classController.getAllUserClass);
+app.get("/feedback/:classID", verifyJWT, feedbackController.getFeedbacksByClassID);
+app.post("/feedback", verifyJWT, feedbackController.createFeedback);
 
 app.listen(port, async () => {
   try {

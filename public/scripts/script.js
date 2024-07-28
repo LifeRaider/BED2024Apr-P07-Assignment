@@ -149,6 +149,17 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       }
     });
 
+if ((window.location.href.includes("main.html")) && !(window.location.href.includes("mainAdmin.html")) && !(window.location.href.includes("mainOthers.html"))) {
+  var retrievedData = localStorage.getItem('data');
+  var user = JSON.parse(retrievedData)
+  console.log(user)
+  if (user.userType == "admin") {
+    window.location.href = "mainAdmin.html"
+  } else {
+    window.location.href = "mainOthers.html"
+  }
+}
+
 // main page
 if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
   const userInfoDiv = document.getElementById('main-title');
@@ -193,7 +204,7 @@ async function fetchClasses() {
       if (window.location.href.includes("mainAdmin.html")) {
         response = await fetch('http://localhost:3000/classes');
       } else {
-        response = await fetch(`http://localhost:3000/userClasses/${user.id}`);
+        response = await fetch(`http://localhost:3000/userClasses/${user.id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
       }
       console.log('Response status:', response.status);
       if (!response.ok) {

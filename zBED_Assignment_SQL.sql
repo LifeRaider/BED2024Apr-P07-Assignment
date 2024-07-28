@@ -75,6 +75,21 @@ Create Table Class04 (
 	FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
+Create Table Class05 (
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
+);
+
+Create Table Class06 (
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
+);
+
+Create Table Class07 (
+	userID VARCHAR(4) PRIMARY KEY,
+	FOREIGN KEY (userID) REFERENCES Users(userID)
+);
+
 -- Feedback
 
 Create Table Feedbacks (
