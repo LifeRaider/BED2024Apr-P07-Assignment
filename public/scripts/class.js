@@ -365,7 +365,7 @@ async function deleteClass() {
         // Close the modal and redirect to the main page
         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteClassModal'));
         modal.hide();
-        window.location.href = 'landing-page.html'; // or wherever you want to redirect after deletion
+        window.location.href = 'mainAdmin.html'; // or wherever you want to redirect after deletion
     } catch (error) {
         console.error('Error deleting class:', error);
         alert('Failed to delete class. Please try again.');
