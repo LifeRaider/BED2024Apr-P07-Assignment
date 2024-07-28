@@ -119,7 +119,7 @@ async function login() {
 // logout function
 async function logout() {
   localStorage.setItem('token', null);
-  window.location.replace(`/public/login.html`)
+  window.location.replace(`login.html`)
 }
 
 // Authentification check
@@ -143,7 +143,7 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       console.error('Error:', error);
       localStorage.setItem('info', null);
       if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
-        window.location.href = '/public/login.html'; // Redirect to login`
+        window.location.href = '/public/login.html'; // Redirect to login
       } else {
         document.body.style.display = 'block';
       }

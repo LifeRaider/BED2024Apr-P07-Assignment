@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const sql = require("mssql");
 const dbConfig = require("./dbConfig");
-const bodyParser = require("body-parser"); // Import body-parser
+const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger-output.json"); // Import generated spec
+const swaggerDocument = require("./swagger-output.json");
 const usersController = require("./controllers/usersController");
 const classController = require("./controllers/classController");
 const assignmentController = require("./controllers/assignmentController");
@@ -13,34 +13,40 @@ const feedbackController = require("./controllers/feedbackController");
 const verifyJWT = require("./middlewares/authorization.js");
 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable or default port
+const port = process.env.PORT || 3000;
 
-const staticMiddleware = express.static("public"); // Path to the public folder
+const staticMiddleware = express.static("public");
 
 app.use(cors({ origin: '*' }));
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
-app.use(staticMiddleware); // Mount the static middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(staticMiddleware);
 
-// Serve the Swagger UI at a specific route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// Routes for requests
-app.get("/test", verifyJWT, usersController.test); // Authorize users
-app.post("/register", usersController.register); // Create user
-app.post('/login', usersController.login); // Login user
-app.get("/users", usersController.getAllUsers); // Get all users
 
-app.get("/classes", classController.getAllClasses); // Get all classes
-app.get("/classes/:classID", classController.getClassById); // Get class by ID
-app.post("/classes", classController.createClass); // Create class
-app.put("/classes/:classID", classController.updateClass); // Update class
-app.delete("/classes", classController.deleteClass); // Delete
+// Routes
+app.get("/test", verifyJWT, usersController.test);
+app.post("/register", usersController.register);
+app.post('/login', usersController.login);
+app.get("/users", usersController.getAllUsers);
 
+app.get("/classes", classController.getAllClasses);
+app.get("/classes/:classID", classController.getClassById);
+app.post("/classes", classController.createClass);
+app.put("/classes/:classID", classController.updateClass);
+app.delete("/classes", classController.deleteClass);
+
+app.put("/classes/:classID/add", classController.addToClass);
+app.put("/classes/:classID/remove", classController.removeFromClass);
+app.get("/classes/:classID/classUsers", classController.getClassUsers);
+
+// Classes
 app.put("/classes/:classID/add", classController.addToClass); // Add Student/Teacher to Class
 app.put("/classes/:classID/remove", classController.removeFromClass); // Remove Student/Teacher from Class
 app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retrieve Class Students
 
+// Announcement routes
 app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
 app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
 app.get('/announcements/:announcementID', announcementController.getAnnouncementById);

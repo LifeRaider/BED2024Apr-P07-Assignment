@@ -24,7 +24,7 @@ const getAssignmentsByClassId = async (req, res) => {
     }
 }
 
-const getAssignmentById = async (req, res) => { // Correct function name
+const getAssignmentById = async (req, res) => {
     const assignmentID = req.params.assignmentID;
     try {
         const assignment = await Assignment.getAssignmentById(assignmentID);
@@ -37,20 +37,31 @@ const getAssignmentById = async (req, res) => { // Correct function name
 
 const createAssignment = async (req, res) => {
     const newAssignment = req.body;
-    const creatorID = req.user.id; // Correct field name
+    
+    if (req.user && req.user.id) {
+        newAssignment.creatorID = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
 
     try {
-        const createdAssignment = await Assignment.createAssignment(newAssignment, creatorID);
-        res.status(201).json(createdAssignment); // Return the created assignment
+        const createdAssignment = await Assignment.createAssignment(newAssignment);
+        res.status(201).json(createdAssignment);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error creating assignment");
     }
-}
+};
 
 const updateAssignment = async (req, res) => {
     const assignmentID = req.params.assignmentID;
     const updatedAssignment = req.body;
+    
+    if (req.user && req.user.id) {
+        updatedAssignment.editedBy = req.user.id;
+    } else {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
 
     try {
         const assignment = await Assignment.updateAssignment(assignmentID, updatedAssignment);
@@ -59,7 +70,7 @@ const updateAssignment = async (req, res) => {
         console.error(error);
         res.status(500).send("Error updating assignment");
     }
-}
+};
 
 const deleteAssignment = async (req, res) => {
     const assignmentID = req.body.assignmentID;
