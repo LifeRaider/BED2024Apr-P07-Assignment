@@ -2,7 +2,7 @@ require('dotenv').config();
 const jwt = require("jsonwebtoken");
 
 function verifyJWT(req, res, next) {
-    console.log('Verifying JWT for path:', req.path); // Log the path being accessed
+    // console.log('Verifying JWT for path:', req.path); // Log the path being accessed
 
     const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
 
@@ -17,7 +17,7 @@ function verifyJWT(req, res, next) {
             return res.status(403).json({ message: "Forbidden" });
         }
 
-        console.log('Decoded token:', decoded); // Log the decoded token
+        // console.log('Decoded token:', decoded); // Log the decoded token
 
         // Check user role for authorization (replace with your logic)
         const authorizedRoles = {
@@ -35,8 +35,8 @@ function verifyJWT(req, res, next) {
         const requestedEndpoint = req.path; // Use req.path instead of req.url
         const userType = decoded.userType;
 
-        console.log('Requested endpoint:', requestedEndpoint);
-        console.log('User type:', userType);
+        // console.log('Requested endpoint:', requestedEndpoint);
+        // console.log('User type:', userType);
 
         const authorizedRole = Object.entries(authorizedRoles).find(
             ([endpoint, roles]) => {
