@@ -12,6 +12,7 @@ Create Table Users (
 
 -- Annoucements Table
 
+-- Create Announcements Table
 CREATE TABLE Announcements (
     announcementID VARCHAR(9) PRIMARY KEY,
     announcementTitle VARCHAR(50),
@@ -19,10 +20,15 @@ CREATE TABLE Announcements (
     announcementDateTime DATETIME,
     announcementCreator VARCHAR(4),
     announcementClass VARCHAR(7),
+    editedBy VARCHAR(4),
+    editedDateTime DATETIME,
     FOREIGN KEY (announcementCreator) REFERENCES Users(userId),
-    FOREIGN KEY (announcementClass) REFERENCES Classes(classID)
+    FOREIGN KEY (announcementClass) REFERENCES Classes(classID),
+    FOREIGN KEY (editedBy) REFERENCES Users(userId)
 );
+GO
 
+-- Insert sample data
 INSERT INTO Announcements (announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass)
 VALUES
 ('ANNO00001', 'Math Quiz Next Week', 'Prepare for a quiz on chapters 3-5 next Tuesday', '2024-07-16 09:00:00', 'T001', 'Class01'),
@@ -35,6 +41,27 @@ VALUES
 ('ANNO00008', 'Math Olympiad Sign-up', 'Interested students can sign up for the Math Olympiad by Friday', '2024-07-20 08:30:00', 'T001', 'Class01'),
 ('ANNO00009', 'English Book Club Meeting', 'Discussion on "To Kill a Mockingbird" this Thursday lunch', '2024-07-18 12:00:00', 'T002', 'Class02'),
 ('ANNO00010', 'Science Documentary Viewing', 'Watching "Cosmos: A Spacetime Odyssey" in class next Tuesday', '2024-07-23 14:00:00', 'T004', 'Class04');
+GO
+
+-- Create a trigger to ensure future inserts and updates use UTC
+CREATE TRIGGER trg_Announcements_UTC
+ON Announcements
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    UPDATE a
+    SET a.announcementDateTime = SWITCHOFFSET(CONVERT(datetimeoffset, a.announcementDateTime), '+00:00'),
+        a.editedDateTime = SWITCHOFFSET(CONVERT(datetimeoffset, COALESCE(a.editedDateTime, SYSDATETIMEOFFSET())), '+00:00')
+    FROM Announcements a
+    INNER JOIN inserted i ON a.announcementID = i.announcementID;
+END;
+GO
+
+-- Update existing data to UTC
+UPDATE Announcements
+SET announcementDateTime = SWITCHOFFSET(CONVERT(datetimeoffset, announcementDateTime), '+00:00'),
+    editedDateTime = SWITCHOFFSET(CONVERT(datetimeoffset, COALESCE(editedDateTime, SYSDATETIMEOFFSET())), '+00:00');
+GO
 
 -- Assignments Table
 

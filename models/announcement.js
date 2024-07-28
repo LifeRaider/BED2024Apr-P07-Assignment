@@ -2,37 +2,56 @@ const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class Announcement {
-    constructor(announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass) {
+    constructor(announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass, editedBy, editedDateTime) {
         this.announcementID = announcementID;
         this.announcementTitle = announcementTitle;
         this.announcementDes = announcementDes;
         this.announcementDateTime = announcementDateTime;
         this.announcementCreator = announcementCreator;
         this.announcementClass = announcementClass;
+        this.editedBy = editedBy;
+        this.editedDateTime = editedDateTime;
     }
 
     static async getAllAnnouncements() {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Announcements`;
+        const sqlQuery = `
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Announcements a
+            LEFT JOIN Users u1 ON a.announcementCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+        `;
 
         const request = connection.request();
         const result = await request.query(sqlQuery);
 
         connection.close();
 
-        return result.recordset.map(
-            (row) => new Announcement(row.announcementID, row.announcementTitle, row.announcementDes, row.announcementDateTime, row.announcementCreator, row.announcementClass)
-        );
+        return result.recordset.map(row => ({
+            ...new Announcement(
+                row.announcementID,
+                row.announcementTitle,
+                row.announcementDes,
+                row.announcementDateTime,
+                row.announcementCreator,
+                row.announcementClass,
+                row.editedBy,
+                row.editedDateTime
+            ),
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
+        }));
     }
 
     static async getAnnouncementsByClassId(classID) {
         const connection = await sql.connect(dbConfig);
     
         const sqlQuery = `
-            SELECT a.*, u.username as creatorUsername
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
             FROM Announcements a
-            JOIN Users u ON a.announcementCreator = u.userID
+            LEFT JOIN Users u1 ON a.announcementCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
             WHERE a.announcementClass = @classID
         `;
     
@@ -49,16 +68,25 @@ class Announcement {
                 row.announcementDes,
                 row.announcementDateTime,
                 row.announcementCreator,
-                row.announcementClass
+                row.announcementClass,
+                row.editedBy,
+                row.editedDateTime
             ),
-            creatorUsername: row.creatorUsername
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
         }));
     }
 
     static async getAnnouncementById(announcementID) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `SELECT * FROM Announcements WHERE announcementID = @announcementID`;
+        const sqlQuery = `
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Announcements a
+            LEFT JOIN Users u1 ON a.announcementCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+            WHERE a.announcementID = @announcementID
+        `;
 
         const request = connection.request();
         request.input("announcementID", announcementID);
@@ -71,14 +99,20 @@ class Announcement {
         }
 
         const row = result.recordset[0];
-        return new Announcement(
-            row.announcementID,
-            row.announcementTitle,
-            row.announcementDes,
-            row.announcementDateTime,
-            row.announcementCreator,
-            row.announcementClass
-        );
+        return {
+            ...new Announcement(
+                row.announcementID,
+                row.announcementTitle,
+                row.announcementDes,
+                row.announcementDateTime,
+                row.announcementCreator,
+                row.announcementClass,
+                row.editedBy,
+                row.editedDateTime
+            ),
+            creatorUsername: row.creatorUsername,
+            editedByUsername: row.editedByUsername
+        };
     }
 
     static async createAnnouncement(newAnnouncementData) {
@@ -90,7 +124,7 @@ class Announcement {
             FROM Announcements;
 
             INSERT INTO Announcements (announcementID, announcementTitle, announcementDes, announcementDateTime, announcementCreator, announcementClass)
-            VALUES (@newID, @announcementTitle, @announcementDes, GETDATE(), @announcementCreator, @announcementClass);
+            VALUES (@newID, @announcementTitle, @announcementDes, SYSUTCDATETIME(), @announcementCreator, @announcementClass);
 
             SELECT @newID AS newID;
         `;
@@ -123,11 +157,10 @@ class Announcement {
             updateFields.push("announcementDes = @announcementDes");
             request.input("announcementDes", updatedAnnouncementData.announcementDes);
         }
-        if (updatedAnnouncementData.announcementClass !== undefined) {
-            updateFields.push("announcementClass = @announcementClass");
-            request.input("announcementClass", updatedAnnouncementData.announcementClass);
+        if (updatedAnnouncementData.editedBy !== undefined) {
+            updateFields.push("editedBy = @editedBy, editedDateTime = SYSUTCDATETIME()");
+            request.input("editedBy", updatedAnnouncementData.editedBy);
         }
-
         if (updateFields.length === 0) {
             throw new Error("No fields to update");
         }
@@ -136,17 +169,40 @@ class Announcement {
             UPDATE Announcements
             SET ${updateFields.join(", ")}
             WHERE announcementID = @announcementID;
+
+            SELECT a.*, u1.username as creatorUsername, u2.username as editedByUsername
+            FROM Announcements a
+            LEFT JOIN Users u1 ON a.announcementCreator = u1.userID
+            LEFT JOIN Users u2 ON a.editedBy = u2.userID
+            WHERE a.announcementID = @announcementID;
         `;
 
         request.input("announcementID", announcementID);
 
-        await request.query(sqlQuery);
+        const result = await request.query(sqlQuery);
 
         connection.close();
 
-        return this.getAnnouncementById(announcementID);
-    }
+        if (result.recordset.length === 0) {
+            throw new Error('Announcement not found');
+        }
 
+        const updatedAnnouncement = result.recordset[0];
+        return {
+            ...new Announcement(
+                updatedAnnouncement.announcementID,
+                updatedAnnouncement.announcementTitle,
+                updatedAnnouncement.announcementDes,
+                updatedAnnouncement.announcementDateTime,
+                updatedAnnouncement.announcementCreator,
+                updatedAnnouncement.announcementClass,
+                updatedAnnouncement.editedBy,
+                updatedAnnouncement.editedDateTime
+            ),
+            creatorUsername: updatedAnnouncement.creatorUsername,
+            editedByUsername: updatedAnnouncement.editedByUsername
+        };
+    }
 
     static async deleteAnnouncement(announcementID) {
         const connection = await sql.connect(dbConfig);
@@ -163,7 +219,6 @@ class Announcement {
     
         connection.close();
     }
-    
 }
 
 module.exports = Announcement;

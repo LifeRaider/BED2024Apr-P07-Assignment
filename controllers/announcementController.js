@@ -40,7 +40,7 @@ const createAnnouncement = async (req, res) => {
 
     try {
         const createdAnnouncement = await Announcement.createAnnouncement(newAnnouncement);
-        res.status(201).json(createdAnnouncement); // Return the created announcement
+        res.status(201).json(createdAnnouncement);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error creating announcement");

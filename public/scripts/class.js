@@ -1,3 +1,5 @@
+let currentAnnouncementId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const classId = getClassIdFromUrl();
     if (classId) {
@@ -26,6 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listener for the delete class button
     document.getElementById('confirmDeleteAnnouncement').addEventListener('click', deleteAnnouncement);
+
+    // Add event listener for the save announcement changes button
+    document.getElementById('saveAnnouncementChanges').addEventListener('click', showConfirmEditAnnouncementModal);
+
+    // Add event listener for the confirm edit announcement button
+    document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
 });
 
 
@@ -107,6 +115,14 @@ function displayAnnouncements(announcements) {
                         Created by: ${announcement.creatorUsername} (${announcement.announcementCreator})
                     </small>
                 </p>
+                ${announcement.editedBy ? `
+                <p class="card-text">
+                    <small class="text-muted">
+                        Edited by: ${announcement.editedByUsername} (${announcement.editedBy}) on ${new Date(announcement.editedDateTime).toLocaleString()}
+                    </small>
+                </p>
+                ` : ''}
+                <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
                 <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
             </div>
         </div>
@@ -115,6 +131,78 @@ function displayAnnouncements(announcements) {
     document.querySelectorAll('.delete-announcement').forEach(button => {
         button.addEventListener('click', showDeleteAnnouncementConfirmation);
     });
+
+    document.querySelectorAll('.edit-announcement').forEach(button => {
+        button.addEventListener('click', showEditAnnouncementModal);
+    });
+}
+
+function showEditAnnouncementModal(event) {
+    const announcementId = event.target.getAttribute('data-announcement-id');
+    currentAnnouncementId = announcementId;
+    
+    const announcementCard = event.target.closest('.card');
+    const title = announcementCard.querySelector('.card-title').textContent;
+    const description = announcementCard.querySelector('.card-text').textContent;
+
+    document.getElementById('editAnnouncementTitle').value = title;
+    document.getElementById('editAnnouncementDes').value = description;
+
+    const modal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
+    modal.show();
+}
+
+function showConfirmEditAnnouncementModal() {
+    const editModal = bootstrap.Modal.getInstance(document.getElementById('editAnnouncementModal'));
+    editModal.hide();
+
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmEditAnnouncementModal'));
+    confirmModal.show();
+}
+
+async function editAnnouncement() {
+    const title = document.getElementById('editAnnouncementTitle').value;
+    const description = document.getElementById('editAnnouncementDes').value;
+    const classId = getClassIdFromUrl();
+
+    if (!title || !description) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const updatedAnnouncementData = {
+        announcementID: currentAnnouncementId,
+        announcementTitle: title,
+        announcementDes: description,
+        editedBy: JSON.parse(localStorage.getItem('user')).id,
+        editedByUsername: JSON.parse(localStorage.getItem('user')).username
+    };
+
+    try {
+        const response = await fetch(`http://localhost:3000/announcements/${currentAnnouncementId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedAnnouncementData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const result = await response.json();
+        console.log('Announcement updated successfully:', result);
+        
+        // Close the modal and refresh the announcements
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmEditAnnouncementModal'));
+        modal.hide();
+        fetchAnnouncements(classId);
+
+    } catch (error) {
+        console.error('Error updating announcement:', error);
+        alert('Failed to update announcement. Please try again.');
+    }
 }
 
 function displayAssignments(assignments) {
