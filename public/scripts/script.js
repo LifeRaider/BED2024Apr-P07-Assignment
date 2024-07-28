@@ -108,7 +108,7 @@ async function login() {
     let data = await response.json()
     localStorage.setItem('token', data.token);
     loaded()
-    window.location.href = "main.html";
+    window.location.href = "login.html";
   } else {
     lWarning.style.display = 'block';
     pSpan.style = 'margin-bottom: 0px;';
@@ -119,6 +119,7 @@ async function login() {
 // logout function
 async function logout() {
   localStorage.setItem('token', null);
+  localStorage.setItem('data', null);
   window.location.replace(`login.html`)
 }
 
@@ -130,18 +131,26 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
         const user = data.user
         localStorage.setItem('data', JSON.stringify(user));
         if (window.location.href.includes("login.html") || window.location.href.includes("signup") || window.location.href.includes("index")) {
-          window.location.href = "main.html"
+          if (user.userType == "admin") {
+            window.location.href = "mainAdmin.html";
+          } else {
+            window.location.href = "mainOthers.html";
+          }
         } else {
+          if (user.userType == "admin" && (!window.location.href.includes("Admin") || !window.location.href.includes("admin"))) {
+            window.location.href = "login.html";
+          } else if (user.userType != "admin" && (window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
+            window.location.href = "login.html";
+          }
           document.body.style.display = 'block';
         }
         return data;
       }
-
       throw new Error('Not authenticated');
     })
     .catch(error => {
       console.error('Error:', error);
-      localStorage.setItem('info', null);
+      localStorage.setItem('data', null);
       if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
         window.location.href = '/public/login.html'; // Redirect to login
       } else {
@@ -149,30 +158,14 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       }
     });
 
-if ((window.location.href.includes("main.html")) && !(window.location.href.includes("mainAdmin.html")) && !(window.location.href.includes("mainOthers.html"))) {
-  var retrievedData = localStorage.getItem('data');
-  var user = JSON.parse(retrievedData)
-  console.log(user)
-  if (user.userType == "admin") {
-    window.location.href = "mainAdmin.html"
-  } else {
-    window.location.href = "mainOthers.html"
-  }
-}
-
-// main page
-if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
-  const userInfoDiv = document.getElementById('main-title');
-  var retrievedData = localStorage.getItem('data');
-  var user = JSON.parse(retrievedData)
-  console.log(user)
-  userInfoDiv.innerHTML += user.username;
-}
-
 // MAIN PAGE
 // =================================
 if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
-  document.addEventListener('DOMContentLoaded', () => {
+  window.onload = function() {
+    const userInfoDiv = document.getElementById('main-title');
+    const retrievedData = localStorage.getItem('data');
+    const user = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += user.username + "!";
     fetchClasses();
   
     if (window.location.href.includes("mainAdmin.html")) {
@@ -182,7 +175,7 @@ if (window.location.href.includes("mainAdmin.html") || window.location.href.incl
           createClass();
       });
     }
-  });
+  };
 }
 
 if (window.location.href.includes("admin")) {
@@ -234,12 +227,12 @@ async function fetchClasses() {
             link = 'classAdmin';
           } else {
             link = `class${user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}`;
-          }
+          } //<img src="assets/image.png" style="width: match-parent;">
           classElement.innerHTML = `
               <div class="card h-100">
                   <div class="card-body">
-                      <h5 class="card-title"><a href="${link}.html?class_id=${classItem.classID}">${classItem.className}</a> (${classItem.classID})</h5>
-                      <p class="card-text">${classItem.classDes}</p>
+                    <h5 class="card-title"><a href="${link}.html?class_id=${classItem.classID}">${classItem.className}</a> (${classItem.classID})</h5>
+                    <p class="card-text">${classItem.classDes}</p>
                   </div>
               </div>
           `;

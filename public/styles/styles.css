@@ -82,7 +82,7 @@ input:focus {
     background-color: #fdc1a1;
     z-index: 10;
 }
-.navbar button{
+.logoBtn{
     width: fit-content;
     height: fit-content;
     margin: 0px;
@@ -110,12 +110,10 @@ input:focus {
 .navbar a:hover{
     opacity: 0.65;
 }
-
 /* Welcome */
 .welcome{
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: center;
     background-color: #fcf2ec;
     padding-top: 20px;
 }
