@@ -119,6 +119,7 @@ async function login() {
 // logout function
 async function logout() {
   localStorage.setItem('token', null);
+  
   window.location.replace(`login.html`)
 }
 
@@ -158,15 +159,17 @@ if (window.location.href.includes("main.html")) {
 
 // ADMIN MAIN PAGE
 // =================================
-document.addEventListener('DOMContentLoaded', () => {
-  fetchClasses();
-
-  const form = document.getElementById('createClassForm');
-  form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      createClass();
+if (window.location.href.includes("landingPage.html")) {
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchClasses();
+  
+    const form = document.getElementById('createClassForm');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        createClass();
+    });
   });
-});
+}
 
 async function fetchClasses() {
   try {

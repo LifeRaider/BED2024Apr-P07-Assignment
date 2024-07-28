@@ -17,7 +17,11 @@ const port = process.env.PORT || 3000;
 
 const staticMiddleware = express.static("public");
 
+
 app.use(cors());
+app.use(cors({ origin: '*' }));
+// Include body-parser middleware to handle JSON data
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(staticMiddleware);
