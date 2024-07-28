@@ -17,6 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listener for the confirm add user button
     document.getElementById('confirmAddUser').addEventListener('click', confirmAddUser);
+
+    // Add event listener for the add announcement button
+    document.getElementById('addAnnouncementBtn').addEventListener('click', showAddAnnouncementModal);
+
+    // Add event listener for the post announcement button
+    document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
+
+    // Add event listener for the edit class button
+    document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
+
+    // Add event listener for the delete class button
+    document.getElementById('confirmDeleteAnnouncement').addEventListener('click', deleteAnnouncement);
 });
 
 
@@ -85,14 +97,41 @@ function displayAnnouncements(announcements) {
     }
     
     announcementsList.innerHTML = announcements.map(announcement => `
-        <div class="card mb-3">
+        <div class="card mb-3" data-announcement-id="${announcement.announcementID}">
             <div class="card-body">
                 <h5 class="card-title">${announcement.announcementTitle}</h5>
                 <p class="card-text">${announcement.announcementDes}</p>
-                <p class="card-text"><small class="text-muted">Posted on: ${new Date(announcement.announcementDateTime).toLocaleString()}</small></p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Posted on: ${new Date(announcement.announcementDateTime).toLocaleString()}
+                    </small>
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Created by: ${announcement.creatorUsername} (${announcement.announcementCreator})
+                    </small>
+                </p>
+                ${announcement.editedBy ? `
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Edited by: ${announcement.editedByUsername} (${announcement.editedBy}) on ${new Date(announcement.editedDateTime).toLocaleString()}
+                        </small>
+                    </p>
+                ` : ''}
+                <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
+                <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
             </div>
         </div>
     `).join('');
+
+    // Add event listeners for edit and delete buttons
+    document.querySelectorAll('.edit-announcement').forEach(button => {
+        button.addEventListener('click', showEditAnnouncementModal);
+    });
+
+    document.querySelectorAll('.delete-announcement').forEach(button => {
+        button.addEventListener('click', showDeleteAnnouncementConfirmation);
+    });
 }
 
 function displayAssignments(assignments) {
@@ -417,5 +456,159 @@ async function confirmAddUser() {
     } catch (error) {
         console.error('Error adding user to class:', error);
         alert('Failed to add user to class. Please try again.');
+    }
+}
+
+function showAddAnnouncementModal() {
+    const addAnnouncementModal = new bootstrap.Modal(document.getElementById('addAnnouncementModal'));
+    addAnnouncementModal.show();
+}
+
+async function postAnnouncement() {
+    const classId = getClassIdFromUrl();
+    const title = document.getElementById('announcementTitle').value;
+    const description = document.getElementById('announcementDes').value;
+
+    if (!title || !description) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const newAnnouncementData = {
+        announcementTitle: title,
+        announcementDes: description,
+        announcementClass: classId
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/announcements', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newAnnouncementData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const result = await response.json();
+        console.log('Announcement posted successfully:', result);
+        
+        // Close the modal and refresh the announcements
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAnnouncementModal'));
+        modal.hide();
+        fetchAnnouncements(classId);
+
+        // Clear the form
+        document.getElementById('addAnnouncementForm').reset();
+    } catch (error) {
+        console.error('Error posting announcement:', error);
+        alert('Failed to post announcement. Please try again.');
+    }
+}
+
+let currentAnnouncementId = null;
+
+function showEditAnnouncementModal(event) {
+    const announcementId = event.target.getAttribute('data-announcement-id');
+    currentAnnouncementId = announcementId;
+    const announcement = getAnnouncementById(announcementId);
+    
+    document.getElementById('editAnnouncementTitle').value = announcement.announcementTitle;
+    document.getElementById('editAnnouncementDes').value = announcement.announcementDes;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
+    modal.show();
+}
+
+function showDeleteAnnouncementConfirmation(event) {
+    const announcementId = event.target.getAttribute('data-announcement-id');
+    currentAnnouncementId = announcementId;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteAnnouncementModal'));
+    modal.show();
+}
+
+function getAnnouncementById(announcementId) {
+    // This function should return the announcement object from your local data
+    // You might need to modify this based on how you're storing the announcements
+    return announcements.find(a => a.announcementID === announcementId);
+}
+
+async function editAnnouncement() {
+    const title = document.getElementById('editAnnouncementTitle').value;
+    const description = document.getElementById('editAnnouncementDes').value;
+    
+    try {
+        const response = await fetch(`http://localhost:3000/announcements/${currentAnnouncementId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ announcementTitle: title, announcementDes: description }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to edit announcement');
+        }
+
+        const updatedAnnouncement = await response.json();
+        updateAnnouncementInUI(updatedAnnouncement);
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnouncementModal'));
+        modal.hide();
+    } catch (error) {
+        console.error('Error editing announcement:', error);
+        alert('Failed to edit announcement. Please try again.');
+    }
+}
+
+async function deleteAnnouncement() {
+    try {
+        const response = await fetch(`http://localhost:3000/announcements`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ announcementID: currentAnnouncementId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete announcement');
+        }
+
+        removeAnnouncementFromUI(currentAnnouncementId);
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAnnouncementModal'));
+        modal.hide();
+    } catch (error) {
+        console.error('Error deleting announcement:', error);
+        alert('Failed to delete announcement. Please try again.');
+    }
+}
+
+function updateAnnouncementInUI(updatedAnnouncement) {
+    const announcementCard = document.querySelector(`[data-announcement-id="${updatedAnnouncement.announcementID}"]`);
+    if (announcementCard) {
+        announcementCard.querySelector('.card-title').textContent = updatedAnnouncement.announcementTitle;
+        announcementCard.querySelector('.card-text').textContent = updatedAnnouncement.announcementDes;
+        // Update edited by information
+        const editedByInfo = `
+            <p class="card-text">
+                <small class="text-muted">
+                    Edited by: ${updatedAnnouncement.editedByUsername} (${updatedAnnouncement.editedBy}) on ${new Date(updatedAnnouncement.editedDateTime).toLocaleString()}
+                </small>
+            </p>
+        `;
+        announcementCard.querySelector('.card-body').insertAdjacentHTML('beforeend', editedByInfo);
+    }
+}
+
+function removeAnnouncementFromUI(announcementId) {
+    const announcementCard = document.querySelector(`[data-announcement-id="${announcementId}"]`);
+    if (announcementCard) {
+        announcementCard.remove();
     }
 }

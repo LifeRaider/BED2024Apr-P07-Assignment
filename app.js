@@ -41,12 +41,12 @@ app.put("/classes/:classID/add", classController.addToClass); // Add Student/Tea
 app.put("/classes/:classID/remove", classController.removeFromClass); // Remove Student/Teacher from Class
 app.get("/classes/:classID/classUsers", classController.getClassUsers); // Retrieve Class Students
 
-app.get("/announcements", verifyJWT, announcementController.getAllAnnouncements); // Get all annoucements
+app.get("/announcements", announcementController.getAllAnnouncements); // Get all annoucements
 app.get('/announcements/class/:classID', announcementController.getAnnouncementsByClassId); // Get annoucement by class ID
 app.get('/announcements/:announcementID', verifyJWT, announcementController.getAnnouncementById);
 app.post("/announcements", verifyJWT, announcementController.createAnnouncement); // Create annoucement
 app.put("/announcements/:announcementID", verifyJWT, announcementController.updateAnnouncement); // Update annoucement
-app.delete("/announcements", verifyJWT, announcementController.deleteAnnouncement); // Delete annoucement
+app.delete("/announcements", announcementController.deleteAnnouncement); // Delete annoucement
 
 app.get("/assignments", verifyJWT, assignmentController.getAllAssignments); // Get all assignments
 app.get("/assignments/class/:classID", assignmentController.getAssignmentsByClassId); // Get assignments by class ID

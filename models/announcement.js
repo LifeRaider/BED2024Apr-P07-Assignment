@@ -28,25 +28,31 @@ class Announcement {
 
     static async getAnnouncementsByClassId(classID) {
         const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `SELECT * FROM Announcements WHERE announcementClass = @classID`;
-
+    
+        const sqlQuery = `
+            SELECT a.*, u.username as creatorUsername
+            FROM Announcements a
+            JOIN Users u ON a.announcementCreator = u.userID
+            WHERE a.announcementClass = @classID
+        `;
+    
         const request = connection.request();
         request.input("classID", classID);
         const result = await request.query(sqlQuery);
-
+    
         connection.close();
-
-        return result.recordset.map(row => 
-            new Announcement(
+    
+        return result.recordset.map(row => ({
+            ...new Announcement(
                 row.announcementID,
                 row.announcementTitle,
                 row.announcementDes,
                 row.announcementDateTime,
                 row.announcementCreator,
                 row.announcementClass
-            )
-        );
+            ),
+            creatorUsername: row.creatorUsername
+        }));
     }
 
     static async getAnnouncementById(announcementID) {
@@ -103,53 +109,50 @@ class Announcement {
         return this.getAnnouncementById(newID);
     }
 
-    static async updateAnnouncement(announcementID, updatedAnnouncementData) {
+    static async updateAnnouncement(announcementID, updatedData, editorID) {
         const connection = await sql.connect(dbConfig);
-
-        let updateFields = [];
-        const request = connection.request();
-
-        if (updatedAnnouncementData.announcementTitle !== undefined) {
-            updateFields.push("announcementTitle = @announcementTitle");
-            request.input("announcementTitle", updatedAnnouncementData.announcementTitle);
-        }
-        if (updatedAnnouncementData.announcementDes !== undefined) {
-            updateFields.push("announcementDes = @announcementDes");
-            request.input("announcementDes", updatedAnnouncementData.announcementDes);
-        }
-        if (updatedAnnouncementData.announcementClass !== undefined) {
-            updateFields.push("announcementClass = @announcementClass");
-            request.input("announcementClass", updatedAnnouncementData.announcementClass);
-        }
-
-        if (updateFields.length === 0) {
-            throw new Error("No fields to update");
-        }
-
+    
         const sqlQuery = `
             UPDATE Announcements
-            SET ${updateFields.join(", ")}
+            SET announcementTitle = @announcementTitle,
+                announcementDes = @announcementDes,
+                editedBy = @editedBy,
+                editedDateTime = GETDATE()
+            OUTPUT inserted.*
             WHERE announcementID = @announcementID;
+    
+            SELECT username as editedByUsername FROM Users WHERE userID = @editedBy;
         `;
-
+    
+        const request = connection.request();
         request.input("announcementID", announcementID);
-
-        await request.query(sqlQuery);
-
+        request.input("announcementTitle", updatedData.announcementTitle);
+        request.input("announcementDes", updatedData.announcementDes);
+        request.input("editedBy", editorID);
+    
+        const result = await request.query(sqlQuery);
+    
         connection.close();
-
-        return this.getAnnouncementById(announcementID);
+    
+        const updatedAnnouncement = result.recordsets[0][0];
+        updatedAnnouncement.editedByUsername = result.recordsets[1][0].editedByUsername;
+    
+        return updatedAnnouncement;
     }
 
     static async deleteAnnouncement(announcementID) {
         const connection = await sql.connect(dbConfig);
-
-        const sqlQuery = `DELETE FROM Announcements WHERE announcementID = @announcementID`;
-
+    
+        const sqlQuery = `
+            DELETE FROM Announcements
+            WHERE announcementID = @announcementID
+        `;
+    
         const request = connection.request();
         request.input("announcementID", announcementID);
+    
         await request.query(sqlQuery);
-
+    
         connection.close();
     }
     
