@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <button><img src="assets/BJs-logo.png"></button>
+        <ul>
+            <li><a href="mainAdmin.html">Classes</a></li>
+            <li><a href="adminTeachers.html">Teachers</a></li>
+            <li><a href="adminParents.html">Parents</a></li>
+            <li><a href="adminStudents.html">Students</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <div class="welcome">
+            <h1 id="main-title">Welcome </h1>
+            <button onclick="logout()" style="height: 30px; width: fit-content; background-color: rgb(62, 80, 82);">Logout</button>
+        </div>
+
+        <div class="classes-container" style="background-color: #fcf2ec; padding: 40px;">
+            <h1>Class List</h1>
+            <div id="class-list" class="row row-cols-1 row-cols-md-3">
+                <!-- Classes will be dynamically inserted here -->
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">
+                    Create a New Class
+                </button>
+            </div>
+        </div>
+    
+        <!-- Create Class Modal -->
+        <div class="modal fade" id="createClassModal" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="createClassModalLabel">Create a New Class</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createClassForm">
+                            <div class="mb-3">
+                                <label for="className" class="form-label">Class Name</label>
+                                <input type="text" class="form-control" id="className" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="classDes" class="form-label">Class Description</label>
+                                <textarea class="form-control" id="classDes" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Class</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="padding"></section>
+
+    <footer>
+        <div class="footer">
+          <div class="footer-left">
+            <img src="assets/BJ-name.png">
+            <p>Empowering the minds of the next generation to think beyond boundaries,</p>
+            <p class="quote">"one connection at a time"</p>
+          </div>
+          <div class="footer-right">
+            <div class="redirects">
+              <div>
+                <a href=""><p>|</p>Home</a>
+                <a href=""><p>|</p>Our Team</a>
+              </div>
+              <div>
+                <a href=""><p>|</p>About Us</a>
+                <a href=""><p>|</p>Privacy</a>
+              </div>
+              <div>
+                <a href=""><p>|</p>Contacts Us</a>
+                <a href=""><p>|</p>Terms & Conditions</a>
+              </div>
+            </div>
+            <div class="line"></div>
+            <div class="footer-misc">
+              <p>© 2024 Brain Jam systems — All Rights Reserved</p>
+              <div>
+                <a href="https://www.facebook.com"><img src="assets/fb.png"></a>
+                <a href="https://www.instagram.com"><img src="assets/insta.png"></a>
+                <a href="https://www.x.com"><img src="assets/x.png"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/script.js"></script>
+</body>
+</html>

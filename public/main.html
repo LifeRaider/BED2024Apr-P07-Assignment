@@ -10,12 +10,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <nav></nav>
+    <nav class="navbar">
+      <button><img src="assets/BJs-logo.png"></button>
+      <ul>
+          <li><a href="#Home">Home</a></li>
+          <li><a href="#Announcement">Announcement</a></li>
+          <li><a href="#Assignments">Assignments</a></li>
+          <li><a href="#Tests">Tests</a></li>
+          <li><a href="#Overview">Overview</a></li>
+          <li><a href="#Feedback">Feedback</a></li>
+        </ul>
+    </nav>
+    
     <section id="main-page">
       <h1 id="main-title">Welcome </h1>
       <button onclick="logout()" style="height: 30px; width: fit-content; background-color: rgb(62, 80, 82);">Logout</button>
-      <a href="landingPage.html" style="color: rgb(0, 0, 0); text-decoration: none;">View Classes</a>
+      <a href="mainAdmin.html" style="height: 30px; width: fit-content; background-color: rgb(216, 216, 216);">Admin</a>
+      <a href="mainOthers.html" style="height: 30px; width: fit-content; background-color: rgb(216, 216, 216);">Others</a>
     </section>
+
+    <footer>
+      <div class="footer">
+        <div class="footer-left">
+          <img src="assets/BJ-name.png">
+          <p>Empowering the minds of the next generation to think beyond boundaries,</p>
+          <p class="quote">"one connection at a time"</p>
+        </div>
+        <div class="footer-right">
+          <div class="redirects">
+            <div>
+              <a href=""><p>|</p>Home</a>
+              <a href=""><p>|</p>Our Team</a>
+            </div>
+            <div>
+              <a href=""><p>|</p>About Us</a>
+              <a href=""><p>|</p>Privacy</a>
+            </div>
+            <div>
+              <a href=""><p>|</p>Contacts Us</a>
+              <a href=""><p>|</p>Terms & Conditions</a>
+            </div>
+          </div>
+          <div class="line"></div>
+          <div class="footer-misc">
+            <p>© 2024 Brain Jam systems — All Rights Reserved</p>
+            <div>
+              <a href="https://www.facebook.com"><img src="assets/fb.png"></a>
+              <a href="https://www.instagram.com"><img src="assets/insta.png"></a>
+              <a href="https://www.x.com"><img src="assets/x.png"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
 
     <script src="scripts/script.js"></script>
   </body>

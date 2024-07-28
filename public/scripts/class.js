@@ -149,7 +149,7 @@ function displayAnnouncements(announcements) {
         announcementsList.innerHTML = '<p>No announcements for this class.</p>';
         return;
     }
-    
+
     announcementsList.innerHTML = announcements.map(announcement => `
         <div class="card mb-3" data-announcement-id="${announcement.announcementID}">
             <div class="card-body">
@@ -172,8 +172,11 @@ function displayAnnouncements(announcements) {
                     </small>
                 </p>
                 ` : ''}
-                <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
-                <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
+                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
+                    <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
+                ` : ``}
+                
             </div>
         </div>
     `).join('');
@@ -404,7 +407,10 @@ function displayClassUsers(users) {
                 <h5 class="card-title">${user.username} (${user.userID})</h5>
                 <p class="card-text">Role: ${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</p>
                 <p class="card-text">Email: ${user.email}</p>
-                <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">Remove User</button>
+                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
+                    <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">Remove User</button>
+                ` : ``}
+                
             </div>
         </div>
     `).join('');
