@@ -26,13 +26,29 @@ For the curious minds out there itching to get a sneak peak at the initial wiref
 As our system is still under development, you might encounter some features that are not fully implemented. Rest assured, we're working diligently to bring you a complete and robust platform! 🛠️
 
 ### Existing Features
--
+- Register Account (Student, Parent)
+- Login Account
+- Logout Account
+- View Account Details
+- Edit / Delete Account
+- View Classes (Admin, *Student)
+- Create / Delete Class (Admin)
+- Get Class Information (Admin)
+- Edit Class Details (Admin)
+- Create / Edit / Delete Announcements (Admin)
+- Create / Edit / Delete Assignments (Admin)
+- Add / Remove Class Users (Admin)
 
 ### Features to Implement
-- 
+- Limit Access to Functions for Users (Student, Parent, Teacher)
+- Link Parent to Student Account
+- Page for Creating Teacher Accounts (Admin)
+- Student Progress Tracking
+- Parent-Teacher Feedback
+- And Much More...
 <br>
 
->Last updated on 29/07/2024
+>Last updated on 30/07/2024
 
 ### Possible Future Features
 - Mobile Application for on-the-go access
@@ -56,6 +72,7 @@ Here are the materials used in the development of the Brain Jam system:
     - OpenAI's ChatGPT-4o
     - Anthropic's Claude 3.5 Sonnet
     - Microsoft's GitHub Copilot
+    - Gignite
 <br>
 
 > [!NOTE]
@@ -64,15 +81,28 @@ Here are the materials used in the development of the Brain Jam system:
 ## Credits
 
 ### Pages, Scripts and Functions
-- Example (By ***Marvin -*** [***@s10260527***](https://github.com/s10260527))
+By ***Marvin -*** [***@s10260527***](https://github.com/s10260527)
+- getAllAnnouncements, getAnnouncementsByClassId, getAnnouncementById, createAnnouncement, updateAnnouncement, deleteAnnouncement
+- getAllAssignments, getAssignmentsByClassId, getAssignmentById, createAssignment, updateAssignment, deleteAssignment
+- getAllClasses, getClassById, createClass, updateClass, deleteClass
+- class.js (HTML Script)
+- In script.js; showModal, hideModal, populateTeacherDropdown, sortSelectOptions, handleSubjectSelection, handleTeacherSelection, createClass, fetchClasses, fetchUsers, showRemoveUserModal, confirmRemoveUser, removeUserFromClass
+- classAdmin.html, mainAdmin.html
+- Gignite for Create Class Modal & Admin Viewing Class Page
+
+By ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider)
+- Example
+
+By ***Lucas -*** [***@s10257164***](https://github.com/LoocasToh)
+- Example
 
 ### Others
-- Database Design (By ***Marvin -*** [***@s10260527***](https://github.com/s10260527) & ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider))
+- Database Design (By ***Marvin -*** [***@s10260527***](https://github.com/s10260527), ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider), ***Lucas -*** [***@s10257164***](https://github.com/LoocasToh))
 - README Write-up (By ***Marvin -*** [***@s10260527***](https://github.com/s10260527))
 
 ## References
 
-## Inspiration
+### Inspiration
 - Blackboard Learn
 - Google Classroom
 - Edmodo
@@ -81,3 +111,4 @@ Here are the materials used in the development of the Brain Jam system:
 - Icons ([***IconFinder***](https://www.iconfinder.com/))
 - CSS Framework (Bootstrap)
 - JavaScript Library (jQuery)
+- Gignite ([***Gignite***](https://www.gignite.ai/))
