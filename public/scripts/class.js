@@ -192,8 +192,8 @@ async function editAnnouncement() {
         announcementID: currentAnnouncementId,
         announcementTitle: title,
         announcementDes: description,
-        editedBy: JSON.parse(localStorage.getItem('user')).id,
-        editedByUsername: JSON.parse(localStorage.getItem('user')).username
+        editedBy: JSON.parse(localStorage.getItem('data')).id,
+        editedByUsername: JSON.parse(localStorage.getItem('data')).username
     };
 
     try {
@@ -827,7 +827,7 @@ async function editAssignment() {
         assignmentTitle: title,
         assignmentDes: description,
         assignmentDueDateTime: dueDateTime,
-        editedBy: JSON.parse(localStorage.getItem('user')).id
+        editedBy: JSON.parse(localStorage.getItem('data')).id
     };
 
     try {
