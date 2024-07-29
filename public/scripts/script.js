@@ -79,7 +79,7 @@ async function signup() {
     console.error(response.json.message)
     loaded()
   } else if (response.ok) {
-    window.location.href = "main.html";
+    window.location.href = "login.html";
   }
 }
 
@@ -103,7 +103,7 @@ async function login() {
     beforeSend: loading(),
   }
 
-  const response = await fetch("http://localhost:3000/login", settings);
+  const response = await fetch('http://localhost:3000/login', settings);
 
   if (response.ok) {
     let data = await response.json()
@@ -117,11 +117,114 @@ async function login() {
   }
 }
 
+if (window.location.href.includes("profile")) {
+  async function updateProfileInfo() {
+    let data;
+    try {
+      const response = await fetch('http://localhost:3000/usersInfo', {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+      if (response.ok) {
+        data = await response.json()
+      } else {
+        return
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+
+    const nameSide = document.getElementById('nameSide');
+    const emailSide = document.getElementById('emailSide');
+    const fullname = document.getElementById('fullname');
+    const email = document.getElementById('email');
+
+    nameSide.innerHTML = data.username;
+    emailSide.innerHTML = data.email;
+    fullname.value = data.username;
+    email.value = data.email;
+  }
+  updateProfileInfo()
+}
+
+// editing function
+function editing() {
+  document.getElementById('fullname').readOnly = false;
+  document.getElementById('email').readOnly = false;
+  const cancelEdit = document.getElementById('cancelEdit');
+  const confirmBtn = document.getElementById('confirmBtn');
+
+  cancelEdit.style = "display: block;";
+  confirmBtn.style = "display: block;";
+}
+
+// edit user function
+async function editUser() {
+  event.preventDefault();
+
+  const formData = {
+    "username": document.getElementById('fullname').value,
+    "email": document.getElementById('email').value
+  };
+
+  let settings = {
+    method: "PUT", 
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + localStorage.getItem('token')
+    },
+    body: JSON.stringify(formData),
+    beforeSend: loading()
+  }
+
+  const response = await fetch("http://localhost:3000/editUser", settings);
+  loaded()
+  alert("Information Updated")
+  location.reload();
+}
+
+// delete function
+function deleting() {
+  const geryScreen = document.getElementById('geryScreen')
+  const customPopup = document.getElementById('customPopup')
+  geryScreen.style = "display: block;"
+  customPopup.style = "display: block;"
+}
+function cancel() {
+  const geryScreen = document.getElementById('geryScreen')
+  const customPopup = document.getElementById('customPopup')
+  geryScreen.style = "display: none;"
+  customPopup.style = "display: none;"
+}
+
+// delete user function
+async function deleteUser() {
+  let settings = {
+    method: "DELETE", 
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem('token')
+    }
+  }
+
+  const response = await fetch("http://localhost:3000/deleteUser", settings);
+
+  logout()
+}
+
 // logout function
-async function logout() {
+function logout() {
   localStorage.setItem('token', null);
   localStorage.setItem('data', null);
   window.location.replace(`login.html`)
+}
+
+// back function
+async function back() {
+  const retrievedData = localStorage.getItem('data');
+  const userData = JSON.parse(retrievedData);
+  if (userData.userType == "admin") {
+    window.location.replace(`main${userData.userType.charAt(0).toUpperCase() + userData.userType.slice(1)}.html`)
+  } else {
+    window.location.replace(`mainOthers.html`)
+  }
 }
 
 // Authentification check
@@ -138,7 +241,7 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
             window.location.href = "mainOthers.html";
           }
         } else {
-          if (user.userType == "admin" && !(window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
+          if (user.userType == "admin" && !(window.location.href.includes("Admin") || window.location.href.includes("admin") || window.location.href.includes("profile"))) {
             window.location.href = "login.html";
           } else if (user.userType != "admin" && (window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
             window.location.href = "login.html";
@@ -153,14 +256,42 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       console.error('Error:', error);
       localStorage.setItem('data', null);
       if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
-        window.location.href = '/public/login.html'; // Redirect to login
+        window.location.href = 'login.html'; // Redirect to login
       } else {
         document.body.style.display = 'block';
       }
     });
 
+
 // MAIN PAGE
 // =================================
+if (window.location.href.includes("mainAdmin.html")) {
+  window.onload = function() {
+    const userInfoDiv = document.getElementById('main-title');
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += userData.username + "!";
+    fetchClasses();
+  
+    if (userData.userType == "admin") {
+      const form = document.getElementById('createClassForm');
+      form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          createClass();
+      });
+    }
+  };
+}
+if (window.location.href.includes("mainOthers.html")){
+  window.onload = function() {
+    const userInfoDiv = document.getElementById('main-title');
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += userData.username + "!";
+    fetchClasses();
+  }
+}
+
 // Marvin's Gignite
 // ==============================================================================================================
 // Event listeners
@@ -363,49 +494,21 @@ async function createClass() {
       alert(`An error occurred while creating the class: ${error.message}`);
   }
 }
-// ==============================================================================================================
 
-if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
-  window.onload = function() {
-    const userInfoDiv = document.getElementById('main-title');
-    const retrievedData = localStorage.getItem('data');
-    const user = JSON.parse(retrievedData);
-    userInfoDiv.innerHTML += user.username + "!";
-    fetchClasses();
-  
-    if (window.location.href.includes("mainAdmin.html")) {
-      const form = document.getElementById('createClassForm');
-      form.addEventListener('submit', function(event) {
-          event.preventDefault();
-          createClass();
-      });
-    }
-  };
-}
-
-if (window.location.href.includes("admin")) {
-  if (window.location.href.includes("adminTeachers.html")) {
-    fetchUsers("T");
-  } else if (window.location.href.includes("adminParents.html")) {
-    fetchUsers("P");
-  } else if (window.location.href.includes("adminStudents.html")) {
-    fetchUsers("S");
-  }
-}
 
 async function fetchClasses() {
   try {
       console.log('Fetching classes...');
       var retrievedData = localStorage.getItem('data');
-      var user = JSON.parse(retrievedData)
+      var userData = JSON.parse(retrievedData)
       var response;
       if (window.location.href.includes("mainAdmin.html")) {
         response = await fetch('http://localhost:3000/classes');
       } else {
-        response = await fetch(`http://localhost:3000/userClasses/${user.id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+        response = await fetch(`http://localhost:3000/userClasses/${userData.id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
       }
       console.log('Response status:', response.status);
-      if (!response.ok) {
+      if (!response.ok && response.status != 404) {
           throw new Error('Network response was not ok ' + response.statusText);
       }
       const data = await response.json();
@@ -416,10 +519,17 @@ async function fetchClasses() {
       }
       classList.innerHTML = ''; // Clear existing content
 
-      if (data.length === 0) {
-          console.log('No classes found');
-          classList.innerHTML = '<p>No classes available.</p>';
-          return;
+      if (response.status == 404) {
+        console.log('No classes found');
+        classList.innerHTML = '<p>No classes available.</p>';
+        classList.className = "row row-cols-1 row-cols-md-1";
+        return;
+      } else if (data.length == 1) {
+        classList.className = "row row-cols-1 row-cols-md-1";
+      } else if (data.length == 2) {
+        classList.className = "row row-cols-1 row-cols-md-2";
+      } else if (data.length >= 3) {
+        classList.className = "row row-cols-1 row-cols-md-3";
       }
 
       data.forEach((classItem) => {
@@ -431,7 +541,7 @@ async function fetchClasses() {
           if (window.location.href.includes("mainAdmin.html")) {
             link = 'classAdmin';
           } else {
-            link = `class${user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}`;
+            link = `class${userData.userType.charAt(0).toUpperCase() + userData.userType.slice(1)}`;
           } //<img src="assets/image.png" style="width: match-parent;">
           classElement.innerHTML = `
               <div class="card h-100">
@@ -448,7 +558,8 @@ async function fetchClasses() {
       console.error('Error fetching classes:', error);
       const classList = document.getElementById('class-list');
       if (classList) {
-          classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
+        classList.className = "row row-cols-1 row-cols-md-1";
+        classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
       }
   }
 }

@@ -158,6 +158,8 @@ class Class {
         const result2 = await request.query(sqlQuery2);
 
         connection.close();
+
+        console.log(result2)
         return result2.recordset;
     }
 

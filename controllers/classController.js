@@ -78,7 +78,7 @@ const getAllUserClass = async (req, res) => {
   try {
     const classes = await Class.getAllUserClass(userID);
     if (!classes || classes.length === 0) {
-      return res.status(404).send("Classes for user not found");
+      return res.status(404).json({ message: "Classes for user not found" });
     }
     const allClasses = [];
     for (const i of classes) {
@@ -88,7 +88,7 @@ const getAllUserClass = async (req, res) => {
     res.json(allClasses);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error retrieving user classes");
+    return res.status(500).json({ message: "Error retrieving user classes" });
   }
 };
 

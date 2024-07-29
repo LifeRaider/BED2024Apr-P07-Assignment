@@ -81,6 +81,38 @@ class User {
         return this.getUserById(result.recordset[0].userID);
     }
 
+    static async editUser(newUserData, userID, passwordHash) {
+        const connection = await sql.connect(dbConfig);
+
+        const sqlQuery = `UPDATE Users SET username = @username, email = @email WHERE userID = @userID;`;
+
+        const request = connection.request();
+        request.input("userID", userID);
+        request.input("username", newUserData.username);
+        request.input("email", newUserData.email);
+
+        const result = await request.query(sqlQuery);
+
+        connection.close();
+
+        // Retrieve the newly created user using its ID
+        return this.getUserById(userID);
+    }
+    
+    static async deleteUser(userID) {
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `DELETE FROM Users WHERE userID = @userID;`;
+    
+        const request = connection.request();
+        request.input("userID", userID);  // Specify the SQL type
+    
+        const result = await request.query(sqlQuery);  // Use request.query instead of connection.query
+        connection.close();
+    
+        return;
+    }
+
     static async getAllUsers() {
         const connection = await sql.connect(dbConfig);
 

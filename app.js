@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 const staticMiddleware = express.static("public");
 
 app.use(cors({ origin: '*' }));
+
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +30,10 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/test", verifyJWT, usersController.test);
 app.post("/register", usersController.register);
 app.post('/login', usersController.login);
+app.put('/editUser', verifyJWT, usersController.editUser);
+app.delete('/deleteUser', verifyJWT, usersController.deleteUser);
 app.get("/users", usersController.getAllUsers);
+app.get("/usersInfo", verifyJWT, usersController.getUserById);
 
 app.get("/classes", classController.getAllClasses);
 app.get("/classes/:classID", classController.getClassById);

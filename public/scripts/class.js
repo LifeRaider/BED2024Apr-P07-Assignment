@@ -97,6 +97,9 @@ function displayClassDetails(classData) {
 }
 
 function displayAnnouncements(announcements) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    
     const announcementsList = document.getElementById('announcements-list');
     if (announcements.length === 0) {
         announcementsList.innerHTML = '<p>No announcements for this class.</p>';
@@ -189,8 +192,8 @@ async function editAnnouncement() {
         announcementID: currentAnnouncementId,
         announcementTitle: title,
         announcementDes: description,
-        editedBy: JSON.parse(localStorage.getItem('user')).id,
-        editedByUsername: JSON.parse(localStorage.getItem('user')).username
+        editedBy: JSON.parse(localStorage.getItem('data')).id,
+        editedByUsername: JSON.parse(localStorage.getItem('data')).username
     };
 
     try {
@@ -222,6 +225,9 @@ async function editAnnouncement() {
 }
 
 function displayAssignments(assignments) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     const assignmentsList = document.getElementById('assignments-list');
     if (assignments.length === 0) {
         assignmentsList.innerHTML = '<p>No assignments for this class.</p>';
@@ -338,6 +344,9 @@ async function fetchClassUsers(classId) {
 }
 
 function displayClassUsers(users) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     const classUsersList = document.getElementById('class-users-list');
     if (!users || users.length === 0) {
         classUsersList.innerHTML = '<tr><td colspan="5">No users in this class.</td></tr>';
@@ -818,7 +827,7 @@ async function editAssignment() {
         assignmentTitle: title,
         assignmentDes: description,
         assignmentDueDateTime: dueDateTime,
-        editedBy: JSON.parse(localStorage.getItem('user')).id
+        editedBy: JSON.parse(localStorage.getItem('data')).id
     };
 
     try {
