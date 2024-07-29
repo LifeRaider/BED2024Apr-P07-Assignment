@@ -15,7 +15,7 @@ CREATE TABLE Users (
 -- Classes Table
 CREATE TABLE Classes (
     classID VARCHAR(7) PRIMARY KEY,
-    className VARCHAR(50) NOT NULL,
+    className VARCHAR(100) NOT NULL,
     classDes VARCHAR(200)
 );
 
