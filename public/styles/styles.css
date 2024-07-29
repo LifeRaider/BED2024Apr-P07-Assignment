@@ -83,11 +83,21 @@ input:focus {
     z-index: 10;
 }
 .logoBtn{
+    position: absolute;
     width: fit-content;
     height: fit-content;
     margin: 0px;
     padding: 0px;
     background-color: #fdc1a1;
+}
+.backBtn{
+    position: absolute;
+    margin-left: 20px;
+}
+.profileBtn{
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
 }
 .navbar img{
     height: 50px;
@@ -96,13 +106,14 @@ input:focus {
     display: flex;
     flex-direction: row;
     margin-bottom: 0;
-    margin-right: 10px;
+    /* margin-right: 10px; */
+    margin: 0 auto;
     padding: 0px;
     list-style: none;
 }
 .navbar a{
     color: #000;
-    margin-left: 20px;
+    margin-inline: 15px;
     font-size: 20px;
     font-weight: 600;
     text-decoration: none;
@@ -286,7 +297,7 @@ h3 a{
     cursor: not-allowed;
     color: initial;
 }
-.createAcc, .loginBtn{
+.createAcc, .loginBtn, .logoutBTN{
     margin-top: 5px;
     padding-block: 18px;
     padding-inline: 55px;
@@ -297,6 +308,10 @@ h3 a{
 }
 .loginBtn{
     padding-inline: 75px;
+}
+.logoutBTN{
+    padding-inline: 10vw;
+    background-color: #fab995;
 }
 
 @media (min-width: 1360px){
@@ -341,10 +356,135 @@ h3 a{
     margin-left: -150px;
 }
 
+
+
+#profilePage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: calc(100vh - 80px);
+    padding-top: 10vh;
+    background-color: #fcf2ec;
+}
+#geryScreen{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    z-index: 11;
+}
+.profileMain{
+    width: 70vw;
+    /* height: calc(40vh); */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.profileLeft{
+    display: flex;
+    
+}
+.profileLeft img{
+    border-radius: 9999px;
+    width: 70px;
+    height: 70px;
+}
+.profileLeft div{
+    margin-left: 10px;
+}
+.profileLeft h1{
+    margin-top: 15px;
+}
+
+
+.profileRight{
+    width: 40vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    flex: 1;
+}
+.level{
+    width: 30vw
+}
+.profileRight h2{
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30vw;
+}
+.info div{
+    display: flex;
+    flex-direction: column;
+    width: 26vw;
+}
+.info input{
+    padding: 10px;
+}
+.editBtns{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 26vw;
+    margin-top: 15px;
+}
+.cancelEdit{
+    display: none;
+}
+.confirmBtn{
+    background-color: green;
+    border: green;
+    margin-left: 10px;
+    display: none;
+}
+.confirmBtn:hover{
+    background-color: green;
+}
+
+.setingsBtns{
+    display: flex;
+    justify-content: center;
+    width: 30vw;
+}
+.setingsBtns div{
+    display: flex;
+    width: 26vw;
+}
+.setingsBtns button{
+    flex: 1;
+    margin-inline: 5px;
+}
+.profileBottom{
+    margin-top: 5vh;
+}
+
+.deleteUserContainer{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding-block: 20px;
+    padding-inline: 40px;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    display: none;
+    z-index: 12;
+  }
+
+
+
 /* ADMIN MAIN PAGE */
 /* ======================================== */
-
-
 /* classes-container */
 .classes-container{
     background-color: #fcf2ec;

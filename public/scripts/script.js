@@ -78,7 +78,7 @@ async function signup() {
     console.error(response.json.message)
     loaded()
   } else if (response.ok) {
-    window.location.href = "main.html";
+    window.location.href = "login.html";
   }
 }
 
@@ -116,11 +116,114 @@ async function login() {
   }
 }
 
+if (window.location.href.includes("profile")) {
+  async function updateProfileInfo() {
+    let data;
+    try {
+      const response = await fetch('http://localhost:3000/usersInfo', {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+      if (response.ok) {
+        data = await response.json()
+      } else {
+        return
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+
+    const nameSide = document.getElementById('nameSide');
+    const emailSide = document.getElementById('emailSide');
+    const fullname = document.getElementById('fullname');
+    const email = document.getElementById('email');
+
+    nameSide.innerHTML = data.username;
+    emailSide.innerHTML = data.email;
+    fullname.value = data.username;
+    email.value = data.email;
+  }
+  updateProfileInfo()
+}
+
+// editing function
+function editing() {
+  document.getElementById('fullname').readOnly = false;
+  document.getElementById('email').readOnly = false;
+  const cancelEdit = document.getElementById('cancelEdit');
+  const confirmBtn = document.getElementById('confirmBtn');
+
+  cancelEdit.style = "display: block;";
+  confirmBtn.style = "display: block;";
+}
+
+// edit user function
+async function editUser() {
+  event.preventDefault();
+
+  const formData = {
+    "username": document.getElementById('fullname').value,
+    "email": document.getElementById('email').value
+  };
+
+  let settings = {
+    method: "PUT", 
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + localStorage.getItem('token')
+    },
+    body: JSON.stringify(formData),
+    beforeSend: loading()
+  }
+
+  const response = await fetch("http://localhost:3000/editUser", settings);
+  loaded()
+  alert("Information Updated")
+  location.reload();
+}
+
+// delete function
+function deleting() {
+  const geryScreen = document.getElementById('geryScreen')
+  const customPopup = document.getElementById('customPopup')
+  geryScreen.style = "display: block;"
+  customPopup.style = "display: block;"
+}
+function cancel() {
+  const geryScreen = document.getElementById('geryScreen')
+  const customPopup = document.getElementById('customPopup')
+  geryScreen.style = "display: none;"
+  customPopup.style = "display: none;"
+}
+
+// delete user function
+async function deleteUser() {
+  let settings = {
+    method: "DELETE", 
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem('token')
+    }
+  }
+
+  const response = await fetch("http://localhost:3000/deleteUser", settings);
+
+  logout()
+}
+
 // logout function
-async function logout() {
+function logout() {
   localStorage.setItem('token', null);
   localStorage.setItem('data', null);
   window.location.replace(`login.html`)
+}
+
+// back function
+async function back() {
+  const retrievedData = localStorage.getItem('data');
+  const userData = JSON.parse(retrievedData);
+  if (userData.userType == "admin") {
+    window.location.replace(`main${userData.userType.charAt(0).toUpperCase() + userData.userType.slice(1)}.html`)
+  } else {
+    window.location.replace(`mainOthers.html`)
+  }
 }
 
 // Authentification check
@@ -153,7 +256,7 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
       console.error('Error:', error);
       localStorage.setItem('data', null);
       if (!window.location.href.includes("login.html") && !window.location.href.includes("signup") && !window.location.href.includes("index")) {
-        window.location.href = '/public/login.html'; // Redirect to login
+        window.location.href = 'login.html'; // Redirect to login
       } else {
         document.body.style.display = 'block';
       }
@@ -166,11 +269,11 @@ if (window.location.href.includes("mainAdmin.html") || window.location.href.incl
   window.onload = function() {
     const userInfoDiv = document.getElementById('main-title');
     const retrievedData = localStorage.getItem('data');
-    const user = JSON.parse(retrievedData);
-    userInfoDiv.innerHTML += user.username + "!";
+    const userData = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += userData.username + "!";
     fetchClasses();
   
-    if (window.location.href.includes("mainAdmin.html")) {
+    if (userData.userType == "admin") {
       const form = document.getElementById('createClassForm');
       form.addEventListener('submit', function(event) {
           event.preventDefault();

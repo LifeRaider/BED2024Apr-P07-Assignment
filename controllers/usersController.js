@@ -80,9 +80,65 @@ async function login(req, res) {
   }
 }
 
+async function editUser(req, res) {
+  const { email } = req.body;
+  const userID = req.user.id
+
+  try {
+    // Check for existing user ID
+    const existingUser = await User.getUserById(userID);
+    if (!existingUser) {
+      return res.status(409).json({ message: "User does not exists" });
+    }
+
+    // Check for existing email
+    const existingEmail = await User.getUserByEmail(email);
+    if (existingEmail && existingEmail.id != userID) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+    // Edit user in database
+    try {
+      const editedUser = await User.editUser(req.body, userID);
+      res.status(201).json(editedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error editing user");
+    }
+
+    // return res.status(201).json({ message: "User created successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function deleteUser(req, res) {
+  const userID = req.user.id
+
+  try {
+    const users = await User.deleteUser(userID);
+    return res.status(200).json({ message: "User deleted" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 async function getAllUsers(req, res) {
   try {
     const users = await User.getAllUsers();
+    return res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function getUserById(req, res) {
+  const userID = req.user.id
+
+  try {
+    const users = await User.getUserById(userID);
     return res.status(200).json(users);
   } catch (err) {
     console.error(err);
@@ -94,5 +150,8 @@ module.exports = {
     test,
     register,
     login,
-    getAllUsers
+    editUser,
+    deleteUser,
+    getAllUsers,
+    getUserById
 };
