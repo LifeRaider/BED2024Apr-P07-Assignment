@@ -24,7 +24,7 @@ For the curious minds out there itching to get a sneak peak at the initial wiref
 ## Features
 
 As our system is still under development, you might encounter some features that are not fully implemented. Rest assured, we're working diligently to bring you a complete and robust platform! 🛠️
-
+>Last updated on 30/07/2024
 ### Existing Features
 - Register Account (Student, Parent)
 - Login Account
@@ -46,9 +46,6 @@ As our system is still under development, you might encounter some features that
 - Student Progress Tracking
 - Parent-Teacher Feedback
 - And Much More...
-<br>
-
->Last updated on 30/07/2024
 
 ### Possible Future Features
 - Mobile Application for on-the-go access
