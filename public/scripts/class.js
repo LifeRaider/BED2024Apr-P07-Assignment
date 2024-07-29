@@ -16,62 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('No class_id found in the URL');
     }
 
-    document.addEventListener('click', function(event) {
-        if (event.target && event.target.id === 'editClassBtn') {
-            showEditClassModal();
-        }
-        if (event.target && event.target.id === 'deleteClassBtn') {
-            showDeleteClassModal();
-        }
-    });
-
-    document.getElementById('saveClassChanges').addEventListener('click', updateClass);
-    document.getElementById('confirmDeleteClass').addEventListener('click', deleteClass);
-
-    // Add event listener for the confirm remove user button
-    document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
-
-    // Add event listener for the add user button
+    // New or modified event listeners
+    document.getElementById('editClassBtn').addEventListener('click', showEditClassModal);
+    document.getElementById('deleteClassBtn').addEventListener('click', showDeleteClassModal);
+    document.getElementById('addAnnouncementBtn').addEventListener('click', showAddAnnouncementModal);
+    document.getElementById('addAssignmentBtn').addEventListener('click', showAddAssignmentModal);
     document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
 
-    // Add event listener for the confirm add user button
-    document.getElementById('confirmAddUser').addEventListener('click', confirmAddUser);
-
-    // Add event listener for the add announcement button
-    document.getElementById('addAnnouncementBtn').addEventListener('click', showAddAnnouncementModal);
-
-    // Add event listener for the post announcement button
-    document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
-
-    // Add event listener for the delete class button
-    document.getElementById('confirmDeleteAnnouncement').addEventListener('click', deleteAnnouncement);
-
-    // Add event listener for the save announcement changes button
-    document.getElementById('saveAnnouncementChanges').addEventListener('click', showConfirmEditAnnouncementModal);
-
-    // Add event listener for the confirm edit announcement button
-    document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
-
-    // Add event listener for the add assignment button
-    document.getElementById('addAssignmentBtn').addEventListener('click', showAddAssignmentModal);
-
-    // Add event listener for the post assignment button
-    document.getElementById('postAssignmentBtn').addEventListener('click', postAssignment);
-
-    // Add event listener for the delete assignment button
-    document.getElementById('confirmDeleteAssignment').addEventListener('click', deleteAssignment);
-
-    // Add event listener for the save assignment changes button
-    document.getElementById('saveAssignmentChanges').addEventListener('click', showConfirmEditAssignmentModal);
-
-    // Add event listener for the confirm edit assignment button
-    document.getElementById('confirmEditAssignment').addEventListener('click', editAssignment);
-
-    // Add event listener for the edit class button
-    document.getElementById('editClassBtn').addEventListener('click', showEditClassModal);
-
-    // Add event listener for the save class changes button
+    // Existing event listeners
     document.getElementById('saveClassChanges').addEventListener('click', updateClass);
+    document.getElementById('confirmDeleteClass').addEventListener('click', deleteClass);
+    document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
+    document.getElementById('confirmAddUser').addEventListener('click', confirmAddUser);
+    document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
+    document.getElementById('confirmDeleteAnnouncement').addEventListener('click', deleteAnnouncement);
+    document.getElementById('saveAnnouncementChanges').addEventListener('click', showConfirmEditAnnouncementModal);
+    document.getElementById('confirmEditAnnouncement').addEventListener('click', editAnnouncement);
+    document.getElementById('postAssignmentBtn').addEventListener('click', postAssignment);
+    document.getElementById('confirmDeleteAssignment').addEventListener('click', deleteAssignment);
+    document.getElementById('saveAssignmentChanges').addEventListener('click', showConfirmEditAssignmentModal);
+    document.getElementById('confirmEditAssignment').addEventListener('click', editAssignment);
 });
 
 function showDeleteClassModal() {
@@ -128,19 +92,8 @@ async function fetchAssignments(classId) {
 }
 
 function displayClassDetails(classData) {
-    const classDetails = document.getElementById('class-details');
-    classDetails.innerHTML = `
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">${classData.className} (${classData.classID})</h5>
-                <p class="card-text">${classData.classDes}</p>
-                <div class="btn-group" role="group" aria-label="Class actions">
-                    <button id="editClassBtn" class="btn btn-primary">Edit Class</button>
-                    <button id="deleteClassBtn" class="btn btn-danger">Delete Class</button>
-                </div>
-            </div>
-        </div>
-    `;
+    document.getElementById('class-title').textContent = `${classData.className} (${classData.classID})`;
+    document.getElementById('class-details').textContent = classData.classDes;
 }
 
 function displayAnnouncements(announcements) {
@@ -153,30 +106,19 @@ function displayAnnouncements(announcements) {
     announcementsList.innerHTML = announcements.map(announcement => `
         <div class="card mb-3" data-announcement-id="${announcement.announcementID}">
             <div class="card-body">
-                <h5 class="card-title">${announcement.announcementTitle}</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">${announcement.announcementTitle}</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">🗑️</button>
+                    </div>
+                </div>
                 <p class="card-text">${announcement.announcementDes}</p>
-                <p class="card-text">
-                    <small class="text-muted">
-                        Posted on: ${new Date(announcement.announcementDateTime).toLocaleString()}
-                    </small>
-                </p>
-                <p class="card-text">
-                    <small class="text-muted">
-                        Created by: ${announcement.creatorUsername} (${announcement.announcementCreator})
-                    </small>
-                </p>
+                <p class="card-text"><small class="text-muted">Posted on: ${new Date(announcement.announcementDateTime).toLocaleString()}</small></p>
+                <p class="card-text"><small class="text-muted">Created by: ${announcement.creatorUsername} (${announcement.announcementCreator})</small></p>
                 ${announcement.editedBy ? `
-                <p class="card-text">
-                    <small class="text-muted">
-                        Edited by: ${announcement.editedByUsername} (${announcement.editedBy}) on ${new Date(announcement.editedDateTime).toLocaleString()}
-                    </small>
-                </p>
+                <p class="card-text"><small class="text-muted">Edited by: ${announcement.editedByUsername} (${announcement.editedBy}) on ${new Date(announcement.editedDateTime).toLocaleString()}</small></p>
                 ` : ''}
-                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
-                    <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
-                ` : ``}
-                
             </div>
         </div>
     `).join('');
@@ -194,12 +136,18 @@ function showEditClassModal() {
     const modal = new bootstrap.Modal(document.getElementById('editClassModal'));
     
     // Populate the form with current class details
-    const classDetails = document.getElementById('class-details');
-    const className = classDetails.querySelector('.card-title').textContent.split('(')[0].trim();
-    const classDes = classDetails.querySelector('.card-text').textContent;
+    const className = document.getElementById('class-title').textContent.split('(')[0].trim();
+    const classDes = document.getElementById('class-details').textContent;
     
-    document.getElementById('editClassName').value = className;
-    document.getElementById('editClassDes').value = classDes;
+    const editClassNameInput = document.getElementById('editClassName');
+    const editClassDesInput = document.getElementById('editClassDes');
+    
+    if (editClassNameInput && editClassDesInput) {
+        editClassNameInput.value = className;
+        editClassDesInput.value = classDes;
+    } else {
+        console.error('Edit class form inputs not found');
+    }
     
     modal.show();
 }
@@ -283,7 +231,13 @@ function displayAssignments(assignments) {
     assignmentsList.innerHTML = assignments.map(assignment => `
         <div class="card mb-3" data-assignment-id="${assignment.assignmentID}">
             <div class="card-body">
-                <h5 class="card-title">${assignment.assignmentTitle}</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">${assignment.assignmentTitle}</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm edit-assignment" data-assignment-id="${assignment.assignmentID}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-assignment" data-assignment-id="${assignment.assignmentID}">🗑️</button>
+                    </div>
+                </div>
                 <p class="card-text">${assignment.assignmentDes}</p>
                 <p class="card-text"><small class="text-muted">Posted on: ${new Date(assignment.assignmentPostDateTime).toLocaleString()}</small></p>
                 <p class="card-text"><small class="text-muted">Due: ${new Date(assignment.assignmentDueDateTime).toLocaleString()}</small></p>
@@ -291,8 +245,6 @@ function displayAssignments(assignments) {
                 ${assignment.editedBy ? `
                 <p class="card-text"><small class="text-muted">Last edited by: ${assignment.editedByUsername} (${assignment.editedBy}) on ${new Date(assignment.editedDateTime).toLocaleString()}</small></p>
                 ` : ''}
-                <button class="btn btn-primary btn-sm edit-assignment" data-assignment-id="${assignment.assignmentID}">Edit</button>
-                <button class="btn btn-danger btn-sm delete-assignment" data-assignment-id="${assignment.assignmentID}">Delete</button>
             </div>
         </div>
     `).join('');
@@ -388,36 +340,29 @@ async function fetchClassUsers(classId) {
 function displayClassUsers(users) {
     const classUsersList = document.getElementById('class-users-list');
     if (!users || users.length === 0) {
-        classUsersList.innerHTML = '<p>No users in this class.</p>';
+        classUsersList.innerHTML = '<tr><td colspan="5">No users in this class.</td></tr>';
         return;
     }
 
-    // Sort users: teachers first, then students
     const sortedUsers = users.sort((a, b) => {
-        const roleOrder = { T: 0, S: 1, P: 2 };
+        const roleOrder = { T: 0, S: 1 };
         return roleOrder[a.userID[0]] - roleOrder[b.userID[0]];
     });
 
-    // Filter out parents
-    const filteredUsers = sortedUsers.filter(user => user.userID[0] !== 'P');
-
-    const userHTML = filteredUsers.map(user => `
-        <div class="card mb-2">
-            <div class="card-body">
-                <h5 class="card-title">${user.username} (${user.userID})</h5>
-                <p class="card-text">Role: ${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</p>
-                <p class="card-text">Email: ${user.email}</p>
-                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
-                    <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">Remove User</button>
-                ` : ``}
-                
-            </div>
-        </div>
+    const userHTML = sortedUsers.map(user => `
+        <tr>
+            <td>${user.username}</td>
+            <td>${user.userID}</td>
+            <td>${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</td>
+            <td>${user.email}</td>
+            <td>
+                <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">🗑️</button>
+            </td>
+        </tr>
     `).join('');
 
     classUsersList.innerHTML = userHTML;
 
-    // Add event listeners to the remove buttons
     document.querySelectorAll('.remove-user').forEach(button => {
         button.addEventListener('click', function() {
             const userId = this.getAttribute('data-userid');
@@ -543,7 +488,7 @@ function displayUsersToAdd(users) {
                     <h5 class="card-title">${username} (${userId})</h5>
                     <p class="card-text">Email: ${email}</p>
                     <p class="card-text">Role: ${getUserRole(userId)}</p>
-                    <button class="btn btn-primary btn-sm add-user" data-userid="${userId}" data-username="${username}">Add User</button>
+                    <button class="btn btn-warning btn-sm add-user" data-userid="${userId}" data-username="${username}">➕</button>
                 </div>
             </div>
         `;
@@ -605,6 +550,9 @@ async function confirmAddUser() {
         bootstrap.Modal.getInstance(document.getElementById('confirmAddUserModal')).hide();
         bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
 
+        // Expand the class users section
+        expandSection('#usersCollapse');
+
         // Show success message
         alert('User added successfully!');
     } catch (error) {
@@ -654,7 +602,10 @@ async function postAnnouncement() {
         // Close the modal and refresh the announcements
         const modal = bootstrap.Modal.getInstance(document.getElementById('addAnnouncementModal'));
         modal.hide();
-        fetchAnnouncements(classId);
+        await fetchAnnouncements(classId);
+
+        // Expand the announcements section
+        expandSection('#announcementsCollapse');
 
         // Clear the form
         document.getElementById('addAnnouncementForm').reset();
@@ -764,7 +715,10 @@ async function postAssignment() {
         // Close the modal and refresh the assignments
         const modal = bootstrap.Modal.getInstance(document.getElementById('addAssignmentModal'));
         modal.hide();
-        fetchAssignments(classId);
+        await fetchAssignments(classId);
+
+        // Expand the assignments section
+        expandSection('#assignmentsCollapse');
 
         // Clear the form
         document.getElementById('addAssignmentForm').reset();
@@ -892,5 +846,14 @@ async function editAssignment() {
     } catch (error) {
         console.error('Error updating assignment:', error);
         alert('Failed to update assignment. Please try again.');
+    }
+}
+
+// Function to expand a collapsed section
+function expandSection(sectionId) {
+    const section = document.querySelector(sectionId);
+    if (section && !section.classList.contains('show')) {
+        const bsCollapse = new bootstrap.Collapse(section);
+        bsCollapse.show();
     }
 }
