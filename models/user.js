@@ -99,6 +99,30 @@ class User {
             record.parentId
         ));
     }
+
+    static async addChildrenToParent(parentId, childrenEmails) {
+        const connection = await sql.connect(dbConfig);
+
+        // Get the parent user
+        const parent = await this.getUserById(parentId);
+
+        // Find children by email
+        const children = await Promise.all(
+            childrenEmails.map(email => this.getUserByEmail(email))
+        );
+
+        // Update children with parent's ID
+        for (const child of children) {
+            if (child) {
+                child.parentId = parent.userID;
+                await this.updateUser(child);
+            }
+        }
+
+        connection.close();
+
+        return children;
+    }
 }
 
 module.exports = User;

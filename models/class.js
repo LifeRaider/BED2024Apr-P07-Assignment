@@ -258,7 +258,7 @@ class Class {
         request.input("classID", sql.VarChar, classID);
         const result = await request.query(sqlQuery);
         connection.close();
-        return result.recordset; // Return the syllabus recordset
+        return result.recordset; 
     }
 }
     
