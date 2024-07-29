@@ -70,7 +70,6 @@ Here are the materials used in the development of the Brain Jam system:
     - Anthropic's Claude 3.5 Sonnet
     - Microsoft's GitHub Copilot
     - Gignite
-<br>
 
 > [!NOTE]
 > We used various development tools and resources to assist in our coding process, always striving to deliver the best possible product.
