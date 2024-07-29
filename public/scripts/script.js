@@ -265,6 +265,33 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
 
 // MAIN PAGE
 // =================================
+if (window.location.href.includes("mainAdmin.html")) {
+  window.onload = function() {
+    const userInfoDiv = document.getElementById('main-title');
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += userData.username + "!";
+    fetchClasses();
+  
+    if (userData.userType == "admin") {
+      const form = document.getElementById('createClassForm');
+      form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          createClass();
+      });
+    }
+  };
+}
+if (window.location.href.includes("mainOthers.html")){
+  window.onload = function() {
+    const userInfoDiv = document.getElementById('main-title');
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    userInfoDiv.innerHTML += userData.username + "!";
+    fetchClasses();
+  }
+}
+
 // Marvin's Gignite
 // ==============================================================================================================
 // Event listeners
@@ -467,35 +494,7 @@ async function createClass() {
       alert(`An error occurred while creating the class: ${error.message}`);
   }
 }
-// ==============================================================================================================
 
-if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
-  window.onload = function() {
-    const userInfoDiv = document.getElementById('main-title');
-    const retrievedData = localStorage.getItem('data');
-    const userData = JSON.parse(retrievedData);
-    userInfoDiv.innerHTML += userData.username + "!";
-    fetchClasses();
-  
-    if (userData.userType == "admin") {
-      const form = document.getElementById('createClassForm');
-      form.addEventListener('submit', function(event) {
-          event.preventDefault();
-          createClass();
-      });
-    }
-  };
-}
-
-if (window.location.href.includes("admin")) {
-  if (window.location.href.includes("adminTeachers.html")) {
-    fetchUsers("T");
-  } else if (window.location.href.includes("adminParents.html")) {
-    fetchUsers("P");
-  } else if (window.location.href.includes("adminStudents.html")) {
-    fetchUsers("S");
-  }
-}
 
 async function fetchClasses() {
   try {

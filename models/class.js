@@ -159,7 +159,7 @@ class Class {
 
         connection.close();
 
-        consol
+        console.log(result2)
         return result2.recordset;
     }
 
