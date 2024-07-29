@@ -1,15 +1,15 @@
-// // Form checker
-// if (document.querySelector('form')) {
-//   const form = document.querySelector('form');
-//   const submitButton = document.querySelector('#submit');
-//   form.addEventListener('input', () => {
-//     if (form.checkValidity()) {
-//       submitButton.disabled = false;
-//     } else {
-//       submitButton.disabled = true;
-//     }
-//   });
-// }
+// Form checker
+if (document.querySelector('form')) {
+  const form = document.querySelector('form');
+  const submitButton = document.querySelector('#submit');
+  form.addEventListener('input', () => {
+    if (form.checkValidity()) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  });
+}
 
 console.log(window.location.pathname)
 // Loading Screen
