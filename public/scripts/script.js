@@ -102,7 +102,7 @@ async function login() {
     beforeSend: loading(),
   }
 
-  const response = await fetch("http://localhost:3000/login", settings);
+  const response = await fetch('http://localhost:3000/login', settings);
 
   if (response.ok) {
     let data = await response.json()
@@ -137,7 +137,8 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
             window.location.href = "mainOthers.html";
           }
         } else {
-          if (user.userType == "admin" && (!window.location.href.includes("Admin") || !window.location.href.includes("admin"))) {
+          console.log(window.location.href)
+          if (user.userType == "admin" && !(window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
             window.location.href = "login.html";
           } else if (user.userType != "admin" && (window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
             window.location.href = "login.html";
@@ -157,6 +158,7 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
         document.body.style.display = 'block';
       }
     });
+
 
 // MAIN PAGE
 // =================================
@@ -192,15 +194,15 @@ async function fetchClasses() {
   try {
       console.log('Fetching classes...');
       var retrievedData = localStorage.getItem('data');
-      var user = JSON.parse(retrievedData)
+      var userData = JSON.parse(retrievedData)
       var response;
       if (window.location.href.includes("mainAdmin.html")) {
         response = await fetch('http://localhost:3000/classes');
       } else {
-        response = await fetch(`http://localhost:3000/userClasses/${user.id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+        response = await fetch(`http://localhost:3000/userClasses/${userData.id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
       }
       console.log('Response status:', response.status);
-      if (!response.ok) {
+      if (!response.ok && response.status != 404) {
           throw new Error('Network response was not ok ' + response.statusText);
       }
       const data = await response.json();
@@ -211,10 +213,17 @@ async function fetchClasses() {
       }
       classList.innerHTML = ''; // Clear existing content
 
-      if (data.length === 0) {
-          console.log('No classes found');
-          classList.innerHTML = '<p>No classes available.</p>';
-          return;
+      if (response.status == 404) {
+        console.log('No classes found');
+        classList.innerHTML = '<p>No classes available.</p>';
+        classList.className = "row row-cols-1 row-cols-md-1";
+        return;
+      } else if (data.length == 1) {
+        classList.className = "row row-cols-1 row-cols-md-1";
+      } else if (data.length == 2) {
+        classList.className = "row row-cols-1 row-cols-md-2";
+      } else if (data.length >= 3) {
+        classList.className = "row row-cols-1 row-cols-md-3";
       }
 
       data.forEach((classItem) => {
@@ -226,7 +235,7 @@ async function fetchClasses() {
           if (window.location.href.includes("mainAdmin.html")) {
             link = 'classAdmin';
           } else {
-            link = `class${user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}`;
+            link = `class${userData.userType.charAt(0).toUpperCase() + userData.userType.slice(1)}`;
           } //<img src="assets/image.png" style="width: match-parent;">
           classElement.innerHTML = `
               <div class="card h-100">
@@ -243,7 +252,8 @@ async function fetchClasses() {
       console.error('Error fetching classes:', error);
       const classList = document.getElementById('class-list');
       if (classList) {
-          classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
+        classList.className = "row row-cols-1 row-cols-md-1";
+        classList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
       }
   }
 }

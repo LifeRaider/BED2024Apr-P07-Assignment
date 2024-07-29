@@ -128,6 +128,9 @@ async function fetchAssignments(classId) {
 }
 
 function displayClassDetails(classData) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     const classDetails = document.getElementById('class-details');
     classDetails.innerHTML = `
         <div class="card">
@@ -135,8 +138,10 @@ function displayClassDetails(classData) {
                 <h5 class="card-title">${classData.className} (${classData.classID})</h5>
                 <p class="card-text">${classData.classDes}</p>
                 <div class="btn-group" role="group" aria-label="Class actions">
+                ${userData.userType == "admin" ? `
                     <button id="editClassBtn" class="btn btn-primary">Edit Class</button>
                     <button id="deleteClassBtn" class="btn btn-danger">Delete Class</button>
+                ` : ``}
                 </div>
             </div>
         </div>
@@ -144,6 +149,9 @@ function displayClassDetails(classData) {
 }
 
 function displayAnnouncements(announcements) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+    
     const announcementsList = document.getElementById('announcements-list');
     if (announcements.length === 0) {
         announcementsList.innerHTML = '<p>No announcements for this class.</p>';
@@ -172,7 +180,7 @@ function displayAnnouncements(announcements) {
                     </small>
                 </p>
                 ` : ''}
-                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
+                ${(userData.userType == "admin" || userData.userType == "teacher") ? `
                     <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">Edit</button>
                     <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">Delete</button>
                 ` : ``}
@@ -274,6 +282,9 @@ async function editAnnouncement() {
 }
 
 function displayAssignments(assignments) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     const assignmentsList = document.getElementById('assignments-list');
     if (assignments.length === 0) {
         assignmentsList.innerHTML = '<p>No assignments for this class.</p>';
@@ -291,8 +302,10 @@ function displayAssignments(assignments) {
                 ${assignment.editedBy ? `
                 <p class="card-text"><small class="text-muted">Last edited by: ${assignment.editedByUsername} (${assignment.editedBy}) on ${new Date(assignment.editedDateTime).toLocaleString()}</small></p>
                 ` : ''}
+                ${(userData.userType == "admin" || userData.userType == "teacher") ? `
                 <button class="btn btn-primary btn-sm edit-assignment" data-assignment-id="${assignment.assignmentID}">Edit</button>
                 <button class="btn btn-danger btn-sm delete-assignment" data-assignment-id="${assignment.assignmentID}">Delete</button>
+                ` : ``}
             </div>
         </div>
     `).join('');
@@ -386,6 +399,9 @@ async function fetchClassUsers(classId) {
 }
 
 function displayClassUsers(users) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     const classUsersList = document.getElementById('class-users-list');
     if (!users || users.length === 0) {
         classUsersList.innerHTML = '<p>No users in this class.</p>';
@@ -407,7 +423,7 @@ function displayClassUsers(users) {
                 <h5 class="card-title">${user.username} (${user.userID})</h5>
                 <p class="card-text">Role: ${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</p>
                 <p class="card-text">Email: ${user.email}</p>
-                ${(window.location.href.includes("classAdmin.html") || window.location.href.includes("classTeacher.html")) ? `
+                    ${(userData.userType == "admin" || userData.userType == "teacher") ? `
                     <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">Remove User</button>
                 ` : ``}
                 
