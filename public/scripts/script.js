@@ -137,7 +137,7 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
             window.location.href = "mainOthers.html";
           }
         } else {
-          if (user.userType == "admin" && (!window.location.href.includes("Admin") || !window.location.href.includes("admin"))) {
+          if (user.userType == "admin" && !(window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
             window.location.href = "login.html";
           } else if (user.userType != "admin" && (window.location.href.includes("Admin") || window.location.href.includes("admin"))) {
             window.location.href = "login.html";
