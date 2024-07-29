@@ -1,4 +1,4 @@
-# 🧠 Brain Jam 🧠
+# 🧠 The Brain Jam System 🧠
 **🚧 Currently in development 🚧**
 
 Welcome to **Brain Jam**, the innovative tuition center management system designed to enhance learning experiences for students, teachers, and parents. We're excited to have you here and hope you find our platform intuitive and helpful. With Brain Jam, you can manage classes, track assignments, view progress, and communicate effectively. Let's empower minds and create connections, one lesson at a time! 📚
