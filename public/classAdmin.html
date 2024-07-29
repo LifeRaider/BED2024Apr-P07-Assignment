@@ -3,33 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Class Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles/styles.css" rel="stylesheet">
+    <title>Class Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-header .btn {
+            padding: 0;
+            font-size: 1.5rem;
+        }
+        .btn-link {
+        text-decoration: none;
+        }
+        .btn-link:hover, .btn-link:focus {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <button class="btn btn-secondary backBtn" onclick="back()">BACK</button>
     </nav>
 
-    <div class="class-container" style="padding: 40px; padding-inline: 20vw; background-color: #fcf2ec;">
-        <h1>Class Details</h1>
-        <div id="class-details"></div>
-        
-        <h2 class="mt-4">Announcements 
-            <button id="addAnnouncementBtn" class="btn btn-primary btn-sm">Add Announcement</button>
-        </h2>
-        <div id="announcements-list"></div>
-        
-        <h2 class="mt-4">Assignments
-            <button id="addAssignmentBtn" class="btn btn-primary btn-sm">Add Assignment</button>
-        </h2>
-        <div id="assignments-list"></div>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 id="class-title">Class Name</h1>
+            <div>
+                <button id="editClassBtn" class="btn btn-primary me-2">✏️</button>
+                <button id="deleteClassBtn" class="btn btn-danger">🗑️</button>
+            </div>
+        </div>
 
-        <h2 class="mt-4">Class Users 
-            <button id="addUserBtn" class="btn btn-primary btn-sm ms-2">Add User</button>
-        </h2>
-        <div id="class-users-list"></div>
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Class Description</h5>
+            </div>
+            <div class="card-body" id="class-details"></div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Announcements</h5>
+                <div>
+                    <button id="addAnnouncementBtn" class="btn btn-warning me-2">➕</button>
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#announcementsCollapse" aria-expanded="true" aria-controls="announcementsCollapse">
+                        🔽
+                    </button>
+                </div>
+            </div>
+            <div class="collapse show" id="announcementsCollapse">
+                <div class="card-body" id="announcements-list"></div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Assignments</h5>
+                <div>
+                    <button id="addAssignmentBtn" class="btn btn-warning me-2">➕</button>
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#assignmentsCollapse" aria-expanded="false" aria-controls="assignmentsCollapse">
+                        🔽
+                    </button>
+                </div>
+            </div>
+            <div class="collapse" id="assignmentsCollapse">
+                <div class="card-body" id="assignments-list"></div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Class Users</h5>
+                <div>
+                    <button id="addUserBtn" class="btn btn-warning me-2">➕</button>
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#usersCollapse" aria-expanded="false" aria-controls="usersCollapse">
+                        🔽
+                    </button>
+                </div>
+            </div>
+            <div class="collapse" id="usersCollapse">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>User ID</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="class-users-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Delete Class Modal -->
