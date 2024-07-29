@@ -1,15 +1,16 @@
-// Form checker
-if (document.querySelector('form')) {
-  const form = document.querySelector('form');
-  const submitButton = document.querySelector('#submit');
-  form.addEventListener('input', () => {
-    if (form.checkValidity()) {
-      submitButton.disabled = false;
-    } else {
-      submitButton.disabled = true;
-    }
-  });
-}
+// // Form checker
+// if (document.querySelector('form')) {
+//   const form = document.querySelector('form');
+//   const submitButton = document.querySelector('#submit');
+//   form.addEventListener('input', () => {
+//     if (form.checkValidity()) {
+//       submitButton.disabled = false;
+//     } else {
+//       submitButton.disabled = true;
+//     }
+//   });
+// }
+
 console.log(window.location.pathname)
 // Loading Screen
 function loading() {
@@ -160,6 +161,210 @@ fetch('http://localhost:3000/test', {headers: {"Authorization": "Bearer " + loca
 
 // MAIN PAGE
 // =================================
+// Marvin's Gignite
+// ==============================================================================================================
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  populateTeacherDropdown();
+  handleSubjectSelection();
+  handleTeacherSelection();
+
+  document.getElementById('createClassBtn').addEventListener('click', createClass);
+  document.getElementById('cancelBtn').addEventListener('click', hideModal);
+
+  // Close modal when clicking outside
+  document.getElementById('createClassModal').addEventListener('click', function(event) {
+      if (event.target === this) {
+          hideModal();
+      }
+  });
+});
+
+// Assuming you have a button to open the modal
+document.getElementById('openModalBtn').addEventListener('click', showModal);
+
+// Function to show the modal
+function showModal() {
+  document.getElementById('createClassModal').style.display = 'block';
+}
+
+// Function to hide the modal
+function hideModal() {
+  document.getElementById('createClassModal').style.display = 'none';
+}
+
+// Function to populate the teacher dropdown
+async function populateTeacherDropdown() {
+  try {
+      const response = await fetch('http://localhost:3000/users');
+      if (!response.ok) {
+          throw new Error('Failed to fetch users');
+      }
+      const users = await response.json();
+
+      const teachers = users.filter(user => {
+          if (!user || typeof user !== 'object') {
+              console.warn('Invalid user object:', user);
+              return false;
+          }
+          const userId = user.userID || user.userId || user.id;
+          if (!userId) {
+              console.warn('User object missing ID:', user);
+              return false;
+          }
+          return userId.toString().startsWith('T');
+      });
+
+      const teacherSelect = document.getElementById('assignedTeachers');
+      if (!teacherSelect) {
+          console.error('Teacher select element not found');
+          return;
+      }
+
+      teacherSelect.innerHTML = '<option value="">Select a teacher</option>';
+      teachers.forEach(teacher => {
+          const option = document.createElement('option');
+          option.value = teacher.userID || teacher.userId || teacher.id;
+          option.textContent = `${teacher.username} (${option.value})`;
+          teacherSelect.appendChild(option);
+      });
+
+      // Sort the options alphabetically
+      sortSelectOptions(teacherSelect);
+  } catch (error) {
+      console.error('Error fetching teachers:', error);
+  }
+}
+function sortSelectOptions(selectElement) {
+  const options = Array.from(selectElement.options).slice(1); // Exclude the first "Select a teacher" option
+  options.sort((a, b) => a.text.localeCompare(b.text));
+  selectElement.innerHTML = '<option value="">Select a teacher</option>'; // Re-add the first option
+  options.forEach(option => selectElement.add(option));
+}
+
+// Function to handle subject selection
+function handleSubjectSelection() {
+  const subjectSelect = document.getElementById('classSubject');
+  const classNameInput = document.getElementById('className');
+
+  subjectSelect.addEventListener('change', function() {
+      const selectedSubject = this.value;
+      if (selectedSubject) {
+          const currentName = classNameInput.value.split(' - ')[0];
+          classNameInput.value = `${currentName} - ${selectedSubject}`;
+      } else {
+          classNameInput.value = classNameInput.value.split(' - ')[0];
+      }
+  });
+}
+
+// Function to handle teacher selection
+function handleTeacherSelection() {
+  const teacherSelect = document.getElementById('assignedTeachers');
+  const selectedTeachersDiv = document.getElementById('selectedTeachers');
+
+  teacherSelect.addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      if (selectedOption.value) {
+          addTeacherToSelection(selectedOption);
+          this.remove(this.selectedIndex);
+          this.value = ''; // Reset the select element
+      }
+  });
+
+  function addTeacherToSelection(option) {
+      const teacherBox = document.createElement('div');
+      teacherBox.style.padding = '4px 8px';
+      teacherBox.style.backgroundColor = '#e0e0e0';
+      teacherBox.style.borderRadius = '4px';
+      teacherBox.style.display = 'flex';
+      teacherBox.style.alignItems = 'center';
+      teacherBox.style.gap = '8px';
+      teacherBox.style.marginBottom = '4px';
+      teacherBox.innerHTML = `
+          <span>${option.text}</span>
+          <button type="button" style="border: none; background: none; cursor: pointer; font-size: 18px; line-height: 1;">&times;</button>
+      `;
+      selectedTeachersDiv.appendChild(teacherBox);
+
+      // Add event listener to remove button
+      teacherBox.querySelector('button').addEventListener('click', function() {
+          selectedTeachersDiv.removeChild(teacherBox);
+          // Add the teacher back to the dropdown
+          const newOption = document.createElement('option');
+          newOption.value = option.value;
+          newOption.text = option.text;
+          teacherSelect.add(newOption);
+          // Sort the options
+          sortSelectOptions(teacherSelect);
+      });
+  }
+
+  function sortSelectOptions(selectElement) {
+      const options = Array.from(selectElement.options);
+      options.sort((a, b) => a.text.localeCompare(b.text));
+      selectElement.innerHTML = '';
+      options.forEach(option => selectElement.add(option));
+  }
+}
+
+// Function to create a new class
+async function createClass() {
+  let className = document.getElementById('className').value.trim();
+  const classDes = document.getElementById('classDes').value.trim();
+  const selectedTeachers = Array.from(document.getElementById('selectedTeachers').children).map(
+      teacherBox => teacherBox.textContent.trim().split('(')[1].split(')')[0]
+  );
+
+  // Ensure className is not longer than 50 characters
+  if (className.length > 50) {
+      className = className.substring(0, 47) + '...';
+  }
+
+  const newClass = {
+      className: className,
+      classDes: classDes
+  };
+
+  try {
+      const response = await fetch('http://localhost:3000/classes', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newClass),
+      });
+
+      if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to create class: ${errorText}`);
+      }
+
+      const createdClass = await response.json();
+
+      // Add teachers to the class
+      for (const teacherId of selectedTeachers) {
+          await fetch(`http://localhost:3000/classes/${createdClass.classID}/add`, {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ userID: teacherId }),
+          });
+      }
+
+      alert('Class created successfully!');
+      document.getElementById('createClassForm').reset();
+      document.getElementById('selectedTeachers').innerHTML = '';
+      hideModal();
+      fetchClasses(); // Refresh the class list
+  } catch (error) {
+      console.error('Error:', error);
+      alert(`An error occurred while creating the class: ${error.message}`);
+  }
+}
+// ==============================================================================================================
+
 if (window.location.href.includes("mainAdmin.html") || window.location.href.includes("mainOthers.html")) {
   window.onload = function() {
     const userInfoDiv = document.getElementById('main-title');
@@ -248,41 +453,6 @@ async function fetchClasses() {
   }
 }
 
-async function createClass() {
-  const className = document.getElementById('className').value;
-  const classDes = document.getElementById('classDes').value;
-
-  const newClass = {
-      className: className,
-      classDes: classDes
-  };
-
-  try {
-      const response = await fetch('http://localhost:3000/classes', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newClass),
-      });
-
-      if (!response.ok) {
-          const errorMessage = await response.text(); // Use text() to get non-JSON response
-          throw new Error('Network response was not ok: ' + errorMessage);
-      }
-
-      const data = await response.json();
-      console.log('Success:', data);
-      alert('Class created successfully!');
-      document.getElementById('createClassForm').reset();
-      document.querySelector('#createClassModal .btn-close').click(); // Close the modal
-      fetchClasses(); // Refresh the class list
-  } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while creating the class.');
-  }
-}
-
 async function fetchUsers(type) {
   try {
       console.log('Fetching User...');
@@ -334,12 +504,12 @@ async function fetchUsers(type) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Add event listener for the confirm remove user button
-  document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
-  // Add event listener for the add user button
-  document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//   // Add event listener for the confirm remove user button
+//   document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
+//   // Add event listener for the add user button
+//   document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
+// });
 
 function showRemoveUserModal(userId, username) {
   const modal = new bootstrap.Modal(document.getElementById('removeUserModal'));
