@@ -1,4 +1,4 @@
-# 🧠 Brain Jam 🧠
+# 🧠 The Brain Jam System 🧠
 **🚧 Currently in development 🚧**
 
 Welcome to **Brain Jam**, the innovative tuition center management system designed to enhance learning experiences for students, teachers, and parents. We're excited to have you here and hope you find our platform intuitive and helpful. With Brain Jam, you can manage classes, track assignments, view progress, and communicate effectively. Let's empower minds and create connections, one lesson at a time! 📚
@@ -24,7 +24,7 @@ For the curious minds out there itching to get a sneak peak at the initial wiref
 ## Features
 
 As our system is still under development, you might encounter some features that are not fully implemented. Rest assured, we're working diligently to bring you a complete and robust platform! 🛠️
-
+>Last updated on 30/07/2024
 ### Existing Features
 - Register Account (Student, Parent)
 - Login Account
@@ -46,9 +46,6 @@ As our system is still under development, you might encounter some features that
 - Student Progress Tracking
 - Parent-Teacher Feedback
 - And Much More...
-<br>
-
->Last updated on 30/07/2024
 
 ### Possible Future Features
 - Mobile Application for on-the-go access
@@ -73,7 +70,6 @@ Here are the materials used in the development of the Brain Jam system:
     - Anthropic's Claude 3.5 Sonnet
     - Microsoft's GitHub Copilot
     - Gignite
-<br>
 
 > [!NOTE]
 > We used various development tools and resources to assist in our coding process, always striving to deliver the best possible product.
