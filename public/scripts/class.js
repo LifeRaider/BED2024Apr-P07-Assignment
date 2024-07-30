@@ -111,10 +111,12 @@ function displayAnnouncements(announcements) {
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title">${announcement.announcementTitle}</h5>
+                    ${(userData.userType == "admin" || userData.userType == "teacher") ? `
                     <div>
                         <button class="btn btn-primary btn-sm edit-announcement" data-announcement-id="${announcement.announcementID}">✏️</button>
                         <button class="btn btn-danger btn-sm delete-announcement" data-announcement-id="${announcement.announcementID}">🗑️</button>
                     </div>
+                    ` : ``}
                 </div>
                 <p class="card-text">${announcement.announcementDes}</p>
                 <p class="card-text"><small class="text-muted">Posted on: ${new Date(announcement.announcementDateTime).toLocaleString()}</small></p>
@@ -239,10 +241,12 @@ function displayAssignments(assignments) {
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title">${assignment.assignmentTitle}</h5>
+                    ${(userData.userType == "admin" || userData.userType == "teacher") ? `
                     <div>
                         <button class="btn btn-primary btn-sm edit-assignment" data-assignment-id="${assignment.assignmentID}">✏️</button>
                         <button class="btn btn-danger btn-sm delete-assignment" data-assignment-id="${assignment.assignmentID}">🗑️</button>
                     </div>
+                    ` : ``}
                 </div>
                 <p class="card-text">${assignment.assignmentDes}</p>
                 <p class="card-text"><small class="text-muted">Posted on: ${new Date(assignment.assignmentPostDateTime).toLocaleString()}</small></p>
@@ -364,9 +368,11 @@ function displayClassUsers(users) {
             <td>${user.userID}</td>
             <td>${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</td>
             <td>${user.email}</td>
+            ${(userData.userType == "admin" || userData.userType == "teacher") ? `
             <td>
                 <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">🗑️</button>
             </td>
+            ` : ``}
         </tr>
     `).join('');
 
