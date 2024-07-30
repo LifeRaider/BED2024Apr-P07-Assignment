@@ -145,6 +145,9 @@ class Class {
 
         const request = connection.request();
         const result = await request.query(sqlQuery);
+        connection.close();
+
+        const connection2 = await sql.connect(dbConfig);
 
         let sqlQuery2 = ``;
         result.recordset.forEach(i => {
@@ -154,12 +157,11 @@ class Class {
                           UNION ALL\n`
         });
         sqlQuery2 = sqlQuery2.trim().slice(0, -11);
-        
-        const result2 = await request.query(sqlQuery2);
 
+        const request2 = connection2.request();
+        const result2 = await request2.query(sqlQuery2);
         connection.close();
 
-        console.log(result2)
         return result2.recordset;
     }
 
