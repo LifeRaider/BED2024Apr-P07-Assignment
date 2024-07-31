@@ -17,15 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // New or modified event listeners
-    document.getElementById('editClassBtn').addEventListener('click', showEditClassModal);
-    document.getElementById('deleteClassBtn').addEventListener('click', showDeleteClassModal);
     document.getElementById('addAnnouncementBtn').addEventListener('click', showAddAnnouncementModal);
     document.getElementById('addAssignmentBtn').addEventListener('click', showAddAssignmentModal);
     document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
 
     // Existing event listeners
-    document.getElementById('saveClassChanges').addEventListener('click', updateClass);
-    document.getElementById('confirmDeleteClass').addEventListener('click', deleteClass);
     document.getElementById('confirmRemoveUser').addEventListener('click', confirmRemoveUser);
     document.getElementById('confirmAddUser').addEventListener('click', confirmAddUser);
     document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
@@ -36,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirmDeleteAssignment').addEventListener('click', deleteAssignment);
     document.getElementById('saveAssignmentChanges').addEventListener('click', showConfirmEditAssignmentModal);
     document.getElementById('confirmEditAssignment').addEventListener('click', editAssignment);
+
+    // Class event listeners
+    document.getElementById('editClassBtn').addEventListener('click', showEditClassModal);
+    document.getElementById('deleteClassBtn').addEventListener('click', showDeleteClassModal);
+    document.getElementById('saveClassChanges').addEventListener('click', updateClass);
+    document.getElementById('confirmDeleteClass').addEventListener('click', deleteClass);
 });
 
 function showDeleteClassModal() {
@@ -368,7 +370,10 @@ function displayClassUsers(users) {
             <td>${user.userID}</td>
             <td>${user.userID[0] === 'T' ? 'Teacher' : 'Student'}</td>
             <td>${user.email}</td>
-            ${(userData.userType == "admin" || userData.userType == "teacher") ? `
+            ${(userData.userType == "teacher" && user.userType == "teacher") ? `
+            <td>NIL</td>
+            ` : ``}
+            ${(userData.userType == "admin" || (userData.userType == "teacher" && user.userType != "teacher")) ? `
             <td>
                 <button class="btn btn-danger btn-sm remove-user" data-userid="${user.userID}" data-username="${user.username}">🗑️</button>
             </td>
@@ -454,6 +459,9 @@ async function showAddUserModal() {
 }
 
 function filterAndSortUsers(allUsers, classUsers) {
+    const retrievedData = localStorage.getItem('data');
+    const userData = JSON.parse(retrievedData);
+
     // Create a Set of existing class user IDs for faster lookup
     const existingUserIds = new Set(classUsers.map(user => user.userID));
 
@@ -463,7 +471,8 @@ function filterAndSortUsers(allUsers, classUsers) {
         return userId &&
                !existingUserIds.has(userId) &&
                !userId.startsWith('A') &&
-               !userId.startsWith('P');
+               !userId.startsWith('P') &&
+               (userData.userType !== "teacher" || !userId.startsWith('T'));
     });
 
     // Sort users: teachers first, then students
