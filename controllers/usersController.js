@@ -69,6 +69,7 @@ async function login(req, res) {
     const payload = {
       id: user.id,
       userType: user.userType,
+      username: user.username
     };
     const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" }); // Expires in 1 hour
     return res.status(200).json({ token });
@@ -88,9 +89,24 @@ async function getAllUsers(req, res) {
   }
 }
 
+// Function to link an existing parent to their children
+async function linkParentToChildren(req, res) {
+  try {
+    const { parentId, childrenEmails } = req.body;
+
+    // Link parent to children
+    const children = await User.addChildrenToParent(parentId, childrenEmails);
+
+    res.status(200).json({ message: "Parent linked to children successfully", children });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
     test,
     register,
     login,
-    getAllUsers
+    getAllUsers,
+    linkParentToChildren
 };
