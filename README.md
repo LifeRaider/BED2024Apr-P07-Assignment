@@ -80,17 +80,28 @@ Here are the materials used in the development of the Brain Jam system:
 By ***Marvin -*** [***@s10260527***](https://github.com/s10260527)
 - getAllAnnouncements, getAnnouncementsByClassId, getAnnouncementById, createAnnouncement, updateAnnouncement, deleteAnnouncement
 - getAllAssignments, getAssignmentsByClassId, getAssignmentById, createAssignment, updateAssignment, deleteAssignment
-- getAllClasses, getClassById, createClass, updateClass, deleteClass
+- getAllClasses, getClassById, updateClass, deleteClass
 - class.js (HTML Script)
 - In script.js; showModal, hideModal, populateTeacherDropdown, sortSelectOptions, handleSubjectSelection, handleTeacherSelection, createClass, fetchClasses, fetchUsers, showRemoveUserModal, confirmRemoveUser, removeUserFromClass
 - classAdmin.html, mainAdmin.html
+- SQL Trigger for UTC Time & Update Existing Data to UTC
 - Gignite for Create Class Modal & Admin Viewing Class Page
 
 By ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider)
-- Example
+- authorization.js
+- getAllUsers, register, login, deleteUser, editUser
+- getAllUserClass
+- createFeedback, getFeedbacksByClassID
+- classParent.html, classStudent.html, classTeacher.html, index.html, login.html, mainOthers.html, profile.html, signup.html
+- styles.css, styles2.css
+- In script.js; loading, loaded, sign up page check, signup, login, editing, editUser, deleting, cancel, deleteUser, logout, back, authentification check
+- Gignite for User Profile Page
 
 By ***Lucas -*** [***@s10257164***](https://github.com/LoocasToh)
-- Example
+- addToClass, getClassUsers, createClass, removeFromClass
+- Swagger API Docs
+- SQL Create Tables & Test Data
+- Gignite for Footer (In first submission)
 
 ### Others
 - Database Design (By ***Marvin -*** [***@s10260527***](https://github.com/s10260527), ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider), ***Lucas -*** [***@s10257164***](https://github.com/LoocasToh))
