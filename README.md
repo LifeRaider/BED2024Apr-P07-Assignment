@@ -94,7 +94,7 @@ By ***Jovan -*** [***@s10257399***](https://github.com/LifeRaider)
 - createFeedback, getFeedbacksByClassID
 - classParent.html, classStudent.html, classTeacher.html, index.html, login.html, mainOthers.html, profile.html, signup.html
 - styles.css, styles2.css
-- In script.js; loading, loaded, sign up page check, signup, login, editing, editUser, deleting, cancel, deleteUser, logout, back, authentification check
+- In script.js; loading, loaded, sign up page check, signup, login, editing, editUser, deleting, cancel, deleteUser, logout, back, authentification check, fetchClasses
 - Gignite for User Profile Page
 
 By ***Lucas -*** [***@s10257164***](https://github.com/LoocasToh)
